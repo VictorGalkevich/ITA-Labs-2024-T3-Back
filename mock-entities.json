@@ -1,0 +1,317 @@
+{
+  "users": [
+    {
+      "user_id": 1,
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "john@example.com",
+      "role": "registered user buyer",
+      "password": "password123"
+    },
+    {
+      "user_id": 2,
+      "first_name": "Jane",
+      "last_name": "Smith",
+      "email": "jane@example.com",
+      "role": "registered user seller",
+      "password": "securePassword"
+    },
+    {
+      "user_id": 3,
+      "first_name": "Admin",
+      "last_name": "User",
+      "email": "admin@example.com",
+      "role": "system administrator",
+      "password": "adminPassword"
+    },
+    {
+      "user_id": 4,
+      "first_name": "Exchange",
+      "last_name": "Employee",
+      "email": "employee@example.com",
+      "role": "exchange employee",
+      "password": "employeePassword"
+    },
+    {
+      "user_id": 5,
+      "first_name": "Guest",
+      "last_name": "User",
+      "email": "buyer@example.com",
+      "role": "registered user buyer",
+      "password": "buyerPassword"
+    },
+    {
+      "user_id": 6,
+      "first_name": "User",
+      "last_name": "6",
+      "email": "user6@example.com",
+      "role": "registered user buyer",
+      "password": "user6Password"
+    },
+    {
+      "user_id": 7,
+      "first_name": "User",
+      "last_name": "7",
+      "email": "user7@example.com",
+      "role": "registered user seller",
+      "password": "user7Password"
+    },
+    {
+      "user_id": 8,
+      "first_name": "User",
+      "last_name": "8",
+      "email": "user8@example.com",
+      "role": "system administrator",
+      "password": "user8Password"
+    },
+    {
+      "user_id": 9,
+      "first_name": "User",
+      "last_name": "9",
+      "email": "user9@example.com",
+      "role": "exchange employee",
+      "password": "user9Password"
+    },
+    {
+      "user_id": 10,
+      "first_name": "User",
+      "last_name": "10",
+      "email": "user10@example.com",
+      "role": "exchange employee",
+      "password": "user10Password"
+    }
+  ],
+
+  "categories": [
+    {
+      "category_id": 1,
+      "name": "Fruits",
+      "subcategories": [
+        {
+          "subcategory_id": 1,
+          "category_id": 1,
+          "name": "Apples"
+        },
+        {
+          "subcategory_id": 2,
+          "category_id": 1,
+          "name": "Bananas"
+        },
+        {
+          "subcategory_id": 3,
+          "category_id": 1,
+          "name": "Oranges"
+        },
+        {
+          "subcategory_id": 4,
+          "category_id": 1,
+          "name": "Berries"
+        }
+      ]
+    },
+    {
+      "category_id": 2,
+      "name": "Vegetables",
+      "subcategories": [
+        {
+          "subcategory_id": 5,
+          "category_id": 2,
+          "name": "Tomatoes"
+        },
+        {
+          "subcategory_id": 6,
+          "category_id": 2,
+          "name": "Carrots"
+        },
+        {
+          "subcategory_id": 7,
+          "category_id": 2,
+          "name": "Potatoes"
+        },
+        {
+          "subcategory_id": 8,
+          "category_id": 2,
+          "name": "Spinach"
+        }
+      ]
+    },
+    {
+      "category_id": 3,
+      "name": "Grains",
+      "subcategories": [
+        {
+          "subcategory_id": 9,
+          "category_id": 3,
+          "name": "Rice"
+        },
+        {
+          "subcategory_id": 10,
+          "category_id": 3,
+          "name": "Wheat"
+        },
+        {
+          "subcategory_id": 11,
+          "category_id": 3,
+          "name": "Quinoa"
+        },
+        {
+          "subcategory_id": 12,
+          "category_id": 3,
+          "name": "Barley"
+        }
+      ]
+    }
+  ],
+
+  "lots": [
+    {
+      "lot_id": 1,
+      "title": "Golden Apple Lot",
+      "product_type": "fruits",
+      "product_subtype": "apple",
+      "quantity": 1000,
+      "price_per_unit": 1.50,
+      "location": {
+        "country": "United States",
+        "region": "California"
+      },
+      "description": "Fresh and high-quality golden apples",
+      "status": "active",
+      "image_url": "https://example.com/apple_image.jpg"
+    },
+    {
+      "lot_id": 2,
+      "title": "Cavendish Banana Lot",
+      "product_type": "fruits",
+      "product_subtype": "banana",
+      "quantity": 800,
+      "price_per_unit": 1.20,
+      "location": {
+        "country": "Ecuador",
+        "region": "Guayas"
+      },
+      "description": "Delicious and ripe Cavendish bananas",
+      "status": "completed",
+      "image_url": "https://example.com/banana_image.jpg"
+    },
+    {
+      "lot_id": 3,
+      "title": "Roma Tomato Lot",
+      "product_type": "vegetables",
+      "product_subtype": "tomato",
+      "quantity": 500,
+      "price_per_unit": 0.80,
+      "location": {
+        "country": "Italy",
+        "region": "Campania"
+      },
+      "description": "Fresh Roma tomatoes from Italy",
+      "status": "active",
+      "image_url": "https://example.com/tomato_image.jpg"
+    },
+    {
+      "lot_id": 4,
+      "title": "Orange Carrot Lot",
+      "product_type": "vegetables",
+      "product_subtype": "carrot",
+      "quantity": 600,
+      "price_per_unit": 0.90,
+      "location": {
+        "country": "Canada",
+        "region": "Ontario"
+      },
+      "description": "Sweet and orange carrots",
+      "status": "active",
+      "image_url": "https://example.com/carrot_image.jpg"
+    },
+    {
+      "lot_id": 5,
+      "title": "Jasmine Rice Lot",
+      "product_type": "grains",
+      "product_subtype": "rice",
+      "quantity": 1000,
+      "price_per_unit": 2.50,
+      "location": {
+        "country": "Thailand",
+        "region": "Bangkok"
+      },
+      "description": "High-quality Jasmine rice",
+      "status": "active",
+      "image_url": "https://example.com/rice_image.jpg"
+    },
+    {
+      "lot_id": 6,
+      "title": "Hard Red Spring Wheat Lot",
+      "product_type": "grains",
+      "product_subtype": "wheat",
+      "quantity": 800,
+      "price_per_unit": 2.20,
+      "location": {
+        "country": "United States",
+        "region": "Montana"
+      },
+      "description": "Hard Red Spring Wheat from Montana",
+      "status": "active",
+      "image_url": "https://example.com/wheat_image.jpg"
+    },
+    {
+      "lot_id": 7,
+      "title": "Sweet Basil Lot",
+      "product_type": "herbs",
+      "product_subtype": "basil",
+      "quantity": 300,
+      "price_per_unit": 1.80,
+      "location": {
+        "country": "France",
+        "region": "Provence-Alpes-Côte d'Azur"
+      },
+      "description": "Fresh and aromatic sweet basil",
+      "status": "completed",
+      "image_url": "https://example.com/basil_image.jpg"
+    },
+    {
+      "lot_id": 8,
+      "title": "Common Rosemary Lot",
+      "product_type": "herbs",
+      "product_subtype": "rosemary",
+      "quantity": 250,
+      "price_per_unit": 2.00,
+      "location": {
+        "country": "Spain",
+        "region": "Andalusia"
+      },
+      "description": "Common rosemary for culinary use",
+      "status": "active",
+      "image_url": "https://example.com/rosemary_image.jpg"
+    },
+    {
+      "lot_id": 9,
+      "title": "Valencia Orange Lot",
+      "product_type": "fruits",
+      "product_subtype": "orange",
+      "quantity": 700,
+      "price_per_unit": 1.60,
+      "location": {
+        "country": "Spain",
+        "region": "Valencia"
+      },
+      "description": "Sweet and juicy Valencia oranges",
+      "status": "active",
+      "image_url": "https://example.com/orange_image.jpg"
+    },
+    {
+      "lot_id": 10,
+      "title": "Russet Potato Lot",
+      "product_type": "vegetables",
+      "product_subtype": "potato",
+      "quantity": 400,
+      "price_per_unit": 1.00,
+      "location": {
+        "country": "United States",
+        "region": "Idaho"
+      },
+      "description": "Russet potatoes with a golden skin",
+      "status": "completed",
+      "image_url": "https://example.com/potato_image.jpg"
+    }  ]
+}

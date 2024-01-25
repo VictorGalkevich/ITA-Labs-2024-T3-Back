@@ -1,7 +1,7 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import com.ventionteams.applicationexchange.container.CategoryContainer;
 import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
 import com.ventionteams.applicationexchange.dto.CategoryReadDto;
 import com.ventionteams.applicationexchange.service.CategoryService;
@@ -10,12 +10,10 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-import static org.springframework.http.ResponseEntity.noContent;
-import static org.springframework.http.ResponseEntity.notFound;
+import static org.springframework.http.ResponseEntity.*;
 
 @RestController
 @RequestMapping("/categories")
@@ -24,15 +22,21 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final ObjectMapper objectMapper;
 
+    @SneakyThrows
     @GetMapping
-    public List<CategoryReadDto> findAll() {
-        return categoryService.findAll();
+    public ResponseEntity<String> findAll() {
+        List<CategoryReadDto> all = categoryService.findAll();
+        return all.isEmpty()
+                ? noContent().build()
+                : ok().body(getFromObject(new CategoryContainer(all)));
     }
 
     @GetMapping("/{id}")
-    public CategoryReadDto findById(@PathVariable("id") Integer id) {
+    public ResponseEntity<String> findById(@PathVariable("id") Integer id) {
         return categoryService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .map(obj -> ok()
+                        .body(getFromObject(obj)))
+                .orElseGet(notFound()::build);
     }
 
     @SneakyThrows
@@ -45,11 +49,12 @@ public class CategoryController {
 
     @SneakyThrows
     @PutMapping("/{id}")
-    public CategoryReadDto update(@PathVariable("id") Integer id,
-                                  @RequestBody String json) {
+    public ResponseEntity<String> update(@PathVariable("id") Integer id,
+                                         @RequestBody String json) {
         CategoryCreateEditDto dto = objectMapper.readValue(json, CategoryCreateEditDto.class);
         return categoryService.update(id, dto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .map(obj -> ok().body(getFromObject(obj)))
+                .orElseGet(notFound()::build);
     }
 
     @DeleteMapping("/{id}")
@@ -57,5 +62,10 @@ public class CategoryController {
         return categoryService.delete(id)
                 ? noContent().build()
                 : notFound().build();
+    }
+
+    @SneakyThrows
+    private String getFromObject(Object object) {
+        return objectMapper.writeValueAsString(object);
     }
 }

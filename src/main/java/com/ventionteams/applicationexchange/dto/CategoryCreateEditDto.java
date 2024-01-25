@@ -1,15 +1,15 @@
 package com.ventionteams.applicationexchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
-import lombok.Value;
+import lombok.Data;
+
 
 import java.util.List;
 
-@Value
+@Data
 public class CategoryCreateEditDto {
     @JsonProperty("category_id")
-    Integer id;
-    String name;
-    List<SubcategoryCreateEditDto> subcategories;
+    private Integer id;
+    private String name;
+    private List<SubcategoryCreateEditDto> subcategories;
 }

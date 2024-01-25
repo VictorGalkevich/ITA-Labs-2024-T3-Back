@@ -1,7 +1,6 @@
 package com.ventionteams.applicationexchange.mapper;
 
 import com.ventionteams.applicationexchange.dto.SubcategoryReadDto;
-import com.ventionteams.applicationexchange.entity.Category;
 import com.ventionteams.applicationexchange.entity.Subcategory;
 import org.springframework.stereotype.Component;
 

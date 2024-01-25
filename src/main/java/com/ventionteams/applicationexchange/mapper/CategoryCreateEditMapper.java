@@ -2,12 +2,10 @@ package com.ventionteams.applicationexchange.mapper;
 
 import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
 import com.ventionteams.applicationexchange.entity.Category;
-import com.ventionteams.applicationexchange.entity.Subcategory;
 import com.ventionteams.applicationexchange.repository.SubcategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component

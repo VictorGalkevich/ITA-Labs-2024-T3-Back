@@ -1,7 +1,6 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ventionteams.applicationexchange.container.CategoryContainer;
 import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
 import com.ventionteams.applicationexchange.dto.CategoryReadDto;
 import com.ventionteams.applicationexchange.service.CategoryService;
@@ -24,23 +23,23 @@ public class CategoryController {
 
     @SneakyThrows
     @GetMapping
-    public ResponseEntity<String> findAll() {
+    public ResponseEntity<List<CategoryReadDto>> findAll() {
         List<CategoryReadDto> all = categoryService.findAll();
         return all.isEmpty()
-                ? noContent().build()
-                : ok().body(getFromObject(new CategoryContainer(all)));
+                ? notFound().build()
+                : ok().body(all);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> findById(@PathVariable("id") Integer id) {
+    public ResponseEntity<CategoryReadDto> findById(@PathVariable("id") Integer id) {
         return categoryService.findById(id)
                 .map(obj -> ok()
-                        .body(getFromObject(obj)))
+                        .body(obj))
                 .orElseGet(notFound()::build);
     }
 
     @SneakyThrows
-    @PostMapping("/create")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryReadDto create(@RequestBody String json) {
         CategoryCreateEditDto dto = objectMapper.readValue(json, CategoryCreateEditDto.class);
@@ -49,11 +48,11 @@ public class CategoryController {
 
     @SneakyThrows
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable("id") Integer id,
+    public ResponseEntity<CategoryReadDto> update(@PathVariable("id") Integer id,
                                          @RequestBody String json) {
         CategoryCreateEditDto dto = objectMapper.readValue(json, CategoryCreateEditDto.class);
         return categoryService.update(id, dto)
-                .map(obj -> ok().body(getFromObject(obj)))
+                .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }
 
@@ -62,10 +61,5 @@ public class CategoryController {
         return categoryService.delete(id)
                 ? noContent().build()
                 : notFound().build();
-    }
-
-    @SneakyThrows
-    private String getFromObject(Object object) {
-        return objectMapper.writeValueAsString(object);
     }
 }

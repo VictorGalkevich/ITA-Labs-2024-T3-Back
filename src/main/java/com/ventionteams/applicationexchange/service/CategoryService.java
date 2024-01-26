@@ -48,9 +48,7 @@ public class CategoryService {
 
     public Optional<CategoryReadDto> update(Integer id, CategoryCreateEditDto categoryDto) {
         return categoryRepository.findById(id)
-                .map(category -> {
-                    return categoryCreateEditMapper.map(categoryDto, category);
-                })
+                .map(category -> categoryCreateEditMapper.map(categoryDto))
                 .map(categoryRepository::update)
                 .map(categoryReadMapper::map);
     }

@@ -19,7 +19,6 @@ import static org.springframework.http.ResponseEntity.*;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    private final ObjectMapper objectMapper;
 
     @SneakyThrows
     @GetMapping
@@ -41,16 +40,14 @@ public class CategoryController {
     @SneakyThrows
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryReadDto create(@RequestBody String json) {
-        CategoryCreateEditDto dto = objectMapper.readValue(json, CategoryCreateEditDto.class);
-        return categoryService.create(dto);
+    public ResponseEntity<CategoryReadDto> create(@RequestBody CategoryCreateEditDto dto) {
+        return ok().body(categoryService.create(dto));
     }
 
     @SneakyThrows
     @PutMapping("/{id}")
     public ResponseEntity<CategoryReadDto> update(@PathVariable("id") Integer id,
-                                         @RequestBody String json) {
-        CategoryCreateEditDto dto = objectMapper.readValue(json, CategoryCreateEditDto.class);
+                                         @RequestBody CategoryCreateEditDto dto) {
         return categoryService.update(id, dto)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);

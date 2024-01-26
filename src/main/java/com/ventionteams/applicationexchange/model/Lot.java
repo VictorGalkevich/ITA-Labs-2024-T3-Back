@@ -14,7 +14,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Lot {
-
     @JsonProperty("lot_id")
     private Integer id;
     private String title;

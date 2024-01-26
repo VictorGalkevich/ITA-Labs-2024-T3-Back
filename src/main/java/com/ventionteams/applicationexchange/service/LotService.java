@@ -28,9 +28,8 @@ public class LotService {
         return Optional.ofNullable(lotMapper.toLotReadDTO(lotRepository.findById(id)));
     }
 
-    public Lot create(Lot lot) {
-        return lotRepository.save(lot);
-        //return lotMapper.toLotReadDTO(lotRepository.save(lot));
+    public LotReadDTO create(Lot lot) {
+        return lotMapper.toLotReadDTO(lotRepository.save(lot));
     }
 
     public void delete(Integer id) {

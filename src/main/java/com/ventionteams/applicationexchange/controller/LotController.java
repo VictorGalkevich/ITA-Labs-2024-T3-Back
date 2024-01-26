@@ -37,7 +37,7 @@ public class LotController {
     }
 
     @PostMapping
-    public ResponseEntity<Lot> create(@RequestBody Lot lot) {
+    public ResponseEntity<LotReadDTO> create(@RequestBody Lot lot) {
         return ResponseEntity.ok(lotService.create(lot));
     }
 

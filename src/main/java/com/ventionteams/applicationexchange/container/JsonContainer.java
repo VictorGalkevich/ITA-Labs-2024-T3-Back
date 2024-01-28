@@ -3,12 +3,13 @@ package com.ventionteams.applicationexchange.container;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
 import com.ventionteams.applicationexchange.dto.CategoryReadDto;
+import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public record JsonContainer(List<MockUser> users, List<CategoryCreateEditDto> categories, List<MockLot> lots) {
+public record JsonContainer(List<MockUser> users, List<CategoryCreateEditDto> categories, List<LotReadDTO> lots) {
 }
 
 class MockUser {

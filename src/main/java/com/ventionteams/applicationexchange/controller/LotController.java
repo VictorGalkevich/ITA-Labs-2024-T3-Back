@@ -2,7 +2,7 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
-import com.ventionteams.applicationexchange.model.Lot;
+import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.service.LotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +47,7 @@ public class LotController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         lotService.delete(id);
         return new ResponseEntity<>(OK);
     }

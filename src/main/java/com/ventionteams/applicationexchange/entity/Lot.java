@@ -1,7 +1,7 @@
-package com.ventionteams.applicationexchange.model;
+package com.ventionteams.applicationexchange.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ventionteams.applicationexchange.model.enumeration.Status;
+import com.ventionteams.applicationexchange.entity.enumeration.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

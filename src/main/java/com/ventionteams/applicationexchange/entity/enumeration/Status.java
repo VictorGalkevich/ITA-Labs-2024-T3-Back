@@ -1,4 +1,4 @@
-package com.ventionteams.applicationexchange.model.enumeration;
+package com.ventionteams.applicationexchange.entity.enumeration;
 
 import lombok.Getter;
 

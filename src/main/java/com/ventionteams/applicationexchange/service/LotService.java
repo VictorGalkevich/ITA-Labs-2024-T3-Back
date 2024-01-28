@@ -3,7 +3,7 @@ package com.ventionteams.applicationexchange.service;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
-import com.ventionteams.applicationexchange.model.Lot;
+import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.repository.LotRepository;
 import org.springframework.stereotype.Service;
 

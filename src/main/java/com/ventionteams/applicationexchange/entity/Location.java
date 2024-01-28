@@ -1,4 +1,4 @@
-package com.ventionteams.applicationexchange.model;
+package com.ventionteams.applicationexchange.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +11,8 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class Subcategory {
+public class Location {
     private int id;
-    private int categoryId;
-    private String name;
+    private String country;
+    private String region;
 }

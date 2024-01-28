@@ -1,16 +1,12 @@
 package com.ventionteams.applicationexchange.entity.enumeration;
 
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Getter
 public enum Status {
-    active("active"),
-    completed("completed"),
-    moderated("moderated");
-
-    private final String name;
-
-    Status(String name) {
-        this.name = name;
-    }
+    @JsonProperty("active")
+    ACTIVE,
+    @JsonProperty("completed")
+    COMPLETED,
+    @JsonProperty("moderated")
+    MODERATED
 }

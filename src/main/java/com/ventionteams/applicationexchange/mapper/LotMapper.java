@@ -12,5 +12,6 @@ public interface LotMapper {
     List<LotReadDTO> toLotReadList(List<Lot> lots);
 
     LotReadDTO toLotReadDTO(Lot lot);
+
     Lot toLot(LotReadDTO lotReadDTO);
 }

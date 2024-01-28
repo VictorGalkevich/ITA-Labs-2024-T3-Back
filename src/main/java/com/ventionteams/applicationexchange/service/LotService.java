@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service
 public class LotService {
     private final LotRepository lotRepository;
-    private LotMapper lotMapper;
+    private final LotMapper lotMapper;
 
     public LotService(LotRepository lotRepository, LotMapper lotMapper) {
         this.lotRepository = lotRepository;

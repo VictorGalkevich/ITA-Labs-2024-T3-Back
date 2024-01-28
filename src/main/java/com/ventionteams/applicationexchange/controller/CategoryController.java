@@ -1,6 +1,5 @@
 package com.ventionteams.applicationexchange.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
 import com.ventionteams.applicationexchange.dto.CategoryReadDto;
 import com.ventionteams.applicationexchange.service.CategoryService;

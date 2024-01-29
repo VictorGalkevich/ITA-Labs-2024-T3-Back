@@ -25,18 +25,25 @@ public class LotService {
     }
 
     public Optional<LotReadDTO> findById(Integer id) {
-        return Optional.ofNullable(lotMapper.toLotReadDTO(lotRepository.findById(id)));
+        return lotRepository.findById(id)
+                .map(lotMapper::toLotReadDTO);
     }
 
     public LotReadDTO create(Lot lot) {
         return lotMapper.toLotReadDTO(lotRepository.save(lot));
     }
 
-    public void delete(Integer id) {
-        lotRepository.delete(id);
+    public boolean delete(Integer id) {
+        return lotRepository.findById(id)
+                .map(lot -> {
+                    lotRepository.delete(id);
+                    return true;
+                })
+                .orElse(false);
     }
 
-    public LotReadDTO update(Integer id, LotUpdateDTO lotUpdateDTO) {
-        return lotMapper.toLotReadDTO(lotRepository.update(id, lotUpdateDTO));
+    public Optional<LotReadDTO> update(Integer id, LotUpdateDTO lotUpdateDTO) {
+        return lotRepository.findById(id)
+                .map(lot -> lotMapper.toLotReadDTO(lotRepository.update(id, lotUpdateDTO)));
     }
 }

@@ -19,13 +19,10 @@ import static org.springframework.http.ResponseEntity.*;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @SneakyThrows
     @GetMapping
     public ResponseEntity<List<CategoryReadDto>> findAll() {
         List<CategoryReadDto> all = categoryService.findAll();
-        return all.isEmpty()
-                ? notFound().build()
-                : ok().body(all);
+        return ok().body(all);
     }
 
     @GetMapping("/{id}")
@@ -36,17 +33,15 @@ public class CategoryController {
                 .orElseGet(notFound()::build);
     }
 
-    @SneakyThrows
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CategoryReadDto> create(@RequestBody CategoryCreateEditDto dto) {
         return ok().body(categoryService.create(dto));
     }
 
-    @SneakyThrows
     @PutMapping("/{id}")
     public ResponseEntity<CategoryReadDto> update(@PathVariable("id") Integer id,
-                                         @RequestBody CategoryCreateEditDto dto) {
+                                                  @RequestBody CategoryCreateEditDto dto) {
         return categoryService.update(id, dto)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);

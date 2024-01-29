@@ -5,20 +5,13 @@ import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.service.LotService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.ResponseEntity.*;
 
 @RestController
 @RequestMapping("/lots")
@@ -28,27 +21,34 @@ public class LotController {
 
     @GetMapping
     public ResponseEntity<List<LotReadDTO>> findAll() {
-        return ResponseEntity.ok(lotService.findAll());
+        return ok(lotService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<LotReadDTO>> findById(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(lotService.findById(id));
+    public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Integer id) {
+        return lotService.findById(id)
+                .map(obj -> ok().body(obj))
+                .orElseGet(notFound()::build);
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<LotReadDTO> create(@RequestBody Lot lot) {
-        return ResponseEntity.ok(lotService.create(lot));
+        return ok(lotService.create(lot));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LotReadDTO> update(@PathVariable("id") Integer id, @RequestBody LotUpdateDTO lotUpdateDTO) {
-        return ResponseEntity.ok(lotService.update(id, lotUpdateDTO));
+    public ResponseEntity<LotReadDTO> update(@PathVariable("id") Integer id,
+                                             @RequestBody LotUpdateDTO lotUpdateDTO) {
+        return lotService.update(id, lotUpdateDTO)
+                .map(obj -> ok().body(obj))
+                .orElseGet(notFound()::build);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
-        lotService.delete(id);
-        return new ResponseEntity<>(OK);
+        return lotService.delete(id)
+                ? noContent().build()
+                : notFound().build();
     }
 }

@@ -24,9 +24,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserReadDto>> findAll() {
         List<UserReadDto> all = userService.findAll();
-        return all.isEmpty()
-                ? notFound().build()
-                : ok().body(all);
+        return ok().body(all);
     }
 
     @GetMapping("/{id}")

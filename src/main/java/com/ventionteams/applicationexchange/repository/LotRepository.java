@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 @Repository
@@ -47,8 +48,8 @@ public class LotRepository {
         return lotTree.replace(id, lot);
     }
 
-    public Lot findById(Integer id) {
-        return lotTree.get(id);
+    public Optional<Lot> findById(Integer id) {
+        return Optional.ofNullable(lotTree.get(id));
     }
 
     public void delete(Integer id) {

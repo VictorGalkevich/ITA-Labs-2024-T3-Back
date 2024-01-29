@@ -47,7 +47,7 @@ public class LotController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         lotService.delete(id);
         return new ResponseEntity<>(OK);
     }

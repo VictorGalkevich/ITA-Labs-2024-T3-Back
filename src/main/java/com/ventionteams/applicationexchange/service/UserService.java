@@ -37,7 +37,7 @@ public class UserService {
     public Optional<UserReadDto> update(Long id, UserCreateEditDto dto) {
         return userRepository.findById(id)
                 .map(user -> userMapper.toUser(dto))
-                .map(userRepository::update)
+                .map(userRepository::saveAndFlush)
                 .map(userMapper::toUserReadDto);
     }
 

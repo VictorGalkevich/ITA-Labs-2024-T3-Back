@@ -162,13 +162,12 @@
       ]
     }
   ],
-
   "lots": [
     {
       "lot_id": 1,
       "title": "Golden Apple Lot",
-      "product_type": "fruits",
-      "product_subtype": "apple",
+      "category_id": 1,
+      "subcategory_id": 1,
       "quantity": 1000,
       "price_per_unit": 1.50,
       "location": {
@@ -177,13 +176,18 @@
       },
       "description": "Fresh and high-quality golden apples",
       "status": "active",
-      "image_url": "https://example.com/apple_image.jpg"
+      "image_url": "https://example.com/apple_image.jpg",
+      "expiration_date": "2024-10-15",
+      "variety": "Golden",
+      "size": "Medium",
+      "packaging": "Carton",
+      "created_at": "2024-03-05T15:20:00Z"
     },
     {
       "lot_id": 2,
       "title": "Cavendish Banana Lot",
-      "product_type": "fruits",
-      "product_subtype": "banana",
+      "category_id": 1,
+      "subcategory_id": 2,
       "quantity": 800,
       "price_per_unit": 1.20,
       "location": {
@@ -192,13 +196,18 @@
       },
       "description": "Delicious and ripe Cavendish bananas",
       "status": "completed",
-      "image_url": "https://example.com/banana_image.jpg"
+      "image_url": "https://example.com/banana_image.jpg",
+      "expiration_date": "2024-09-20",
+      "variety": "Cavendish",
+      "size": "Medium",
+      "packaging": "Box",
+      "created_at": "2024-04-10T08:30:00Z"
     },
     {
       "lot_id": 3,
       "title": "Roma Tomato Lot",
-      "product_type": "vegetables",
-      "product_subtype": "tomato",
+      "category_id": 1,
+      "subcategory_id": 1,
       "quantity": 500,
       "price_per_unit": 0.80,
       "location": {
@@ -207,13 +216,18 @@
       },
       "description": "Fresh Roma tomatoes from Italy",
       "status": "active",
-      "image_url": "https://example.com/tomato_image.jpg"
+      "image_url": "https://example.com/tomato_image.jpg",
+      "expiration_date": "2024-08-05",
+      "variety": "Roma",
+      "size": "Medium",
+      "packaging": "Basket",
+      "created_at": "2024-05-20T11:15:00Z"
     },
     {
       "lot_id": 4,
       "title": "Orange Carrot Lot",
-      "product_type": "vegetables",
-      "product_subtype": "carrot",
+      "category_id": 1,
+      "subcategory_id": 1,
       "quantity": 600,
       "price_per_unit": 0.90,
       "location": {
@@ -222,13 +236,18 @@
       },
       "description": "Sweet and orange carrots",
       "status": "active",
-      "image_url": "https://example.com/carrot_image.jpg"
+      "image_url": "https://example.com/carrot_image.jpg",
+      "expiration_date": "2024-07-10",
+      "variety": "Orange",
+      "size": "Small",
+      "packaging": "Bag",
+      "created_at": "2024-06-01T13:45:00Z"
     },
     {
       "lot_id": 5,
       "title": "Jasmine Rice Lot",
-      "product_type": "grains",
-      "product_subtype": "rice",
+      "category_id": 1,
+      "subcategory_id": 1,
       "quantity": 1000,
       "price_per_unit": 2.50,
       "location": {
@@ -237,13 +256,18 @@
       },
       "description": "High-quality Jasmine rice",
       "status": "active",
-      "image_url": "https://example.com/rice_image.jpg"
+      "image_url": "https://example.com/rice_image.jpg",
+      "expiration_date": "2024-12-01",
+      "variety": "Jasmine",
+      "size": "Large",
+      "packaging": "Sack",
+      "created_at": "2024-07-25T09:00:00Z"
     },
     {
       "lot_id": 6,
       "title": "Hard Red Spring Wheat Lot",
-      "product_type": "grains",
-      "product_subtype": "wheat",
+      "category_id": 1,
+      "subcategory_id": 1,
       "quantity": 800,
       "price_per_unit": 2.20,
       "location": {
@@ -252,13 +276,18 @@
       },
       "description": "Hard Red Spring Wheat from Montana",
       "status": "active",
-      "image_url": "https://example.com/wheat_image.jpg"
+      "image_url": "https://example.com/wheat_image.jpg",
+      "expiration_date": "2024-11-15",
+      "variety": "Hard Red Spring",
+      "size": "Small",
+      "packaging": "Box",
+      "created_at": "2024-08-15T10:30:00Z"
     },
     {
       "lot_id": 7,
       "title": "Sweet Basil Lot",
-      "product_type": "herbs",
-      "product_subtype": "basil",
+      "category_id": 1,
+      "subcategory_id": 1,
       "quantity": 300,
       "price_per_unit": 1.80,
       "location": {
@@ -267,13 +296,18 @@
       },
       "description": "Fresh and aromatic sweet basil",
       "status": "completed",
-      "image_url": "https://example.com/basil_image.jpg"
+      "image_url": "https://example.com/basil_image.jpg",
+      "expiration_date": "2024-10-15",
+      "variety": "Sweet",
+      "size": "Small",
+      "packaging": "Bunch",
+      "created_at": "2024-03-05T15:20:00Z"
     },
     {
       "lot_id": 8,
       "title": "Common Rosemary Lot",
-      "product_type": "herbs",
-      "product_subtype": "rosemary",
+      "category_id": 1,
+      "subcategory_id": 1,
       "quantity": 250,
       "price_per_unit": 2.00,
       "location": {
@@ -282,13 +316,18 @@
       },
       "description": "Common rosemary for culinary use",
       "status": "active",
-      "image_url": "https://example.com/rosemary_image.jpg"
+      "image_url": "https://example.com/rosemary_image.jpg",
+      "expiration_date": "2024-08-20",
+      "variety": "Common",
+      "size": "Medium",
+      "packaging": "Bottle",
+      "created_at": "2024-11-05T11:45:00Z"
     },
     {
       "lot_id": 9,
       "title": "Valencia Orange Lot",
-      "product_type": "fruits",
-      "product_subtype": "orange",
+      "category_id": 1,
+      "subcategory_id": 1,
       "quantity": 700,
       "price_per_unit": 1.60,
       "location": {
@@ -297,13 +336,18 @@
       },
       "description": "Sweet and juicy Valencia oranges",
       "status": "active",
-      "image_url": "https://example.com/orange_image.jpg"
+      "image_url": "https://example.com/orange_image.jpg",
+      "expiration_date": "2024-09-10",
+      "variety": "Valencia",
+      "size": "Large",
+      "packaging": "Crate",
+      "created_at": "2024-10-01T12:00:00Z"
     },
     {
       "lot_id": 10,
       "title": "Russet Potato Lot",
-      "product_type": "vegetables",
-      "product_subtype": "potato",
+      "category_id": 1,
+      "subcategory_id": 1,
       "quantity": 400,
       "price_per_unit": 1.00,
       "location": {
@@ -312,6 +356,12 @@
       },
       "description": "Russet potatoes with a golden skin",
       "status": "completed",
-      "image_url": "https://example.com/potato_image.jpg"
-    }  ]
+      "image_url": "https://example.com/potato_image.jpg",
+      "expiration_date": "2024-09-20",
+      "variety": "Russet",
+      "size": "Large",
+      "packaging": "Bag",
+      "created_at": "2024-04-10T08:30:00Z"
+    }
+  ]
 }

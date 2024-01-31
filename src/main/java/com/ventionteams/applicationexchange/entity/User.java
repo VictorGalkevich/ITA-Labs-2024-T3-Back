@@ -1,6 +1,7 @@
 package com.ventionteams.applicationexchange.entity;
 
 import com.ventionteams.applicationexchange.entity.enumeration.Role;
+import jakarta.persistence.*;
 import lombok.*;
 
 
@@ -9,7 +10,11 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @AllArgsConstructor
+@Entity
+@Table(name ="users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;

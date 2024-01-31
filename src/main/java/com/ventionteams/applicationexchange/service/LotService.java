@@ -2,26 +2,37 @@ package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
-import com.ventionteams.applicationexchange.mapper.LotMapper;
+import com.ventionteams.applicationexchange.entity.Category;
+import com.ventionteams.applicationexchange.entity.Location;
 import com.ventionteams.applicationexchange.entity.Lot;
+import com.ventionteams.applicationexchange.entity.Subcategory;
+import com.ventionteams.applicationexchange.mapper.LotMapper;
+import com.ventionteams.applicationexchange.repository.CategoryRepository;
+import com.ventionteams.applicationexchange.repository.LocationRepository;
 import com.ventionteams.applicationexchange.repository.LotRepository;
+import com.ventionteams.applicationexchange.repository.SubcategoryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LotService {
     private final LotRepository lotRepository;
+    private final LocationRepository locationRepository;
+    private final CategoryRepository categoryRepository;
+    private final SubcategoryRepository subcategoryRepository;
     private final LotMapper lotMapper;
 
-    public LotService(LotRepository lotRepository, LotMapper lotMapper) {
-        this.lotRepository = lotRepository;
-        this.lotMapper = lotMapper;
-    }
-
     public List<LotReadDTO> findAll() {
-        return lotMapper.toLotReadList(lotRepository.findAll());
+        return lotRepository.findAll().stream()
+                .map(lotMapper::toLotReadDTO)
+                .toList();
     }
 
     public Optional<LotReadDTO> findById(Integer id) {
@@ -29,21 +40,50 @@ public class LotService {
                 .map(lotMapper::toLotReadDTO);
     }
 
-    public LotReadDTO create(Lot lot) {
-        return lotMapper.toLotReadDTO(lotRepository.save(lot));
-    }
-
+    @Transactional
     public boolean delete(Integer id) {
         return lotRepository.findById(id)
                 .map(lot -> {
-                    lotRepository.delete(id);
+                    lotRepository.delete(lot);
                     return true;
                 })
                 .orElse(false);
     }
 
-    public Optional<LotReadDTO> update(Integer id, LotUpdateDTO lotUpdateDTO) {
+    @Transactional
+    public LotReadDTO create(LotUpdateDTO dto) {
+        return Optional.of(dto)
+                .map(lotMapper::toLot)
+                .map(this::saveOrUpdate)
+                .map(lotMapper::toLotReadDTO)
+                .orElseThrow();
+    }
+
+    @Transactional
+    public Optional<LotReadDTO> update(Integer id, LotUpdateDTO dto) {
         return lotRepository.findById(id)
-                .map(lot -> lotMapper.toLotReadDTO(lotRepository.update(id, lotUpdateDTO)));
+                .map(lot -> lotMapper.map(lot, lotMapper.toLot(dto)))
+                .map(this::saveOrUpdate)
+                .map(lotMapper::toLotReadDTO);
+    }
+
+    private Lot saveOrUpdate(Lot obj) {
+        Location location = obj.getLocation();
+        Category category = categoryRepository.findById(obj.getCategory().getId()).get();
+        Subcategory subcategory = subcategoryRepository.findById(obj.getSubcategory().getId()).get();
+        obj.setLocation(null);
+        obj.setCategory(null);
+        obj.setSubcategory(null);
+        if (obj.getCreatedAt() == null) {
+            obj.setExpirationDate(Instant.now().plusSeconds(86400 * 30 + 60));
+        }
+        lotRepository.save(obj);
+        location.addLot(obj);
+        category.addLot(obj);
+        subcategory.addLot(obj);
+        locationRepository.saveAndFlush(location);
+        categoryRepository.saveAndFlush(category);
+        subcategoryRepository.saveAndFlush(subcategory);
+        return obj;
     }
 }

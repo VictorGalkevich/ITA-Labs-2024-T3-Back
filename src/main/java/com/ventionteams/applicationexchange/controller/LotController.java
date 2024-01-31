@@ -2,7 +2,6 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
-import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.service.LotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,8 +32,9 @@ public class LotController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<LotReadDTO> create(@RequestBody Lot lot) {
-        return ok(lotService.create(lot));
+    public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot) {
+        LotReadDTO lotReadDTO = lotService.create(lot);
+        return ok(lotReadDTO);
     }
 
     @PutMapping("/{id}")

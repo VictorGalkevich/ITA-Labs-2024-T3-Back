@@ -363,5 +363,63 @@
       "packaging": "Bag",
       "created_at": "2024-04-10T08:30:00Z"
     }
+  ],
+  "bids": [
+    {
+      "id": 1,
+      "lot_id": 1,
+      "expiration_date": "2024-10-15",
+      "quantity": 800,
+      "price": 1.20
+    },
+    {
+      "id": 2,
+      "lot_id": 1,
+      "expiration_date": "2024-09-30",
+      "quantity": 500,
+      "price": 1.10
+    },
+    {
+      "id": 3,
+      "lot_id": 2,
+      "expiration_date": "2024-11-15",
+      "quantity": 700,
+      "price": 1.80
+    },
+    {
+      "id": 4,
+      "lot_id": 2,
+      "expiration_date": "2024-09-20",
+      "quantity": 300,
+      "price": 1.50
+    },
+    {
+      "id": 5,
+      "lot_id": 3,
+      "expiration_date": "2024-08-05",
+      "quantity": 400,
+      "price": 1.40
+    },
+    {
+      "id": 6,
+      "lot_id": 3,
+      "expiration_date": "2024-10-01",
+      "quantity": 600,
+      "price": 1.70
+    },
+    {
+      "id": 7,
+      "lot_id": 4,
+      "expiration_date": "2024-09-10",
+      "quantity": 200,
+      "price": 1.90
+    },
+    {
+      "id": 8,
+      "lot_id": 4,
+      "expiration_date": "2024-11-01",
+      "quantity": 100,
+      "price": 2.00
+    }
   ]
 }

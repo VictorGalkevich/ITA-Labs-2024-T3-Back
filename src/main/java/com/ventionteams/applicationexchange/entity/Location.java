@@ -3,21 +3,23 @@ package com.ventionteams.applicationexchange.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.EqualsAndHashCode.Include;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = "lots")
 @Builder
-@Getter
-@Setter
 @Entity
 @Table(name = "locations")
-public class Location {
+public class Location implements BaseEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Include
     private Integer id;
     private String country;
     private String region;

@@ -14,8 +14,12 @@ public record LotReadDTO (
     String title,
     @JsonProperty("category_id")
     Integer categoryId,
+    @JsonProperty("product_type")
+    String category,
     @JsonProperty("subcategory_id")
     Integer subcategoryId,
+    @JsonProperty("product_subtype")
+    String subcategory,
     Long quantity,
     @JsonProperty("price_per_unit")
     Double pricePerUnit,

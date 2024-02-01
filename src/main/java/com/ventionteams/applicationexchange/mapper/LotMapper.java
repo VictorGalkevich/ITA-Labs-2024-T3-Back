@@ -6,28 +6,22 @@ import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
 import com.ventionteams.applicationexchange.entity.Lot;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(config = MapperConfiguration.class)
 public interface LotMapper {
 
     @Mapping(target = "categoryId", source = "category.id")
     @Mapping(target = "subcategoryId", source = "subcategory.id")
+    @Mapping(target = "category", source = "category.name")
+    @Mapping(target = "subcategory", source = "subcategory.name")
     LotReadDTO toLotReadDTO(Lot lot);
 
     @Mapping(target = "category", expression = "java(Category.builder().id(dto.categoryId()).build())")
     @Mapping(target = "subcategory", expression = "java(Subcategory.builder().id(dto.subcategoryId()).build())")
     Lot toLot(LotUpdateDTO dto);
 
-    default Lot map(Lot to, Lot from) {
-        to.setSubcategory(from.getSubcategory());
-        to.setCategory(from.getCategory());
-        to.setLocation(from.getLocation());
-        to.setDescription(from.getDescription());
-        to.setQuantity(from.getQuantity());
-        to.setStatus(from.getStatus());
-        to.setTitle(from.getTitle());
-        to.setImageUrl(from.getImageUrl());
-        to.setPricePerUnit(from.getPricePerUnit());
-        return to;
-    }
+    @Mapping(target = "category", expression = "java(Category.builder().id(from.categoryId()).build())")
+    @Mapping(target = "subcategory", expression = "java(Subcategory.builder().id(from.subcategoryId()).build())")
+    void map(@MappingTarget Lot to, LotUpdateDTO from);
 }

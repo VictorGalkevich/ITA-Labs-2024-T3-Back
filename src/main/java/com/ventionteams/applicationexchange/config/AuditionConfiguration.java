@@ -13,6 +13,6 @@ public class AuditionConfiguration {
     @Bean
     public AuditorAware<String> auditorAware() {
         //user from security context
-        return () -> Optional.of("admin");
+        return () -> Optional.of("system process");
     }
 }

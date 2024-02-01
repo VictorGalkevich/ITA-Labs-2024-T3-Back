@@ -56,7 +56,10 @@ public class CategoryService {
     @Transactional
     public Optional<CategoryReadDto> update(Integer id, CategoryCreateEditDto categoryDto) {
         return categoryRepository.findById(id)
-                .map(obj -> categoryMapper.map(obj, categoryMapper.toCategory(categoryDto)))
+                .map(obj -> {
+                    categoryMapper.map(obj, categoryDto);
+                    return obj;
+                })
                 .map(this::saveOrUpdate)
                 .map(categoryMapper::toReadDto);
     }

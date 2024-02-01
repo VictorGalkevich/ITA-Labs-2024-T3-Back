@@ -62,7 +62,10 @@ public class LotService {
     @Transactional
     public Optional<LotReadDTO> update(Integer id, LotUpdateDTO dto) {
         return lotRepository.findById(id)
-                .map(lot -> lotMapper.map(lot, lotMapper.toLot(dto)))
+                .map(lot -> {
+                    lotMapper.map(lot, dto);
+                    return lot;
+                })
                 .map(this::saveOrUpdate)
                 .map(lotMapper::toLotReadDTO);
     }
@@ -75,15 +78,19 @@ public class LotService {
         obj.setCategory(null);
         obj.setSubcategory(null);
         if (obj.getCreatedAt() == null) {
-            obj.setExpirationDate(Instant.now().plusSeconds(86400 * 30 + 60));
+            obj.setExpirationDate(Instant.now().plusSeconds(86400 * 7 + 60));
         }
         lotRepository.save(obj);
         location.addLot(obj);
         category.addLot(obj);
         subcategory.addLot(obj);
-        locationRepository.saveAndFlush(location);
-        categoryRepository.saveAndFlush(category);
         subcategoryRepository.saveAndFlush(subcategory);
         return obj;
+    }
+
+    public List<LotReadDTO> findLotsByCategoryId(Integer id) {
+        return lotRepository.findAllByCategoryId(id).stream()
+                .map(lotMapper::toLotReadDTO)
+                .toList();
     }
 }

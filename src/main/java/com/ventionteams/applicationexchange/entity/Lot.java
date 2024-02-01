@@ -4,24 +4,22 @@ import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Size;
 import com.ventionteams.applicationexchange.entity.enumeration.Status;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.EqualsAndHashCode.Include;
 
 import java.time.Instant;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Builder
-@Getter
-@Setter
 @Entity
 @Table(name = "lots")
-public class Lot extends AuditingEntity {
+public class Lot extends AuditingEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Include
     private Integer id;
     private String title;
     @ManyToOne(cascade = {

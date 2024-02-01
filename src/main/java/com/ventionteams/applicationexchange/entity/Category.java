@@ -7,17 +7,20 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static lombok.EqualsAndHashCode.*;
+
 @Data
 @Builder
 @NoArgsConstructor
 @ToString(exclude = {"subcategories", "lots"})
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @Entity
 @Table(name = "categories")
-public class Category {
+public class Category implements BaseEntity<Integer>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Include
     private Integer id;
     private String name;
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

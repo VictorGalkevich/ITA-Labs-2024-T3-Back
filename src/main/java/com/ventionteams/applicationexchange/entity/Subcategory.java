@@ -3,6 +3,7 @@ package com.ventionteams.applicationexchange.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.EqualsAndHashCode.Include;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +11,15 @@ import java.util.List;
 @Data
 @Builder
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(exclude = "lots")
 @AllArgsConstructor
 @Entity
 @Table(name = "subcategories")
-public class Subcategory {
+public class Subcategory implements BaseEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Include
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "category_id")

@@ -6,6 +6,7 @@ import com.ventionteams.applicationexchange.dto.CategoryReadDto;
 import com.ventionteams.applicationexchange.entity.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(uses = {SubcategoryMapper.class},
         config = MapperConfiguration.class)
@@ -15,10 +16,5 @@ public interface CategoryMapper {
 
     CategoryReadDto toReadDto(Category category);
 
-    default Category map(Category to, Category from) {
-        to.setSubcategories(from.getSubcategories());
-        to.setName(from.getName());
-        to.setLots(from.getLots());
-        return to;
-    }
+    void map(@MappingTarget Category to, CategoryCreateEditDto from);
 }

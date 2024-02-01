@@ -12,3 +12,4 @@ spring:
       format_sql: true
       hbm2ddl.auto: update
     open-in-view: false
+

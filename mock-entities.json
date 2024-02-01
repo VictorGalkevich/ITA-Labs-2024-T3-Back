@@ -166,6 +166,8 @@
     {
       "lot_id": 1,
       "title": "Golden Apple Lot",
+      "product_type": "fruits",
+      "product_subtype": "apple",
       "category_id": 1,
       "subcategory_id": 1,
       "quantity": 1000,
@@ -186,6 +188,8 @@
     {
       "lot_id": 2,
       "title": "Cavendish Banana Lot",
+      "product_type": "fruits",
+      "product_subtype": "banana",
       "category_id": 1,
       "subcategory_id": 2,
       "quantity": 800,
@@ -206,6 +210,8 @@
     {
       "lot_id": 3,
       "title": "Roma Tomato Lot",
+      "product_type": "Vegetables",
+      "product_subtype": "Tomatoes",
       "category_id": 1,
       "subcategory_id": 1,
       "quantity": 500,
@@ -226,6 +232,8 @@
     {
       "lot_id": 4,
       "title": "Orange Carrot Lot",
+      "product_type": "fruits",
+      "product_subtype": "apple",
       "category_id": 1,
       "subcategory_id": 1,
       "quantity": 600,
@@ -246,6 +254,8 @@
     {
       "lot_id": 5,
       "title": "Jasmine Rice Lot",
+      "product_type": "fruits",
+      "product_subtype": "apple",
       "category_id": 1,
       "subcategory_id": 1,
       "quantity": 1000,
@@ -266,6 +276,8 @@
     {
       "lot_id": 6,
       "title": "Hard Red Spring Wheat Lot",
+      "product_type": "fruits",
+      "product_subtype": "apple",
       "category_id": 1,
       "subcategory_id": 1,
       "quantity": 800,
@@ -286,6 +298,8 @@
     {
       "lot_id": 7,
       "title": "Sweet Basil Lot",
+      "product_type": "fruits",
+      "product_subtype": "apple",
       "category_id": 1,
       "subcategory_id": 1,
       "quantity": 300,
@@ -306,6 +320,8 @@
     {
       "lot_id": 8,
       "title": "Common Rosemary Lot",
+      "product_type": "fruits",
+      "product_subtype": "apple",
       "category_id": 1,
       "subcategory_id": 1,
       "quantity": 250,
@@ -326,6 +342,8 @@
     {
       "lot_id": 9,
       "title": "Valencia Orange Lot",
+      "product_type": "fruits",
+      "product_subtype": "apple",
       "category_id": 1,
       "subcategory_id": 1,
       "quantity": 700,
@@ -346,6 +364,8 @@
     {
       "lot_id": 10,
       "title": "Russet Potato Lot",
+      "product_type": "fruits",
+      "product_subtype": "apple",
       "category_id": 1,
       "subcategory_id": 1,
       "quantity": 400,

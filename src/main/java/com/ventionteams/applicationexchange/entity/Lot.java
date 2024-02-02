@@ -16,31 +16,22 @@ import java.time.Instant;
 @Builder
 @Entity
 @Table(name = "lots")
-public class Lot extends AuditingEntity<Integer> {
+public class Lot extends AuditingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include
-    private Integer id;
+    private Long id;
     private String title;
-    @ManyToOne(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinColumn(name = "category_id")
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-    @ManyToOne(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinColumn(name = "subcategory_id")
+    @ManyToOne
+    @JoinColumn(name = "subcategory_id", nullable = false)
     private Subcategory subcategory;
     private Long quantity;
     private Double pricePerUnit;
-    @ManyToOne(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinColumn(name = "location_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "location_id", nullable = false)
     private Location location;
     private String description;
     private Status status;

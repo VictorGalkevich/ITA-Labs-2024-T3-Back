@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "locations")
-public class Location implements BaseEntity<Integer> {
+public class Location{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include

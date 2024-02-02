@@ -74,17 +74,13 @@ public class LotService {
         Location location = obj.getLocation();
         Category category = categoryRepository.findById(obj.getCategory().getId()).get();
         Subcategory subcategory = subcategoryRepository.findById(obj.getSubcategory().getId()).get();
-        obj.setLocation(null);
-        obj.setCategory(null);
-        obj.setSubcategory(null);
         if (obj.getCreatedAt() == null) {
             obj.setExpirationDate(Instant.now().plusSeconds(86400 * 7 + 60));
         }
-        lotRepository.save(obj);
         location.addLot(obj);
         category.addLot(obj);
         subcategory.addLot(obj);
-        subcategoryRepository.saveAndFlush(subcategory);
+        lotRepository.save(obj);
         return obj;
     }
 

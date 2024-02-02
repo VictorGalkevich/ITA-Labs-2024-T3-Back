@@ -17,7 +17,7 @@ import static lombok.EqualsAndHashCode.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "categories")
-public class Category implements BaseEntity<Integer>{
+public class Category{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include

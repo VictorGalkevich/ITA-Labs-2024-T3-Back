@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "subcategories")
-public class Subcategory implements BaseEntity<Integer> {
+public class Subcategory{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include

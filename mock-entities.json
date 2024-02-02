@@ -85,79 +85,39 @@
   "categories": [
     {
       "category_id": 1,
+      "parent_id": null,
       "name": "Fruits",
       "subcategories": [
         {
-          "subcategory_id": 1,
-          "category_id": 1,
-          "name": "Apples"
+          "category_id": 2,
+          "parent_id": 1,
+          "name": "Apples",
+          "subcategories": []
         },
         {
-          "subcategory_id": 2,
-          "category_id": 1,
-          "name": "Bananas"
-        },
-        {
-          "subcategory_id": 3,
-          "category_id": 1,
-          "name": "Oranges"
-        },
-        {
-          "subcategory_id": 4,
-          "category_id": 1,
-          "name": "Berries"
+          "category_id": 3,
+          "parent_id": 1,
+          "name": "Oranges",
+          "subcategories": []
         }
       ]
     },
     {
-      "category_id": 2,
+      "category_id": 4,
+      "parent_id": null,
       "name": "Vegetables",
       "subcategories": [
         {
-          "subcategory_id": 5,
-          "category_id": 2,
-          "name": "Tomatoes"
+          "category_id": 5,
+          "parent_id": 4,
+          "name": "Potatoes",
+          "subcategories": []
         },
         {
-          "subcategory_id": 6,
-          "category_id": 2,
-          "name": "Carrots"
-        },
-        {
-          "subcategory_id": 7,
-          "category_id": 2,
-          "name": "Potatoes"
-        },
-        {
-          "subcategory_id": 8,
-          "category_id": 2,
-          "name": "Spinach"
-        }
-      ]
-    },
-    {
-      "category_id": 3,
-      "name": "Grains",
-      "subcategories": [
-        {
-          "subcategory_id": 9,
-          "category_id": 3,
-          "name": "Rice"
-        },
-        {
-          "subcategory_id": 10,
-          "category_id": 3,
-          "name": "Wheat"
-        },
-        {
-          "subcategory_id": 11,
-          "category_id": 3,
-          "name": "Quinoa"
-        },
-        {
-          "subcategory_id": 12,
-          "category_id": 3,
-          "name": "Barley"
+          "category_id": 6,
+          "parent_id": 4,
+          "name": "Tomatoes",
+          "subcategories": []
         }
       ]
     }
@@ -167,9 +127,7 @@
       "lot_id": 1,
       "title": "Golden Apple Lot",
       "category_name": "fruits",
-      "subcategory_name": "apple",
       "category_id": 1,
-      "subcategory_id": 1,
       "quantity": 1000,
       "price_per_unit": 1.50,
       "location": {
@@ -189,9 +147,7 @@
       "lot_id": 2,
       "title": "Cavendish Banana Lot",
       "category_name": "fruits",
-      "subcategory_name": "apple",
       "category_id": 1,
-      "subcategory_id": 2,
       "quantity": 800,
       "price_per_unit": 1.20,
       "location": {
@@ -211,9 +167,7 @@
       "lot_id": 3,
       "title": "Roma Tomato Lot",
       "category_name": "fruits",
-      "subcategory_name": "apple",
       "category_id": 1,
-      "subcategory_id": 1,
       "quantity": 500,
       "price_per_unit": 0.80,
       "location": {
@@ -233,9 +187,7 @@
       "lot_id": 4,
       "title": "Orange Carrot Lot",
       "category_name": "fruits",
-      "subcategory_name": "apple",
       "category_id": 1,
-      "subcategory_id": 1,
       "quantity": 600,
       "price_per_unit": 0.90,
       "location": {
@@ -255,9 +207,7 @@
       "lot_id": 5,
       "title": "Jasmine Rice Lot",
       "category_name": "fruits",
-      "subcategory_name": "apple",
       "category_id": 1,
-      "subcategory_id": 1,
       "quantity": 1000,
       "price_per_unit": 2.50,
       "location": {
@@ -277,9 +227,7 @@
       "lot_id": 6,
       "title": "Hard Red Spring Wheat Lot",
       "category_name": "fruits",
-      "subcategory_name": "apple",
       "category_id": 1,
-      "subcategory_id": 1,
       "quantity": 800,
       "price_per_unit": 2.20,
       "location": {
@@ -299,9 +247,7 @@
       "lot_id": 7,
       "title": "Sweet Basil Lot",
       "category_name": "fruits",
-      "subcategory_name": "apple",
       "category_id": 1,
-      "subcategory_id": 1,
       "quantity": 300,
       "price_per_unit": 1.80,
       "location": {
@@ -321,9 +267,7 @@
       "lot_id": 8,
       "title": "Common Rosemary Lot",
       "category_name": "fruits",
-      "subcategory_name": "apple",
       "category_id": 1,
-      "subcategory_id": 1,
       "quantity": 250,
       "price_per_unit": 2.00,
       "location": {
@@ -343,9 +287,7 @@
       "lot_id": 9,
       "title": "Valencia Orange Lot",
       "category_name": "fruits",
-      "subcategory_name": "apple",
       "category_id": 1,
-      "subcategory_id": 1,
       "quantity": 700,
       "price_per_unit": 1.60,
       "location": {
@@ -365,9 +307,7 @@
       "lot_id": 10,
       "title": "Russet Potato Lot",
       "category_name": "fruits",
-      "subcategory_name": "apple",
       "category_id": 1,
-      "subcategory_id": 1,
       "quantity": 400,
       "price_per_unit": 1.00,
       "location": {

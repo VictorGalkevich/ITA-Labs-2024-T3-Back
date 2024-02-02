@@ -1,8 +1,9 @@
 package com.ventionteams.applicationexchange.dto;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record CategoryCreateEditDto(
         String name,
-        List<SubcategoryCreateEditDto> subcategories) {
+        @JsonProperty("parent_id")
+        Integer parentId) {
 }

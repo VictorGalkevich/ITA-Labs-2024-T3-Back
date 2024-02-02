@@ -21,15 +21,12 @@ public class Location{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include
     private Integer id;
+    @Column(nullable = false)
     private String country;
+    @Column(nullable = false)
     private String region;
     @OneToMany(mappedBy = "location")
     @JsonIgnore
     @Builder.Default
     private List<Lot> lots = new ArrayList<>();
-
-    public void addLot(Lot lot) {
-        lots.add(lot);
-        lot.setLocation(this);
-    }
 }

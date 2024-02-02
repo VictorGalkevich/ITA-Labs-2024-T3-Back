@@ -12,7 +12,7 @@ import static lombok.EqualsAndHashCode.*;
 @Data
 @Builder
 @NoArgsConstructor
-@ToString(exclude = {"subcategories", "lots"})
+@ToString(exclude = "lots")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @Entity
@@ -22,21 +22,13 @@ public class Category{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include
     private Integer id;
+    @Column(nullable = false)
     private String name;
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Subcategory> subcategories;
     @OneToMany(mappedBy = "category")
     @JsonIgnore
     @Builder.Default
     private List<Lot> lots = new ArrayList<>();
-
-    public void addSubcategory(Subcategory subcategory) {
-        subcategories.add(subcategory);
-        subcategory.setCategory(this);
-    }
-
-    public void addLot(Lot lot) {
-        lots.add(lot);
-        lot.setCategory(this);
-    }
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Category parent;
 }

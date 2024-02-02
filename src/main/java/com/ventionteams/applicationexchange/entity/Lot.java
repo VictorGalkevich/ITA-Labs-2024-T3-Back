@@ -21,23 +21,45 @@ public class Lot extends AuditingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include
     private Long id;
+
+    @Column(nullable = false)
     private String title;
+
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-    @ManyToOne
-    @JoinColumn(name = "subcategory_id", nullable = false)
-    private Subcategory subcategory;
+
+    @Column(nullable = false)
     private Long quantity;
+
+    @Column(nullable = false)
     private Double pricePerUnit;
+
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
+
+    @Column(nullable = false)
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Status status;
+
+    @Column(nullable = false)
     private String imageUrl;
+
+    @Column(nullable = false)
     private String variety;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Size size;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Packaging packaging;
+
+    @Column(nullable = false)
     private Instant expirationDate;
 }

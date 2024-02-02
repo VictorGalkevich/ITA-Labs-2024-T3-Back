@@ -8,5 +8,7 @@ public record CategoryReadDto(
         @JsonProperty("category_id")
         Integer id,
         String name,
-        List<SubcategoryReadDto> subcategories) {
+        @JsonProperty("parent_id")
+        Integer parentId,
+        List<CategoryReadDto> subcategories) {
 }

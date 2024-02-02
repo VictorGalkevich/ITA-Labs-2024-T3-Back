@@ -24,7 +24,7 @@ public class LotController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Integer id) {
+    public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id) {
         return lotService.findById(id)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
@@ -38,7 +38,7 @@ public class LotController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LotReadDTO> update(@PathVariable("id") Integer id,
+    public ResponseEntity<LotReadDTO> update(@PathVariable("id") Long id,
                                              @RequestBody LotUpdateDTO lotUpdateDTO) {
         return lotService.update(id, lotUpdateDTO)
                 .map(obj -> ok().body(obj))
@@ -46,7 +46,7 @@ public class LotController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         return lotService.delete(id)
                 ? noContent().build()
                 : notFound().build();

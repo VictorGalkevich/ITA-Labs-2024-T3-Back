@@ -10,16 +10,12 @@ import java.time.Instant;
 
 public record LotReadDTO (
     @JsonProperty("lot_id")
-    Integer id,
+    Long id,
     String title,
     @JsonProperty("category_id")
     Integer categoryId,
     @JsonProperty("category_name")
     String category,
-    @JsonProperty("subcategory_id")
-    Integer subcategoryId,
-    @JsonProperty("subcategory_name")
-    String subcategory,
     Long quantity,
     @JsonProperty("price_per_unit")
     Double pricePerUnit,

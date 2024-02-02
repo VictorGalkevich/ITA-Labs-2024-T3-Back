@@ -10,8 +10,6 @@ public record LotUpdateDTO (
         String title,
         @JsonProperty("category_id")
         Integer categoryId,
-        @JsonProperty("subcategory_id")
-        Integer subcategoryId,
         Long quantity,
         @JsonProperty("price_per_unit")
         Double pricePerUnit,

@@ -12,16 +12,12 @@ import org.mapstruct.MappingTarget;
 public interface LotMapper {
 
     @Mapping(target = "categoryId", source = "category.id")
-    @Mapping(target = "subcategoryId", source = "subcategory.id")
     @Mapping(target = "category", source = "category.name")
-    @Mapping(target = "subcategory", source = "subcategory.name")
     LotReadDTO toLotReadDTO(Lot lot);
 
     @Mapping(target = "category", expression = "java(Category.builder().id(dto.categoryId()).build())")
-    @Mapping(target = "subcategory", expression = "java(Subcategory.builder().id(dto.subcategoryId()).build())")
+    @Mapping(target = "expirationDate", expression = "java(Instant.now().plusSeconds(86400 * 7 + 60))")
     Lot toLot(LotUpdateDTO dto);
 
-    @Mapping(target = "category", expression = "java(Category.builder().id(from.categoryId()).build())")
-    @Mapping(target = "subcategory", expression = "java(Subcategory.builder().id(from.subcategoryId()).build())")
     void map(@MappingTarget Lot to, LotUpdateDTO from);
 }

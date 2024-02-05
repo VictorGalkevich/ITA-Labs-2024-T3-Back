@@ -20,7 +20,7 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
 
     public List<CategoryReadDto> findAll() {
-        return categoryRepository.findAllByParentId(null).stream()
+        return categoryRepository.findAllByParentIdIsNull().stream()
                 .map(categoryMapper::toReadDto)
                 .toList();
     }

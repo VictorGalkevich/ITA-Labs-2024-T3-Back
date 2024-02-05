@@ -11,7 +11,7 @@ import static lombok.EqualsAndHashCode.*;
 @Data
 @Builder
 @NoArgsConstructor
-@ToString(exclude = "children")
+@ToString(exclude = "subcategories")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @Entity
@@ -31,5 +31,5 @@ public class Category{
 
     @OneToMany(mappedBy = "parent")
     @Builder.Default
-    private List<Category> children = new ArrayList<>();
+    private List<Category> subcategories = new ArrayList<>();
 }

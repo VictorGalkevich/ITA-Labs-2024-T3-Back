@@ -10,5 +10,5 @@ public record CategoryReadDto(
         String name,
         @JsonProperty("parent_id")
         Integer parentId,
-        List<CategoryReadDto> children) {
+        List<CategoryReadDto> subcategories) {
 }

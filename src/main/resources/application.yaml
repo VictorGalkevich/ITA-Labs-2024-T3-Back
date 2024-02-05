@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5433/postgres
     username: postgres
-    password: 12345
+    password: root1234
     driver-class-name: org.postgresql.Driver
   jpa:
     properties.hibernate:
@@ -10,5 +10,5 @@ spring:
       fetch_size: 50
       show_sql: true
       format_sql: true
-      hbm2ddl.auto: validate
+      hbm2ddl.auto: update
     open-in-view: false

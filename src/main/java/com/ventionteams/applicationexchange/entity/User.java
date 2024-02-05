@@ -19,17 +19,19 @@ public class User extends AuditingEntity{
     @Include
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "first_name")
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "last_name")
     private String lastName;
-    @Column(unique = true)
+
+    @Column(nullable = false, unique = true, name = "email")
     private String email;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "role")
     private Role role;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "password")
     private String password;
 }

@@ -3,7 +3,6 @@ package com.ventionteams.applicationexchange.service;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
-import com.ventionteams.applicationexchange.repository.CategoryRepository;
 import com.ventionteams.applicationexchange.repository.LotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class LotService {
     private final LotRepository lotRepository;
-    private final CategoryRepository categoryRepository;
     private final LotMapper lotMapper;
 
     public List<LotReadDTO> findAll() {
@@ -45,10 +43,6 @@ public class LotService {
     public LotReadDTO create(LotUpdateDTO dto) {
         return Optional.of(dto)
                 .map(lotMapper::toLot)
-                .map(lot -> {
-                    lot.setCategory(categoryRepository.findById(dto.categoryId()).get());
-                    return lot;
-                })
                 .map(lotRepository::save)
                 .map(lotMapper::toLotReadDTO)
                 .orElseThrow();
@@ -59,9 +53,6 @@ public class LotService {
         return lotRepository.findById(id)
                 .map(lot -> {
                     lotMapper.map(lot, dto);
-                    if (dto.categoryId() != null) {
-                        lot.setCategory(categoryRepository.findById(dto.categoryId()).get());
-                    }
                     return lot;
                 })
                 .map(lotRepository::save)

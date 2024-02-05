@@ -1,6 +1,5 @@
 package com.ventionteams.applicationexchange.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +11,7 @@ import static lombok.EqualsAndHashCode.*;
 @Data
 @Builder
 @NoArgsConstructor
-@ToString(exclude = "lots")
+@ToString(exclude = "children")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @Entity
@@ -22,13 +21,15 @@ public class Category{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include
     private Integer id;
-    @Column(nullable = false)
+
+    @Column(nullable = false, name = "name")
     private String name;
-    @OneToMany(mappedBy = "category")
-    @JsonIgnore
-    @Builder.Default
-    private List<Lot> lots = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Category parent;
+
+    @OneToMany(mappedBy = "parent")
+    @Builder.Default
+    private List<Category> children = new ArrayList<>();
 }

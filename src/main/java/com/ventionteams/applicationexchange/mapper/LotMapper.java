@@ -1,17 +1,23 @@
 package com.ventionteams.applicationexchange.mapper;
 
-import com.ventionteams.applicationexchange.config.MapperConfig;
+import com.ventionteams.applicationexchange.config.MapperConfiguration;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
 import com.ventionteams.applicationexchange.entity.Lot;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
-import java.util.List;
-
-@Mapper(config = MapperConfig.class)
+@Mapper(config = MapperConfiguration.class)
 public interface LotMapper {
-    List<LotReadDTO> toLotReadList(List<Lot> lots);
 
+    @Mapping(target = "categoryId", source = "category.id")
+    @Mapping(target = "category", source = "category.name")
     LotReadDTO toLotReadDTO(Lot lot);
 
-    Lot toLot(LotReadDTO lotReadDTO);
+    @Mapping(target = "category", expression = "java(Category.builder().id(dto.categoryId()).build())")
+    @Mapping(target = "expirationDate", expression = "java(Instant.now().plusSeconds(86400 * 7 + 60))")
+    Lot toLot(LotUpdateDTO dto);
+
+    void map(@MappingTarget Lot to, LotUpdateDTO from);
 }

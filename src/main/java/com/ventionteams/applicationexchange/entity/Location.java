@@ -1,18 +1,23 @@
 package com.ventionteams.applicationexchange.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.EqualsAndHashCode.Include;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
-@Getter
-@Setter
-public class Location {
-    private int id;
+@Entity
+@Table(name = "locations")
+public class Location{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Include
+    private Integer id;
+    @Column(nullable = false, name = "country")
     private String country;
+    @Column(nullable = false, name = "region")
     private String region;
 }

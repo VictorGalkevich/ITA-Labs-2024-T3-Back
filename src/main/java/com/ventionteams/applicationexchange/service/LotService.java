@@ -3,47 +3,65 @@ package com.ventionteams.applicationexchange.service;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
-import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.repository.LotRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LotService {
     private final LotRepository lotRepository;
     private final LotMapper lotMapper;
 
-    public LotService(LotRepository lotRepository, LotMapper lotMapper) {
-        this.lotRepository = lotRepository;
-        this.lotMapper = lotMapper;
-    }
-
     public List<LotReadDTO> findAll() {
-        return lotMapper.toLotReadList(lotRepository.findAll());
+        return lotRepository.findAll().stream()
+                .map(lotMapper::toLotReadDTO)
+                .toList();
     }
 
-    public Optional<LotReadDTO> findById(Integer id) {
+    public Optional<LotReadDTO> findById(Long id) {
         return lotRepository.findById(id)
                 .map(lotMapper::toLotReadDTO);
     }
 
-    public LotReadDTO create(Lot lot) {
-        return lotMapper.toLotReadDTO(lotRepository.save(lot));
-    }
-
-    public boolean delete(Integer id) {
+    @Transactional
+    public boolean delete(Long id) {
         return lotRepository.findById(id)
                 .map(lot -> {
-                    lotRepository.delete(id);
+                    lotRepository.delete(lot);
                     return true;
                 })
                 .orElse(false);
     }
 
-    public Optional<LotReadDTO> update(Integer id, LotUpdateDTO lotUpdateDTO) {
+    @Transactional
+    public LotReadDTO create(LotUpdateDTO dto) {
+        return Optional.of(dto)
+                .map(lotMapper::toLot)
+                .map(lotRepository::save)
+                .map(lotMapper::toLotReadDTO)
+                .orElseThrow();
+    }
+
+    @Transactional
+    public Optional<LotReadDTO> update(Long id, LotUpdateDTO dto) {
         return lotRepository.findById(id)
-                .map(lot -> lotMapper.toLotReadDTO(lotRepository.update(id, lotUpdateDTO)));
+                .map(lot -> {
+                    lotMapper.map(lot, dto);
+                    return lot;
+                })
+                .map(lotRepository::save)
+                .map(lotMapper::toLotReadDTO);
+    }
+
+    public List<LotReadDTO> findLotsByCategoryId(Integer id) {
+        return lotRepository.findAllByCategoryId(id).stream()
+                .map(lotMapper::toLotReadDTO)
+                .toList();
     }
 }

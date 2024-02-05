@@ -7,10 +7,6 @@ public enum Role {
     EXCHANGE_EMPLOYEE,
     @JsonProperty("system administrator")
     SYSTEM_ADMINISTRATOR,
-    @JsonProperty("registered user buyer")
-    REGISTERED_USER_BUYER,
-    @JsonProperty("registered user seller")
-    REGISTERED_USER_SELLER,
-    @JsonProperty("guest")
-    GUEST
+    @JsonProperty("registered user")
+    REGISTERED_USER,
 }

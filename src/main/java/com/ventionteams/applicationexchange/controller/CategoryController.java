@@ -2,9 +2,10 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
 import com.ventionteams.applicationexchange.dto.CategoryReadDto;
+import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.service.CategoryService;
+import com.ventionteams.applicationexchange.service.LotService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import static org.springframework.http.ResponseEntity.*;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
+    private final LotService lotService;
 
     @GetMapping
     public ResponseEntity<List<CategoryReadDto>> findAll() {
@@ -31,6 +33,12 @@ public class CategoryController {
                 .map(obj -> ok()
                         .body(obj))
                 .orElseGet(notFound()::build);
+    }
+
+    @GetMapping("/{id}/lots")
+    public ResponseEntity<List<LotReadDTO>> findByCategoryId(@PathVariable("id") Integer id) {
+        List<LotReadDTO> all = lotService.findLotsByCategoryId(id);
+        return ok().body(all);
     }
 
     @PostMapping

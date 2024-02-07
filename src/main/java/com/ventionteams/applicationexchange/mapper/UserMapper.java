@@ -5,11 +5,16 @@ import com.ventionteams.applicationexchange.dto.UserReadDto;
 import com.ventionteams.applicationexchange.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
-    UserReadDto toUserReadDto(User user);
+public abstract class UserMapper {
+    @Autowired
+    protected PasswordEncoder passwordEncoder;
+    public abstract UserReadDto toUserReadDto(User user);
 
     @Mapping(target = "id", ignore = true)
-    User toUser(UserCreateEditDto dto);
+    @Mapping(target = "password", expression = "java(passwordEncoder.encode(dto.password()))")
+    public abstract User toUser(UserCreateEditDto dto);
 }

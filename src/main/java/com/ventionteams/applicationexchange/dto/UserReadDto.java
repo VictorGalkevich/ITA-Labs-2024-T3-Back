@@ -3,7 +3,7 @@ package com.ventionteams.applicationexchange.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ventionteams.applicationexchange.entity.enumeration.Role;
 
-public record UserReadDto(
+public record UserReadDto (
 
         @JsonProperty("user_id")
         Long id,
@@ -13,5 +13,5 @@ public record UserReadDto(
         String lastName,
         String email,
         Role role,
-        String password) {
+        String phoneNumber) {
 }

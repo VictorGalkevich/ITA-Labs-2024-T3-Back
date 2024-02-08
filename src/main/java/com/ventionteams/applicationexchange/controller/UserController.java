@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +24,7 @@ public class UserController {
     @SneakyThrows
     @GetMapping
     public ResponseEntity<List<UserReadDto>> findAll() {
-        List<UserReadDto> all = userService.findAll();
-        return ok().body(all);
+        return ok().body(userService.findAll());
     }
 
     @GetMapping("/{id}")
@@ -38,14 +38,14 @@ public class UserController {
     @SneakyThrows
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserReadDto> create(@RequestBody UserCreateEditDto dto) {
+    public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserCreateEditDto dto) {
         return ok().body(userService.create(dto));
     }
 
     @SneakyThrows
     @PutMapping("/{id}")
     public ResponseEntity<UserReadDto> update(@PathVariable("id") Long id,
-                                                  @RequestBody UserCreateEditDto dto) {
+                                              @RequestBody @Validated UserCreateEditDto dto) {
         return userService.update(id, dto)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);

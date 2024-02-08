@@ -23,8 +23,7 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<CategoryReadDto>> findAll() {
-        List<CategoryReadDto> all = categoryService.findAll();
-        return ok().body(all);
+        return ok().body(categoryService.findAll());
     }
 
     @GetMapping("/{id}")
@@ -37,8 +36,7 @@ public class CategoryController {
 
     @GetMapping("/{id}/lots")
     public ResponseEntity<List<LotReadDTO>> findByCategoryId(@PathVariable("id") Integer id) {
-        List<LotReadDTO> all = lotService.findLotsByCategoryId(id);
-        return ok().body(all);
+        return ok().body(lotService.findLotsByCategoryId(id));
     }
 
     @PostMapping

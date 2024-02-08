@@ -33,8 +33,7 @@ public class LotController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot) {
-        LotReadDTO lotReadDTO = lotService.create(lot);
-        return ok(lotReadDTO);
+        return ok(lotService.create(lot));
     }
 
     @PutMapping("/{id}")

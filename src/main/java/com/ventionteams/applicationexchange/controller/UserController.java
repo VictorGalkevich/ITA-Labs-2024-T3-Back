@@ -21,7 +21,6 @@ import static org.springframework.http.ResponseEntity.notFound;
 public class UserController {
     private final UserService userService;
 
-    @SneakyThrows
     @GetMapping
     public ResponseEntity<List<UserReadDto>> findAll() {
         return ok().body(userService.findAll());
@@ -35,14 +34,12 @@ public class UserController {
                 .orElseGet(notFound()::build);
     }
 
-    @SneakyThrows
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserCreateEditDto dto) {
         return ok().body(userService.create(dto));
     }
 
-    @SneakyThrows
     @PutMapping("/{id}")
     public ResponseEntity<UserReadDto> update(@PathVariable("id") Long id,
                                               @RequestBody @Validated UserCreateEditDto dto) {

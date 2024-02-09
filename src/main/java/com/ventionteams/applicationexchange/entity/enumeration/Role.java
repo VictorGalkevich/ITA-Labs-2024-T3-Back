@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 public enum Role implements GrantedAuthority {
     @JsonProperty("exchange employee")
-    EXCHANGE_EMPLOYEE,
+    EMPLOYEE,
     @JsonProperty("system administrator")
     SYSTEM_ADMINISTRATOR,
     @JsonProperty("registered user")

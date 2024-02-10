@@ -1,12 +1,14 @@
 package com.ventionteams.applicationexchange.entity.enumeration;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public enum Size {
-    @JsonProperty("Large")
-    LARGE,
-    @JsonProperty("Small")
-    SMALL,
-    @JsonProperty("Medium")
-    MEDIUM
+    LARGE("Large"),
+    SMALL("Small"),
+    MEDIUM("Medium");
+
+    private String name;
 }

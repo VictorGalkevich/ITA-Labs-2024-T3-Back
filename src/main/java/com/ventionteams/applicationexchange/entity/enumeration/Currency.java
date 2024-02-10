@@ -5,10 +5,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Role {
-    EXCHANGE_EMPLOYEE("exchange employee"),
-    SYSTEM_ADMINISTRATOR("system administrator"),
-    REGISTERED_USER("registered user");
+public enum Currency {
+    USD("USD"),
+    EUR("EUR"),
+    BYR("BYR"),
+    RUB("RUB");
 
     private String name;
 }

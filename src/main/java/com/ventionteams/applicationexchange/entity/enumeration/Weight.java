@@ -5,10 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Role {
-    EXCHANGE_EMPLOYEE("exchange employee"),
-    SYSTEM_ADMINISTRATOR("system administrator"),
-    REGISTERED_USER("registered user");
+public enum Weight {
+    TON("ton"),
+    KILOGRAM("kg");
 
     private String name;
 }

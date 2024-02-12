@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -15,45 +17,28 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DataSelectorController {
 
-    @GetMapping("/packaging")
-    public List<String> getPackagingTypes() {
-        return Arrays.stream(Packaging.values())
+    @GetMapping
+    public Map<String, List<String>> getData() {
+        Map<String, List<String>> data = new HashMap<>();
+        data.put("packaging", Arrays.stream(Packaging.values())
                 .map(Packaging::getName)
-                .collect(Collectors.toList());
-    }
-
-    @GetMapping("/weight")
-    public List<String> getWeightMeasurements() {
-        return  Arrays.stream(Weight.values())
+                .collect(Collectors.toList()));
+        data.put("weight", Arrays.stream(Weight.values())
                 .map(Weight::getName)
-                .collect(Collectors.toList());
-    }
-
-    @GetMapping("/size")
-    public List<String> getSizes() {
-        return  Arrays.stream(Size.values())
+                .collect(Collectors.toList()));
+        data.put("size", Arrays.stream(Size.values())
                 .map(Size::getName)
-                .collect(Collectors.toList());
-    }
-
-    @GetMapping("/role")
-    public List<String> getRoles() {
-        return  Arrays.stream(Role.values())
+                .collect(Collectors.toList()));
+        data.put("role", Arrays.stream(Role.values())
                 .map(Role::getName)
-                .collect(Collectors.toList());
-    }
-
-    @GetMapping("/status")
-    public List<String> getStatuses() {
-        return  Arrays.stream(Status.values())
+                .collect(Collectors.toList()));
+        data.put("status", Arrays.stream(Status.values())
                 .map(Status::getName)
-                .collect(Collectors.toList());
-    }
-
-    @GetMapping("/currency")
-    public List<String> getCurrency() {
-        return  Arrays.stream(Currency.values())
+                .collect(Collectors.toList()));
+        data.put("currency", Arrays.stream(Currency.values())
                 .map(Currency::getName)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+
+        return data;
     }
 }

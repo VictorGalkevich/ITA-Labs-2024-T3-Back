@@ -3,6 +3,7 @@ package com.ventionteams.applicationexchange.controller;
 import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
 import com.ventionteams.applicationexchange.dto.CategoryReadDto;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.service.CategoryService;
 import com.ventionteams.applicationexchange.service.LotService;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,9 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}/lots")
-    public ResponseEntity<List<LotReadDTO>> findByCategoryId(@PathVariable("id") Integer id) {
-        return ok().body(lotService.findLotsByCategoryId(id));
+    public ResponseEntity<PageResponse<LotReadDTO>> findByCategoryId(@PathVariable("id") Integer id,
+                                                             @RequestParam(required = false) Integer page) {
+        return ok().body(PageResponse.of(lotService.findLotsByCategoryId(id, page)));
     }
 
     @PostMapping

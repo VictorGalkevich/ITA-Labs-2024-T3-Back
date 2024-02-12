@@ -1,10 +1,10 @@
 package com.ventionteams.applicationexchange.controller;
 
+import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.UserReadDto;
 import com.ventionteams.applicationexchange.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,8 +22,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserReadDto>> findAll() {
-        return ok().body(userService.findAll());
+    public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(required = false) Integer page) {
+        return ok().body(PageResponse.of(userService.findAll(page)));
     }
 
     @GetMapping("/{id}")

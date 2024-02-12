@@ -5,6 +5,8 @@ import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.LotRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +19,12 @@ import java.util.Optional;
 public class LotService {
     private final LotRepository lotRepository;
     private final LotMapper lotMapper;
+    private final Integer PAGE_SIZE = 2;
 
-    public List<LotReadDTO> findAll() {
-        return lotRepository.findAll().stream()
-                .map(lotMapper::toLotReadDTO)
-                .toList();
+    public Page<LotReadDTO> findAll(Integer page) {
+        PageRequest req = PageRequest.of(page - 1, PAGE_SIZE);
+        return lotRepository.findAll(req)
+                .map(lotMapper::toLotReadDTO);
     }
 
     public Optional<LotReadDTO> findById(Long id) {
@@ -59,9 +62,9 @@ public class LotService {
                 .map(lotMapper::toLotReadDTO);
     }
 
-    public List<LotReadDTO> findLotsByCategoryId(Integer id) {
-        return lotRepository.findAllByCategoryId(id).stream()
-                .map(lotMapper::toLotReadDTO)
-                .toList();
+    public Page<LotReadDTO> findLotsByCategoryId(Integer id, Integer page) {
+        PageRequest req = PageRequest.of(page - 1, PAGE_SIZE);
+        return lotRepository.findAllByCategoryId(id, req)
+                .map(lotMapper::toLotReadDTO);
     }
 }

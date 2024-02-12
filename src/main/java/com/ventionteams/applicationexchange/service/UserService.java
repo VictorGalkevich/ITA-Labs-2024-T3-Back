@@ -5,25 +5,22 @@ import com.ventionteams.applicationexchange.dto.UserReadDto;
 import com.ventionteams.applicationexchange.mapper.UserMapper;
 import com.ventionteams.applicationexchange.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    public List<UserReadDto> findAll() {
-        return userRepository.findAll().stream()
-                .map(userMapper::toUserReadDto)
-                .toList();
+    private final Integer PAGE_SIZE = 30;
+    public Page<UserReadDto> findAll(Integer page) {
+        PageRequest req = PageRequest.of(page - 1, PAGE_SIZE);
+        return userRepository.findAll(req)
+                .map(userMapper::toUserReadDto);
     }
 
     public Optional<UserReadDto> findById(Long id) {
@@ -54,16 +51,4 @@ public class UserService implements UserDetailsService {
                 })
                 .orElse(false);
     }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username)
-                .map(user -> new User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        Collections.singleton(user.getRole())
-                ))
-                .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user: " + username));
-     }
-
 }

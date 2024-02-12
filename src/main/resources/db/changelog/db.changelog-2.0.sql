@@ -37,5 +37,17 @@ ADD COLUMN created_by VARCHAR(64),
 ADD COLUMN modified_at TIMESTAMP,
 ADD COLUMN modified_by VARCHAR(64);
 
+--changeset victor_galkevich:9
+ALTER TABLE users
+ALTER COLUMN password TYPE VARCHAR(256);
+
+--changeset victor_galkevich:10
+ALTER TABLE users
+ADD COLUMN phone_number VARCHAR(256);
+
+--changeset victor_galkevich:11
+ALTER TABLE users
+DROP COLUMN password;
+
 
 

@@ -15,8 +15,6 @@ public record UserCreateEditDto(
         String email,
         @NotNull
         Role role,
-        @Size(min = 10)
-        String password,
         @Pattern(regexp = "[+]375 [0-9]{2} [0-9]{3}-[0-9]{2}-[0-9]{2}")
         String phoneNumber) {
 }

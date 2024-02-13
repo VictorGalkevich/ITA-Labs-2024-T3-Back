@@ -1,10 +1,13 @@
 package com.ventionteams.applicationexchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.entity.Location;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Size;
 import com.ventionteams.applicationexchange.entity.enumeration.Status;
+
+import java.util.List;
 
 public record LotUpdateDTO (
         String title,
@@ -17,7 +20,7 @@ public record LotUpdateDTO (
         String description,
         Status status,
         @JsonProperty("image_url")
-        String imageUrl,
+        List<Image> imageUrl,
         String variety,
         Size size,
         Packaging packaging) {

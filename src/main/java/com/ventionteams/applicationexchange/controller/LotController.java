@@ -2,11 +2,13 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.service.LotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ import static org.springframework.http.ResponseEntity.*;
 @RequiredArgsConstructor
 public class LotController {
     private final LotService lotService;
+    private final ImageService imageService;
 
     @GetMapping
     public ResponseEntity<List<LotReadDTO>> findAll() {
@@ -32,8 +35,8 @@ public class LotController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot) {
-        LotReadDTO lotReadDTO = lotService.create(lot);
+    public ResponseEntity<LotReadDTO> create(@RequestParam("lot") LotUpdateDTO lot, @RequestParam(value = "files") List<MultipartFile> files) {
+        LotReadDTO lotReadDTO = lotService.create(lot, files);
         return ok(lotReadDTO);
     }
 

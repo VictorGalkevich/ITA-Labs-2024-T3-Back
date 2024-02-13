@@ -8,6 +8,8 @@ import lombok.*;
 import lombok.EqualsAndHashCode.Include;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -46,8 +48,8 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "status")
     private Status status;
 
-    @Column(nullable = false, name = "image_url")
-    private String imageUrl;
+    @OneToMany(mappedBy = "lot")
+    private List<Image> imageUrl = new ArrayList<>();
 
     @Column(nullable = false, name = "variety")
     private String variety;

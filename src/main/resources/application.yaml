@@ -12,3 +12,8 @@ spring:
       format_sql: true
       hbm2ddl.auto: validate
     open-in-view: false
+
+aws:
+  accessKey: AKIAXYKJRCXIYC3CQZUQ
+  secretAccessKey: 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
+  bucketName: ita-labs-2024-t3

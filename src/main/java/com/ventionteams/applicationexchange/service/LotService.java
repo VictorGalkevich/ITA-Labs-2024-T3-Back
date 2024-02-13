@@ -2,11 +2,13 @@ package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.LotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,7 @@ import java.util.Optional;
 public class LotService {
     private final LotRepository lotRepository;
     private final LotMapper lotMapper;
+    private final ImageService imageService;
 
     public List<LotReadDTO> findAll() {
         return lotRepository.findAll().stream()
@@ -40,7 +43,14 @@ public class LotService {
     }
 
     @Transactional
-    public LotReadDTO create(LotUpdateDTO dto) {
+    public LotReadDTO create(LotUpdateDTO dto, List<MultipartFile> files) {
+        for (MultipartFile file : files) {
+            Image image = imageService.upload(file);
+            image.setLot(lotMapper.toLot(dto));
+
+            dto.imageUrl().add(image);
+        }
+
         return Optional.of(dto)
                 .map(lotMapper::toLot)
                 .map(lotRepository::save)

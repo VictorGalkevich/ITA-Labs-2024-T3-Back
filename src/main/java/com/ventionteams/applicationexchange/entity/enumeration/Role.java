@@ -1,12 +1,15 @@
 package com.ventionteams.applicationexchange.entity.enumeration;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ventionteams.applicationexchange.entity.ResourceContainer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public enum Role {
-    @JsonProperty("exchange employee")
-    EXCHANGE_EMPLOYEE,
-    @JsonProperty("system administrator")
-    SYSTEM_ADMINISTRATOR,
-    @JsonProperty("registered user")
-    REGISTERED_USER,
+@Getter
+@AllArgsConstructor
+public enum Role implements ResourceContainer {
+    EXCHANGE_EMPLOYEE("exchange employee"),
+    SYSTEM_ADMINISTRATOR("system administrator"),
+    REGISTERED_USER("registered user");
+
+    private String name;
 }

@@ -1,5 +1,6 @@
 package com.ventionteams.applicationexchange.controller;
 
+import com.ventionteams.applicationexchange.entity.ResourceContainer;
 import com.ventionteams.applicationexchange.entity.enumeration.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,9 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -18,27 +17,23 @@ import java.util.stream.Collectors;
 public class DataSelectorController {
 
     @GetMapping
-    public Map<String, List<String>> getData() {
-        Map<String, List<String>> data = new HashMap<>();
-        data.put("packaging", Arrays.stream(Packaging.values())
-                .map(Packaging::getName)
-                .collect(Collectors.toList()));
-        data.put("weight", Arrays.stream(Weight.values())
-                .map(Weight::getName)
-                .collect(Collectors.toList()));
-        data.put("size", Arrays.stream(Size.values())
-                .map(Size::getName)
-                .collect(Collectors.toList()));
-        data.put("role", Arrays.stream(Role.values())
-                .map(Role::getName)
-                .collect(Collectors.toList()));
-        data.put("status", Arrays.stream(Status.values())
-                .map(Status::getName)
-                .collect(Collectors.toList()));
-        data.put("currency", Arrays.stream(Currency.values())
-                .map(Currency::getName)
-                .collect(Collectors.toList()));
-
-        return data;
+    public DataSelection getData() {
+        return new DataSelection(getList(Packaging.class), getList(Weight.class),
+                getList(Size.class), getList(Role.class), getList(Status.class), getList(Currency.class));
     }
+
+    public static <T extends Enum<T> & ResourceContainer> List<String> getList(Class<T> enumeration) {
+        return Arrays.stream(enumeration.getEnumConstants())
+                .map(ResourceContainer::getName)
+                .collect(Collectors.toList());
+    }
+
+    public record DataSelection(
+            List<String> packaging,
+            List<String> weight,
+            List<String> size,
+            List<String> role,
+            List<String> status,
+            List<String> currency
+    ){}
 }

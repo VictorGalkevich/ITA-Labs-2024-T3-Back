@@ -1,11 +1,12 @@
 package com.ventionteams.applicationexchange.entity.enumeration;
 
+import com.ventionteams.applicationexchange.entity.ResourceContainer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Packaging {
+public enum Packaging implements ResourceContainer {
     BOX("Box"),
     BASKET("Basket"),
     CARTON("Carton"),

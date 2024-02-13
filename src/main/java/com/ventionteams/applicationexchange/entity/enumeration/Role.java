@@ -1,17 +1,19 @@
 package com.ventionteams.applicationexchange.entity.enumeration;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
+import com.ventionteams.applicationexchange.entity.ResourceContainer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public enum Role implements GrantedAuthority {
-    @JsonProperty("exchange employee")
-    EMPLOYEE,
-    @JsonProperty("system administrator")
-    SYSTEM_ADMINISTRATOR,
-    @JsonProperty("registered user")
-    REGISTERED_USER,
-    ;
+@Getter
+@AllArgsConstructor
+public enum Role implements ResourceContainer, GrantedAuthority {
+    EXCHANGE_EMPLOYEE("exchange employee"),
+    SYSTEM_ADMINISTRATOR("system administrator"),
+    REGISTERED_USER("registered user");
 
+    private String name;
+  
     @Override
     public String getAuthority() {
         return name();

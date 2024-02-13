@@ -37,8 +37,9 @@ public class CategoryController {
 
     @GetMapping("/{id}/lots")
     public ResponseEntity<PageResponse<LotReadDTO>> findByCategoryId(@PathVariable("id") Integer id,
-                                                             @RequestParam(required = false) Integer page) {
-        return ok().body(PageResponse.of(lotService.findLotsByCategoryId(id, page)));
+                                                                     @RequestParam Integer page,
+                                                                     @RequestParam Integer limit) {
+        return ok().body(PageResponse.of(lotService.findLotsByCategoryId(id, page, limit)));
     }
 
     @PostMapping

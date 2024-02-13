@@ -10,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,10 +18,9 @@ import java.util.Optional;
 public class LotService {
     private final LotRepository lotRepository;
     private final LotMapper lotMapper;
-    private final Integer PAGE_SIZE = 2;
 
-    public Page<LotReadDTO> findAll(Integer page) {
-        PageRequest req = PageRequest.of(page - 1, PAGE_SIZE);
+    public Page<LotReadDTO> findAll(Integer page, Integer limit) {
+        PageRequest req = PageRequest.of(page - 1, limit);
         return lotRepository.findAll(req)
                 .map(lotMapper::toLotReadDTO);
     }
@@ -62,8 +60,8 @@ public class LotService {
                 .map(lotMapper::toLotReadDTO);
     }
 
-    public Page<LotReadDTO> findLotsByCategoryId(Integer id, Integer page) {
-        PageRequest req = PageRequest.of(page - 1, PAGE_SIZE);
+    public Page<LotReadDTO> findLotsByCategoryId(Integer id, Integer page, Integer limit) {
+        PageRequest req = PageRequest.of(page - 1, limit);
         return lotRepository.findAllByCategoryId(id, req)
                 .map(lotMapper::toLotReadDTO);
     }

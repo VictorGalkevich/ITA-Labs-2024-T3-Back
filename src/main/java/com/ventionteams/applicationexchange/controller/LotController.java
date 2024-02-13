@@ -18,8 +18,9 @@ public class LotController {
     private final LotService lotService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam Integer page) {
-        return ok(PageResponse.of(lotService.findAll(page)));
+    public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam Integer page,
+                                                            @RequestParam Integer limit) {
+        return ok(PageResponse.of(lotService.findAll(page, limit)));
     }
 
     @GetMapping("/{id}")

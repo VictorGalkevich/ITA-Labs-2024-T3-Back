@@ -16,9 +16,8 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final Integer PAGE_SIZE = 30;
-    public Page<UserReadDto> findAll(Integer page) {
-        PageRequest req = PageRequest.of(page - 1, PAGE_SIZE);
+    public Page<UserReadDto> findAll(Integer page, Integer limit) {
+        PageRequest req = PageRequest.of(page - 1, limit);
         return userRepository.findAll(req)
                 .map(userMapper::toUserReadDto);
     }

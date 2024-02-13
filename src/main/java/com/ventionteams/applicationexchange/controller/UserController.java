@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static org.springframework.http.ResponseEntity.*;
 import static org.springframework.http.ResponseEntity.notFound;
 
@@ -22,8 +20,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(required = false) Integer page) {
-        return ok().body(PageResponse.of(userService.findAll(page)));
+    public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam Integer page,
+                                                             @RequestParam Integer limit) {
+        return ok().body(PageResponse.of(userService.findAll(page, limit)));
     }
 
     @GetMapping("/{id}")

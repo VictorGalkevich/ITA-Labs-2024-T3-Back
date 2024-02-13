@@ -32,6 +32,6 @@ public class User extends AuditingEntity{
     @Column(nullable = false, name = "role")
     private Role role;
 
-    @Column(nullable = false, name = "password")
-    private String password;
+    @Column(nullable = false, name = "phone_number")
+    private String phoneNumber;
 }

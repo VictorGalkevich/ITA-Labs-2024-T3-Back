@@ -2,13 +2,12 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.service.LotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -19,8 +18,9 @@ public class LotController {
     private final LotService lotService;
 
     @GetMapping
-    public ResponseEntity<List<LotReadDTO>> findAll() {
-        return ok(lotService.findAll());
+    public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam Integer page,
+                                                            @RequestParam Integer limit) {
+        return ok(PageResponse.of(lotService.findAll(page, limit)));
     }
 
     @GetMapping("/{id}")
@@ -33,8 +33,7 @@ public class LotController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot) {
-        LotReadDTO lotReadDTO = lotService.create(lot);
-        return ok(lotReadDTO);
+        return ok(lotService.create(lot));
     }
 
     @PutMapping("/{id}")

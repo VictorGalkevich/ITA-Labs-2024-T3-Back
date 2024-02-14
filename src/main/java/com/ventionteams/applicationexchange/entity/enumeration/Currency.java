@@ -9,7 +9,7 @@ import lombok.Getter;
 public enum Currency implements ResourceContainer {
     USD("USD"),
     EUR("EUR"),
-    BYR("BYR");
+    BYN("BYN");
 
     private String name;
 }

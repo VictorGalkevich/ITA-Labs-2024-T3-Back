@@ -23,8 +23,8 @@ public class LotController {
     private final LotService lotService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam Integer page,
-                                                            @RequestParam @Min(1) @Max(100) Integer limit) {
+    public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam(defaultValue = "1") Integer page,
+                                                            @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
         return  ok(PageResponse.of(lotService.findAll(page, limit)));
     }
 

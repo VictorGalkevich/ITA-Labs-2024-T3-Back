@@ -24,8 +24,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam Integer page,
-                                                             @RequestParam @Min(1) @Max(100) Integer limit) {
+    public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") Integer page,
+                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
         return  ok().body(PageResponse.of(userService.findAll(page, limit)));
     }
 

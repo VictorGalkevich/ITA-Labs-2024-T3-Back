@@ -4,6 +4,9 @@ import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.UserReadDto;
 import com.ventionteams.applicationexchange.service.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +19,14 @@ import static org.springframework.http.ResponseEntity.notFound;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Validated
 public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam Integer page,
-                                                             @RequestParam Integer limit) {
-        return ok().body(PageResponse.of(userService.findAll(page, limit)));
+    public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") Integer page,
+                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
+        return  ok().body(PageResponse.of(userService.findAll(page, limit)));
     }
 
     @GetMapping("/{id}")

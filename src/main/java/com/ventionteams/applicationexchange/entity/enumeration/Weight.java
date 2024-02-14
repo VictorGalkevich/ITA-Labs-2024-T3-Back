@@ -8,7 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Weight implements ResourceContainer {
     TON("ton"),
-    KILOGRAM("kg");
+    KILOGRAM("kg"),
+    PCS("PCS");
 
     private String name;
 }

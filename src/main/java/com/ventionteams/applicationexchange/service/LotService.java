@@ -1,12 +1,18 @@
 package com.ventionteams.applicationexchange.service;
 
+import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.entity.Lot;
+import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.LotRepository;
+import com.ventionteams.applicationexchange.specification.LotSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +25,11 @@ public class LotService {
     private final LotRepository lotRepository;
     private final LotMapper lotMapper;
 
-    public Page<LotReadDTO> findAll(Integer page, Integer limit) {
-        PageRequest req = PageRequest.of(page - 1, limit);
-        return lotRepository.findAll(req)
+    public Page<LotReadDTO> findAll(Integer page, Integer limit, LotFilterDTO filter, LotSortCriteria sort) {
+        Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
+        PageRequest req = PageRequest.of(page - 1, limit, by);
+        Specification<Lot> specification = LotSpecification.getFilterSpecification(filter);
+        return lotRepository.findAll(specification, req)
                 .map(lotMapper::toLotReadDTO);
     }
 

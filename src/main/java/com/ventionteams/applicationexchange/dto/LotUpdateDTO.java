@@ -5,12 +5,14 @@ import com.ventionteams.applicationexchange.entity.Location;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Size;
 import com.ventionteams.applicationexchange.entity.enumeration.Status;
+import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 
 public record LotUpdateDTO (
         String title,
         @JsonProperty("category_id")
         Integer categoryId,
         Long quantity,
+        Weight weight,
         @JsonProperty("price_per_unit")
         Double pricePerUnit,
         Location location,
@@ -19,6 +21,6 @@ public record LotUpdateDTO (
         @JsonProperty("image_url")
         String imageUrl,
         String variety,
-        Size size,
+        Integer size,
         Packaging packaging) {
 }

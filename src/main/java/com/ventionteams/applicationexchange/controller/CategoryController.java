@@ -1,9 +1,6 @@
 package com.ventionteams.applicationexchange.controller;
 
-import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
-import com.ventionteams.applicationexchange.dto.CategoryReadDto;
-import com.ventionteams.applicationexchange.dto.LotReadDTO;
-import com.ventionteams.applicationexchange.dto.PageResponse;
+import com.ventionteams.applicationexchange.dto.*;
 import com.ventionteams.applicationexchange.service.CategoryService;
 import com.ventionteams.applicationexchange.service.LotService;
 import jakarta.validation.constraints.Max;
@@ -27,7 +24,7 @@ public class CategoryController {
     private final LotService lotService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryReadDto>> findAll() {
+    public ResponseEntity<List<MainPageCategoryReadDto>> findAll() {
         return ok().body(categoryService.findAll());
     }
 

@@ -1,9 +1,12 @@
 -- liquibase formatted sql
 
---changeset karina-kuiko:1
+--changeset karina_kuiko:1
 ALTER TABLE lots
-ADD COLUMN weight VARCHAR(32);
+DROP COLUMN image_url;
 
---changeset karina-kuiko:2
-ALTER TABLE lots
-ALTER COLUMN size TYPE INTEGER;
+--changeset karina_kuiko:2
+CREATE TABLE IF NOT EXISTS images (
+                                      id              BIGSERIAL PRIMARY KEY,
+                                      name            VARCHAR(255) UNIQUE  NOT NULL,
+    lot_id     BIGINT REFERENCES lots (id)
+    );

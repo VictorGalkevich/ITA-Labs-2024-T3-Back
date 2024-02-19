@@ -7,6 +7,8 @@ import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -32,7 +34,8 @@ public class LotSpecification {
 
     public static Specification<Lot> inCategories(List<Category> categories) {
         return (root, query, criteriaBuilder) -> {
-            CriteriaBuilder.In<Category> inClause = criteriaBuilder.in(root.get("category"));
+            Join<Category, Lot> join = root.join("category", JoinType.INNER);
+            CriteriaBuilder.In<Category> inClause = criteriaBuilder.in(join.get("category"));
             for (Category category : categories) {
                 inClause.value(category);
             }

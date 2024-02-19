@@ -49,7 +49,7 @@ public class Lot extends AuditingEntity {
     private Status status;
 
     @OneToMany(mappedBy = "lot")
-    private List<Image> imageUrl = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
 
     @Column(nullable = false, name = "variety")
     private String variety;

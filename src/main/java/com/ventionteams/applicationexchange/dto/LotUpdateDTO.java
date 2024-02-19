@@ -20,7 +20,7 @@ public record LotUpdateDTO (
         String description,
         Status status,
         @JsonProperty("image_url")
-        List<Image> imageUrl,
+        List<Image> images,
         String variety,
         Size size,
         Packaging packaging) {

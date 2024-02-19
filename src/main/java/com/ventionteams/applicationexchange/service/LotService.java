@@ -19,7 +19,6 @@ import java.util.Optional;
 public class LotService {
     private final LotRepository lotRepository;
     private final LotMapper lotMapper;
-    private final ImageService imageService;
 
     public List<LotReadDTO> findAll() {
         return lotRepository.findAll().stream()
@@ -43,14 +42,7 @@ public class LotService {
     }
 
     @Transactional
-    public LotReadDTO create(LotUpdateDTO dto, List<MultipartFile> files) {
-        for (MultipartFile file : files) {
-            Image image = imageService.upload(file);
-            image.setLot(lotMapper.toLot(dto));
-
-            dto.imageUrl().add(image);
-        }
-
+    public LotReadDTO create(LotUpdateDTO dto) {
         return Optional.of(dto)
                 .map(lotMapper::toLot)
                 .map(lotRepository::save)

@@ -36,8 +36,7 @@ public class LotController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<LotReadDTO> create(@RequestParam("lot") LotUpdateDTO lot, @RequestParam(value = "files") List<MultipartFile> files) {
-        LotReadDTO lotReadDTO = lotService.create(lot, files);
-        return ok(lotReadDTO);
+        return ok(imageService.saveListImages(files, lotService.create(lot)));
     }
 
     @PutMapping("/{id}")

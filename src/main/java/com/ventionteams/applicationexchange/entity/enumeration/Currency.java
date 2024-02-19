@@ -6,10 +6,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Status implements ResourceContainer {
-    ACTIVE("active"),
-    COMPLETED("completed"),
-    MODERATED("moderated");
+public enum Currency implements ResourceContainer {
+    USD("USD"),
+    EUR("EUR"),
+    BYN("BYN");
 
     private String name;
 }

@@ -6,10 +6,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Status implements ResourceContainer {
-    ACTIVE("active"),
-    COMPLETED("completed"),
-    MODERATED("moderated");
+public enum Weight implements ResourceContainer {
+    TON("ton"),
+    KILOGRAM("kg"),
+    PCS("PCS");
 
     private String name;
 }

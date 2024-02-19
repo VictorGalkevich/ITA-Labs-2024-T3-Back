@@ -1,15 +1,17 @@
 package com.ventionteams.applicationexchange.controller;
 
+import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.UserReadDto;
 import com.ventionteams.applicationexchange.service.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
 import static org.springframework.http.ResponseEntity.notFound;
@@ -17,14 +19,14 @@ import static org.springframework.http.ResponseEntity.notFound;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Validated
 public class UserController {
     private final UserService userService;
 
-    @SneakyThrows
     @GetMapping
-    public ResponseEntity<List<UserReadDto>> findAll() {
-        List<UserReadDto> all = userService.findAll();
-        return ok().body(all);
+    public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") Integer page,
+                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
+        return  ok().body(PageResponse.of(userService.findAll(page, limit)));
     }
 
     @GetMapping("/{id}")
@@ -35,17 +37,15 @@ public class UserController {
                 .orElseGet(notFound()::build);
     }
 
-    @SneakyThrows
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserReadDto> create(@RequestBody UserCreateEditDto dto) {
+    public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserCreateEditDto dto) {
         return ok().body(userService.create(dto));
     }
 
-    @SneakyThrows
     @PutMapping("/{id}")
     public ResponseEntity<UserReadDto> update(@PathVariable("id") Long id,
-                                                  @RequestBody UserCreateEditDto dto) {
+                                              @RequestBody @Validated UserCreateEditDto dto) {
         return userService.update(id, dto)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);

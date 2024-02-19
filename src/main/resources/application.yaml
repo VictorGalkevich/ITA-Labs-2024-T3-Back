@@ -17,3 +17,9 @@ aws:
   accessKey: AKIAXYKJRCXIYC3CQZUQ
   secretAccessKey: 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
   bucketName: ita-labs-2024-t3
+
+okta:
+  oauth2:
+    issuer: https://dev-n26fsmmx8g0s2f8e.us.auth0.com/
+    client-id: NIrdk00WUQOTOg7y66vZ8txZoqLmHcoT
+    client-secret: NsIM_sMh3TpDrW5FtJCRhJ5EcJhzS_TKyzSTTbyfAS5mIm4L1LqrNIWc6K78qD4f

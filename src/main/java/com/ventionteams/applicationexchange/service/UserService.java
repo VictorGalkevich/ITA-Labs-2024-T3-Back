@@ -5,9 +5,10 @@ import com.ventionteams.applicationexchange.dto.UserReadDto;
 import com.ventionteams.applicationexchange.mapper.UserMapper;
 import com.ventionteams.applicationexchange.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,10 +16,10 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    public List<UserReadDto> findAll() {
-        return userRepository.findAll().stream()
-                .map(userMapper::toUserReadDto)
-                .toList();
+    public Page<UserReadDto> findAll(Integer page, Integer limit) {
+        PageRequest req = PageRequest.of(page - 1, limit);
+        return userRepository.findAll(req)
+                .map(userMapper::toUserReadDto);
     }
 
     public Optional<UserReadDto> findById(Long id) {

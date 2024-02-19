@@ -1,22 +1,20 @@
 package com.ventionteams.applicationexchange.entity.enumeration;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ventionteams.applicationexchange.entity.ResourceContainer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public enum Packaging {
-    @JsonProperty("Box")
-    BOX,
-    @JsonProperty("Basket")
-    BASKET,
-    @JsonProperty("Carton")
-    CARTON,
-    @JsonProperty("Bag")
-    BAG,
-    @JsonProperty("Crate")
-    CRATE,
-    @JsonProperty("Bottle")
-    BOTTLE,
-    @JsonProperty("Bunch")
-    BUNCH,
-    @JsonProperty("Sack")
-    SACK
+@Getter
+@AllArgsConstructor
+public enum Packaging implements ResourceContainer {
+    BOX("Box"),
+    BASKET("Basket"),
+    CARTON("Carton"),
+    BAG("Bag"),
+    CRATE("Crate"),
+    BOTTLE("Bottle"),
+    BUNCH("Bunch"),
+    SACK("Sack");
+
+    private String name;
 }

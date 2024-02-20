@@ -1,7 +1,6 @@
 package com.ventionteams.applicationexchange.entity;
 
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
-import com.ventionteams.applicationexchange.entity.enumeration.Size;
 import com.ventionteams.applicationexchange.entity.enumeration.Status;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import jakarta.persistence.*;

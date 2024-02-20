@@ -1,14 +1,10 @@
 package com.ventionteams.applicationexchange.specification;
 
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
-import com.ventionteams.applicationexchange.entity.Category;
-import com.ventionteams.applicationexchange.entity.Location;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -22,6 +18,7 @@ public class LotSpecification {
 
     public static Specification<Lot> getFilterSpecification(LotFilterDTO filter) {
         return Specification.where(isEmpty(filter.categories()) ? null : inCategories(filter.categories()))
+                .or(isEmpty(filter.categories()) ? null : inParentCategories(filter.categories()))
                 .and(isEmpty(filter.packaging()) ? null : inPackaging(filter.packaging()))
                 .and(isEmpty(filter.weights()) ? null : inWeight(filter.weights()))
                 .and(isEmpty(filter.locations()) ? null : inLocations(filter.locations()))
@@ -32,11 +29,20 @@ public class LotSpecification {
                 .and(filter.toSize() == null ? null : toSize(filter.toSize()));
     }
 
-    public static Specification<Lot> inCategories(List<Category> categories) {
+    public static Specification<Lot> inCategories(List<Integer> categories) {
         return (root, query, criteriaBuilder) -> {
-            Join<Category, Lot> join = root.join("category_id", JoinType.INNER);
-            CriteriaBuilder.In<Category> inClause = criteriaBuilder.in(join.get("id"));
-            for (Category category : categories) {
+            CriteriaBuilder.In<Integer> inClause = criteriaBuilder.in(root.get("category").get("id"));
+            for (Integer category : categories) {
+                inClause.value(category);
+            }
+            return inClause;
+        };
+    }
+
+    public static Specification<Lot> inParentCategories(List<Integer> categories) {
+        return (root, query, criteriaBuilder) -> {
+            CriteriaBuilder.In<Integer> inClause = criteriaBuilder.in(root.get("category").get("parent").get("id"));
+            for (Integer category : categories) {
                 inClause.value(category);
             }
             return inClause;
@@ -63,11 +69,10 @@ public class LotSpecification {
         };
     }
 
-    private static Specification<Lot> inLocations(List<Location> locations) {
+    private static Specification<Lot> inLocations(List<Integer> locations) {
         return (root, query, criteriaBuilder) -> {
-            Join<Category, Lot> join = root.join("location_id", JoinType.INNER);
-            CriteriaBuilder.In<Location> inClause = criteriaBuilder.in(join.get("id"));
-            for (Location location : locations) {
+            CriteriaBuilder.In<Integer> inClause = criteriaBuilder.in(root.get("location").get("id"));
+            for (Integer location : locations) {
                 inClause.value(location);
             }
             return inClause;

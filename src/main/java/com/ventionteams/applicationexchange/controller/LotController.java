@@ -4,8 +4,6 @@ import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
 import com.ventionteams.applicationexchange.dto.PageResponse;
-import com.ventionteams.applicationexchange.entity.Category;
-import com.ventionteams.applicationexchange.entity.Location;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
@@ -31,9 +29,9 @@ public class LotController {
     @GetMapping
     public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam Integer page,
                                                             @RequestParam Integer limit,
-                                                            @RequestParam(required = false) List<Category> categories,
+                                                            @RequestParam(required = false) List<Integer> categories,
                                                             @RequestParam(required = false) List<Packaging> packaging,
-                                                            @RequestParam(required = false) List<Location> locations,
+                                                            @RequestParam(required = false) List<Integer> locations,
                                                             @RequestParam(required = false) List<String> varieties,
                                                             @RequestParam(required = false) List<Weight> weights,
                                                             @RequestParam(required = false) Long fromQuantity,

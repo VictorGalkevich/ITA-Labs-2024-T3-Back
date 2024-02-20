@@ -1,19 +1,14 @@
 package com.ventionteams.applicationexchange.dto;
 
-import com.ventionteams.applicationexchange.entity.Category;
-import com.ventionteams.applicationexchange.entity.Location;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 
 import java.util.List;
 
 public record LotFilterDTO (
-    List<Category> categories,
+    List<Integer> categories,
     List<Packaging> packaging,
-    List<Location> locations,
+    List<Integer> locations,
     List<String> varieties,
     List<Weight> weights,
     Long fromQuantity,

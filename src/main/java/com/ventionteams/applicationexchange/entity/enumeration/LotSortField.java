@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum LotSortField {
     QUANTITY("quantity"),
-    CREATED_AT("created_at"),
-    EXPIRATION_DATE("expiration_date"),
+    CREATED_AT("createdAt"),
+    EXPIRATION_DATE("expirationDate"),
     SIZE("size");
 
     private String name;

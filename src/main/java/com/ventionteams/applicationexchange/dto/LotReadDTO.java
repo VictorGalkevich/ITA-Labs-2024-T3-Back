@@ -24,8 +24,8 @@ public record LotReadDTO (
     Location location,
     String description,
     Status status,
-    @JsonProperty("image_url")
-    String imageUrl,
+//    @JsonProperty("image_url")
+//    String imageUrl,
     @JsonProperty("expiration_date")
     Instant expirationDate,
     String variety,

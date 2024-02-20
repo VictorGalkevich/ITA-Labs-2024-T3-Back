@@ -51,7 +51,7 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "status")
     private Status status;
 
-    private String imageUrl;
+//    private String imageUrl;
 
     @Column(nullable = false, name = "variety")
     private String variety;

@@ -34,8 +34,8 @@ public class LotSpecification {
 
     public static Specification<Lot> inCategories(List<Category> categories) {
         return (root, query, criteriaBuilder) -> {
-            Join<Category, Lot> join = root.join("category", JoinType.INNER);
-            CriteriaBuilder.In<Category> inClause = criteriaBuilder.in(join.get("category"));
+            Join<Category, Lot> join = root.join("category_id", JoinType.INNER);
+            CriteriaBuilder.In<Category> inClause = criteriaBuilder.in(join.get("id"));
             for (Category category : categories) {
                 inClause.value(category);
             }
@@ -65,7 +65,8 @@ public class LotSpecification {
 
     private static Specification<Lot> inLocations(List<Location> locations) {
         return (root, query, criteriaBuilder) -> {
-            CriteriaBuilder.In<Location> inClause = criteriaBuilder.in(root.get("location"));
+            Join<Category, Lot> join = root.join("location_id", JoinType.INNER);
+            CriteriaBuilder.In<Location> inClause = criteriaBuilder.in(join.get("id"));
             for (Location location : locations) {
                 inClause.value(location);
             }

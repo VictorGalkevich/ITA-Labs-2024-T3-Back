@@ -18,8 +18,8 @@ public record LotUpdateDTO (
         Location location,
         String description,
         Status status,
-        @JsonProperty("image_url")
-        String imageUrl,
+//        @JsonProperty("image_url")
+//        String imageUrl,
         String variety,
         Integer size,
         Packaging packaging) {

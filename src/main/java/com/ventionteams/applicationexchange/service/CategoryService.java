@@ -2,6 +2,7 @@ package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
 import com.ventionteams.applicationexchange.dto.CategoryReadDto;
+import com.ventionteams.applicationexchange.dto.MainPageCategoryReadDto;
 import com.ventionteams.applicationexchange.entity.Category;
 import com.ventionteams.applicationexchange.mapper.CategoryMapper;
 import com.ventionteams.applicationexchange.repository.CategoryRepository;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,9 +21,9 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
-    public List<CategoryReadDto> findAll() {
+    public List<MainPageCategoryReadDto> findAll() {
         return categoryRepository.findAllByParentIdIsNull().stream()
-                .map(categoryMapper::toReadDto)
+                .map(categoryMapper::toMainPageReadDto)
                 .toList();
     }
 

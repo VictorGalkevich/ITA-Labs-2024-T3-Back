@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: 12345
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     properties.hibernate:
@@ -12,8 +12,9 @@ spring:
       format_sql: true
       hbm2ddl.auto: validate
     open-in-view: false
-okta:
-  oauth2:
-    issuer: https://dev-n26fsmmx8g0s2f8e.us.auth0.com/
-    client-id: NIrdk00WUQOTOg7y66vZ8txZoqLmHcoT
-    client-secret: NsIM_sMh3TpDrW5FtJCRhJ5EcJhzS_TKyzSTTbyfAS5mIm4L1LqrNIWc6K78qD4f
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_QlYr8j0v8/.well-known/jwks.json
+          issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_QlYr8j0v8

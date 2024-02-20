@@ -1,14 +1,14 @@
 package com.ventionteams.applicationexchange.controller;
 
-import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
-import com.ventionteams.applicationexchange.dto.CategoryReadDto;
-import com.ventionteams.applicationexchange.dto.LotReadDTO;
-import com.ventionteams.applicationexchange.dto.PageResponse;
+import com.ventionteams.applicationexchange.dto.*;
 import com.ventionteams.applicationexchange.service.CategoryService;
 import com.ventionteams.applicationexchange.service.LotService;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,12 +18,13 @@ import static org.springframework.http.ResponseEntity.*;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
+@Validated
 public class CategoryController {
     private final CategoryService categoryService;
     private final LotService lotService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryReadDto>> findAll() {
+    public ResponseEntity<List<MainPageCategoryReadDto>> findAll() {
         return ok().body(categoryService.findAll());
     }
 
@@ -37,9 +38,9 @@ public class CategoryController {
 
     @GetMapping("/{id}/lots")
     public ResponseEntity<PageResponse<LotReadDTO>> findByCategoryId(@PathVariable("id") Integer id,
-                                                                     @RequestParam Integer page,
-                                                                     @RequestParam Integer limit) {
-        return ok().body(PageResponse.of(lotService.findLotsByCategoryId(id, page, limit)));
+                                                                     @RequestParam(defaultValue = "1") Integer page,
+                                                                     @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
+        return  ok().body(PageResponse.of(lotService.findLotsByCategoryId(id, page, limit)));
     }
 
     @PostMapping

@@ -9,10 +9,14 @@ import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import com.ventionteams.applicationexchange.service.LotService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,12 +27,13 @@ import static org.springframework.http.ResponseEntity.*;
 @RestController
 @RequestMapping("/lots")
 @RequiredArgsConstructor
+@Validated
 public class LotController {
     private final LotService lotService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam Integer page,
-                                                            @RequestParam Integer limit,
+    public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam(defaultValue = "1") Integer page,
+                                                            @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                             @RequestParam(required = false) List<Integer> categories,
                                                             @RequestParam(required = false) List<Packaging> packaging,
                                                             @RequestParam(required = false) List<Integer> locations,

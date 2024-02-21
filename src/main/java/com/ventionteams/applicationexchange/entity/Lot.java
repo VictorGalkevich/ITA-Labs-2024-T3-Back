@@ -1,8 +1,8 @@
 package com.ventionteams.applicationexchange.entity;
 
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
-import com.ventionteams.applicationexchange.entity.enumeration.Size;
 import com.ventionteams.applicationexchange.entity.enumeration.Status;
+import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.EqualsAndHashCode.Include;
@@ -32,6 +32,10 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "quantity")
     private Long quantity;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "weight")
+    private Weight weight;
+
     @Column(nullable = false, name = "price_per_unit")
     private Double pricePerUnit;
 
@@ -46,15 +50,13 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "status")
     private Status status;
 
-    @Column(nullable = false, name = "image_url")
-    private String imageUrl;
+//    private String imageUrl;
 
     @Column(nullable = false, name = "variety")
     private String variety;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "size")
-    private Size size;
+    private Integer size;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "packaging")

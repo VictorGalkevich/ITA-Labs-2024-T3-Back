@@ -13,6 +13,7 @@ public interface LotMapper {
 
     @Mapping(target = "categoryId", source = "category.id")
     @Mapping(target = "category", source = "category.name")
+    @Mapping(target = "totalPrice", expression = "java(lot.getPricePerUnit() * lot.getQuantity())")
     LotReadDTO toLotReadDTO(Lot lot);
 
     @Mapping(target = "category", expression = "java(Category.builder().id(dto.categoryId()).build())")

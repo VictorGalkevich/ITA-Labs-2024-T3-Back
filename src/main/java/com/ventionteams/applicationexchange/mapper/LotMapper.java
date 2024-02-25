@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(config = MapperConfiguration.class)
+@Mapper(config = MapperConfiguration.class, uses = BidMapper.class)
 public interface LotMapper {
 
     @Mapping(target = "categoryId", source = "category.id")

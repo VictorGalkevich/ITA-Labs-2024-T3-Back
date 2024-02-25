@@ -1,5 +1,6 @@
 package com.ventionteams.applicationexchange.service;
 
+import com.ventionteams.applicationexchange.annotation.TransactionalService;
 import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.UserReadDto;
 import com.ventionteams.applicationexchange.mapper.UserMapper;
@@ -7,11 +8,11 @@ import com.ventionteams.applicationexchange.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Service
+@TransactionalService
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -27,6 +28,7 @@ public class UserService {
                 .map(userMapper::toUserReadDto);
     }
 
+    @Transactional
     public UserReadDto create(UserCreateEditDto dto) {
         return Optional.of(dto)
                 .map(userMapper::toUser)
@@ -35,6 +37,7 @@ public class UserService {
                 .orElseThrow();
     }
 
+    @Transactional
     public Optional<UserReadDto> update(Long id, UserCreateEditDto dto) {
         return userRepository.findById(id)
                 .map(user -> userMapper.toUser(dto))
@@ -42,6 +45,7 @@ public class UserService {
                 .map(userMapper::toUserReadDto);
     }
 
+    @Transactional
     public boolean delete(Long id) {
         return userRepository.findById(id)
                 .map(category -> {

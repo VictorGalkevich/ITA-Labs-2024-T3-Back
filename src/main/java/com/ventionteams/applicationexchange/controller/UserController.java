@@ -1,10 +1,9 @@
 package com.ventionteams.applicationexchange.controller;
 
-import com.ventionteams.applicationexchange.dto.PageResponse;
-import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
-import com.ventionteams.applicationexchange.dto.UserReadDto;
+import com.ventionteams.applicationexchange.annotation.ValidatedController;
+import com.ventionteams.applicationexchange.dto.*;
+import com.ventionteams.applicationexchange.service.BidService;
 import com.ventionteams.applicationexchange.service.UserService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -14,17 +13,16 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.ResponseEntity.*;
-import static org.springframework.http.ResponseEntity.notFound;
 
-@RestController
+@ValidatedController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Validated
 public class UserController {
     private final UserService userService;
+    private final BidService bidService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") Integer page,
+    public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                              @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
         return  ok().body(PageResponse.of(userService.findAll(page, limit)));
     }
@@ -35,6 +33,13 @@ public class UserController {
                 .map(obj -> ok()
                         .body(obj))
                 .orElseGet(notFound()::build);
+    }
+
+    @GetMapping("/{id}/bids")
+    public ResponseEntity<PageResponse<BidUserReadDto>> findById(@PathVariable("id") Long id,
+                                                                 @RequestParam(defaultValue = "1") @Min(1) Integer page,
+                                                                 @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
+        return  ok().body(PageResponse.of(bidService.findBidsByUserId(id, page, limit)));
     }
 
     @PostMapping

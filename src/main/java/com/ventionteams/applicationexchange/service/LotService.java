@@ -1,5 +1,6 @@
 package com.ventionteams.applicationexchange.service;
 
+import com.ventionteams.applicationexchange.annotation.TransactionalService;
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
@@ -13,14 +14,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Service
+@TransactionalService
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class LotService {
     private final LotRepository lotRepository;
     private final LotMapper lotMapper;

@@ -1,5 +1,6 @@
 package com.ventionteams.applicationexchange.controller;
 
+import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.*;
 import com.ventionteams.applicationexchange.service.CategoryService;
 import com.ventionteams.applicationexchange.service.LotService;
@@ -8,17 +9,15 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
 
-@RestController
+@ValidatedController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@Validated
 public class CategoryController {
     private final CategoryService categoryService;
     private final LotService lotService;
@@ -38,7 +37,7 @@ public class CategoryController {
 
     @GetMapping("/{id}/lots")
     public ResponseEntity<PageResponse<LotReadDTO>> findByCategoryId(@PathVariable("id") Integer id,
-                                                                     @RequestParam(defaultValue = "1") Integer page,
+                                                                     @RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                                      @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
         return  ok().body(PageResponse.of(lotService.findLotsByCategoryId(id, page, limit)));
     }

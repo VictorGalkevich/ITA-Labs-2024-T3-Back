@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.EqualsAndHashCode.Include;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Data
 @Builder
@@ -34,4 +37,8 @@ public class User extends AuditingEntity{
 
     @Column(nullable = false, name = "phone_number")
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    private List<Bid> bids = new ArrayList<>();
 }

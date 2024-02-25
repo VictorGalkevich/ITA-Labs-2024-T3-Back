@@ -36,6 +36,6 @@ public record LotReadDTO(
         @JsonProperty("total_price")
         Double totalPrice,
         @JsonProperty("length_unit")
-        LengthUnit lengthUnit) {
-
+        LengthUnit lengthUnit,
+        BidLotReadDto bid) {
 }

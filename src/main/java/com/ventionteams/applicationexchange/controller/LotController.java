@@ -1,5 +1,6 @@
 package com.ventionteams.applicationexchange.controller;
 
+import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,15 +23,14 @@ import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.*;
 
-@RestController
+@ValidatedController
 @RequestMapping("/lots")
 @RequiredArgsConstructor
-@Validated
 public class LotController {
     private final LotService lotService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam(defaultValue = "1") Integer page,
+    public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                             @RequestParam(required = false) List<Integer> categories,
                                                             @RequestParam(required = false) List<Packaging> packaging,

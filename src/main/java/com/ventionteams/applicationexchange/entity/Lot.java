@@ -69,4 +69,8 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "length_unit")
     @Enumerated(EnumType.STRING)
     private LengthUnit lengthUnit;
+
+    @OneToOne
+    @JoinColumn(name = "bid_id")
+    private Bid bid;
 }

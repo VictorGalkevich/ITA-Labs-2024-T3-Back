@@ -1,15 +1,12 @@
 package com.ventionteams.applicationexchange.entity.enumeration;
 
-import com.ventionteams.applicationexchange.entity.ResourceContainer;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Getter
-@AllArgsConstructor
-public enum Size implements ResourceContainer {
-    LARGE("Large"),
-    SMALL("Small"),
-    MEDIUM("Medium");
-
-    private String name;
+public enum Size {
+    @JsonProperty("Large")
+    LARGE,
+    @JsonProperty("Small")
+    SMALL,
+    @JsonProperty("Medium")
+    MEDIUM
 }

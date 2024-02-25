@@ -9,7 +9,6 @@ import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import com.ventionteams.applicationexchange.service.LotService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,8 @@
 package com.ventionteams.applicationexchange.entity;
 
+import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
-import com.ventionteams.applicationexchange.entity.enumeration.Status;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,7 +49,7 @@ public class Lot extends AuditingEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "status")
-    private Status status;
+    private LotStatus status;
 
 //    private String imageUrl;
 
@@ -64,4 +65,8 @@ public class Lot extends AuditingEntity {
 
     @Column(nullable = false, name = "expiration_date")
     private Instant expirationDate;
+
+    @Column(nullable = false, name = "length_unit")
+    @Enumerated(EnumType.STRING)
+    private LengthUnit lengthUnit;
 }

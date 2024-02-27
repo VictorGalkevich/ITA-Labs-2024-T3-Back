@@ -6,9 +6,11 @@ import com.ventionteams.applicationexchange.entity.Location;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Size;
 import com.ventionteams.applicationexchange.entity.enumeration.Status;
+import lombok.Builder;
 
 import java.util.List;
 
+@Builder
 public record LotUpdateDTO (
         String title,
         @JsonProperty("category_id")
@@ -22,6 +24,6 @@ public record LotUpdateDTO (
         @JsonProperty("image_url")
         List<Image> images,
         String variety,
-        Size size,
+        Integer size,
         Packaging packaging) {
 }

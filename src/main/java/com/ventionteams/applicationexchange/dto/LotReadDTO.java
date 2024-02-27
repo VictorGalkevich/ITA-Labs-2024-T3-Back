@@ -29,7 +29,7 @@ public record LotReadDTO (
     @JsonProperty("expiration_date")
     Instant expirationDate,
     String variety,
-    Size size,
+    Integer size,
     Packaging packaging,
     @JsonProperty("created_at")
     Instant createdAt) {

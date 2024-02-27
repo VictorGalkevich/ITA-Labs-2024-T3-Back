@@ -2,7 +2,7 @@ package com.ventionteams.applicationexchange.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.ventionteams.applicationexchange.config.AWSClientConfig;
+import com.ventionteams.applicationexchange.config.ConfigProperties;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 public class ImageService {
     private final AmazonS3 amazonS3;
-    private final AWSClientConfig awsClientConfig;
+    private final ConfigProperties configProperties;
     private final LotMapper lotMapper;
     private final ImageRepository imageRepository;
 
@@ -38,7 +38,7 @@ public class ImageService {
 
     public String upload(MultipartFile file) {
         File localFile = convertNultiPartFileToFile(file);
-        amazonS3.putObject(new PutObjectRequest(awsClientConfig.getBucketName(), file.getOriginalFilename(), localFile));
+        amazonS3.putObject(new PutObjectRequest(configProperties.getBucketName(), file.getOriginalFilename(), localFile));
         return file.getOriginalFilename();
     }
 

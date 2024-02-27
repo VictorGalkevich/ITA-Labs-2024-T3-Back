@@ -17,8 +17,8 @@ public class LotSpecification {
     }
 
     public static Specification<Lot> getFilterSpecification(LotFilterDTO filter) {
-        return Specification.where(isEmpty(filter.categories()) ? null : inCategories(filter.categories()))
-                .or(isEmpty(filter.categories()) ? null : inParentCategories(filter.categories()))
+        return Specification.where(filter.category() == null ? null : inCategories(filter.category()))
+                .or(filter.category() == null ? null : inParentCategories(filter.category()))
                 .and(isEmpty(filter.packaging()) ? null : inPackaging(filter.packaging()))
                 .and(isEmpty(filter.weights()) ? null : inWeight(filter.weights()))
                 .and(isEmpty(filter.locations()) ? null : inLocations(filter.locations()))
@@ -29,24 +29,14 @@ public class LotSpecification {
                 .and(filter.toSize() == null ? null : toSize(filter.toSize()));
     }
 
-    public static Specification<Lot> inCategories(List<Integer> categories) {
-        return (root, query, criteriaBuilder) -> {
-            CriteriaBuilder.In<Integer> inClause = criteriaBuilder.in(root.get("category").get("id"));
-            for (Integer category : categories) {
-                inClause.value(category);
-            }
-            return inClause;
-        };
+    public static Specification<Lot> inCategories(Integer category) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("category").get("id"), category);
     }
 
-    public static Specification<Lot> inParentCategories(List<Integer> categories) {
-        return (root, query, criteriaBuilder) -> {
-            CriteriaBuilder.In<Integer> inClause = criteriaBuilder.in(root.get("category").get("parent").get("id"));
-            for (Integer category : categories) {
-                inClause.value(category);
-            }
-            return inClause;
-        };
+    public static Specification<Lot> inParentCategories(Integer category) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("category").get("parent").get("id"), category);
     }
 
     private static Specification<Lot> inPackaging(List<Packaging> packaging) {
@@ -91,21 +81,21 @@ public class LotSpecification {
 
     private static Specification<Lot> fromQuantity(Long fromQuantity) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.greaterThan(root.get("quantity"), fromQuantity);
+                criteriaBuilder.greaterThanOrEqualTo(root.get("quantity"), fromQuantity);
     }
 
     private static Specification<Lot> toQuantity(Long toQuantity) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.lessThan(root.get("quantity"), toQuantity);
+                criteriaBuilder.lessThanOrEqualTo(root.get("quantity"), toQuantity);
     }
 
     private static Specification<Lot> fromSize(Integer fromSize) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.greaterThan(root.get("size"), fromSize);
+                criteriaBuilder.greaterThanOrEqualTo(root.get("size"), fromSize);
     }
 
     private static Specification<Lot> toSize(Integer toSize) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.lessThan(root.get("size"), toSize);
+                criteriaBuilder.lessThanOrEqualTo(root.get("size"), toSize);
     }
 }

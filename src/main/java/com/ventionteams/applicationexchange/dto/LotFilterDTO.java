@@ -6,7 +6,7 @@ import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import java.util.List;
 
 public record LotFilterDTO (
-    List<Integer> categories,
+    Integer category,
     List<Packaging> packaging,
     List<Integer> locations,
     List<String> varieties,

@@ -60,7 +60,7 @@ public class CategoryController {
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
-        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort)));
+        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, 123123L)));
     }
 
     @PostMapping

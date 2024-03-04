@@ -17,7 +17,6 @@ create table bids
 
 --changeset victor_galkevich:2
 ALTER TABLE lots
-ADD COLUMN leading_id BIGINT,
 ADD COLUMN bid_quantity INTEGER,
 ADD COLUMN total_price float8;
 

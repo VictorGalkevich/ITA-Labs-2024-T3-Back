@@ -73,9 +73,6 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "bid_quantity")
     private Integer bidQuantity;
 
-    @Column(name = "leading_id")
-    private Long leadingId;
-
     @Column(nullable = false, name = "total_price")
     private Double totalPrice;
 }

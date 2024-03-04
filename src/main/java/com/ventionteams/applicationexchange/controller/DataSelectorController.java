@@ -28,5 +28,6 @@ public class DataSelectorController {
             Role[] role,
             LotStatus[] status,
             Currency[] currency
-    ){}
+    ) {
+    }
 }

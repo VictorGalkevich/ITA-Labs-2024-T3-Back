@@ -7,7 +7,7 @@ import com.ventionteams.applicationexchange.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(config = MapperConfiguration.class)
+@Mapper(config = MapperConfiguration.class, uses = BidMapper.class)
 public interface UserMapper {
     UserReadDto toUserReadDto(User user);
 

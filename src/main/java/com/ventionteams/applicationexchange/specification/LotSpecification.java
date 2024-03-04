@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
+
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class LotSpecification {

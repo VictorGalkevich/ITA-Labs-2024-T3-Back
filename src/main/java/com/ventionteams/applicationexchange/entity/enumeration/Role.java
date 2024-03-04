@@ -10,6 +10,7 @@ public enum Role implements GrantedAuthority {
     ADMINISTRATOR,
     @JsonProperty("user")
     USER;
+
     @Override
     public String getAuthority() {
         return name();

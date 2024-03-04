@@ -1,5 +1,6 @@
 package com.ventionteams.applicationexchange.controller;
 
+import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.*;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
@@ -13,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +21,9 @@ import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.*;
 
-@RestController
+@ValidatedController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@Validated
 public class CategoryController {
     private final CategoryService categoryService;
     private final LotService lotService;
@@ -61,7 +60,7 @@ public class CategoryController {
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
-        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort)));
+        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, 123123L)));
     }
 
     @PostMapping

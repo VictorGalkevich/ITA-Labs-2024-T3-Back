@@ -21,6 +21,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequiredArgsConstructor
 public class BidController {
     private final BidService bidService;
+
     @GetMapping
     public ResponseEntity<PageResponse<BidReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {

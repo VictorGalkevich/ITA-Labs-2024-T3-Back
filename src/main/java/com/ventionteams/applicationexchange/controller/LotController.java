@@ -48,12 +48,12 @@ public class LotController {
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
-        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort)));
+        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, 123123L)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id) {
-        return lotService.findById(id)
+        return lotService.findById(id, 123123L)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }
@@ -67,7 +67,7 @@ public class LotController {
     @PutMapping("/{id}")
     public ResponseEntity<LotReadDTO> update(@PathVariable("id") Long id,
                                              @RequestBody LotUpdateDTO lotUpdateDTO) {
-        return lotService.update(id, lotUpdateDTO)
+        return lotService.update(id, lotUpdateDTO, 123123L)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }

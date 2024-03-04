@@ -41,7 +41,7 @@ public class Lot extends AuditingEntity {
     private Double pricePerUnit;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "location_id", nullable = false)
+    @JoinColumn(nullable = false, name = "location_id")
     private Location location;
 
     @Column(nullable = false, name = "description")
@@ -70,7 +70,12 @@ public class Lot extends AuditingEntity {
     @Enumerated(EnumType.STRING)
     private LengthUnit lengthUnit;
 
-    @OneToOne
-    @JoinColumn(name = "bid_id")
-    private Bid bid;
+    @Column(nullable = false, name = "bid_quantity")
+    private Integer bidQuantity;
+
+    @Column(name = "leading_id")
+    private Long leadingId;
+
+    @Column(nullable = false, name = "total_price")
+    private Double totalPrice;
 }

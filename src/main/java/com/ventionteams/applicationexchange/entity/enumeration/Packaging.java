@@ -2,7 +2,7 @@ package com.ventionteams.applicationexchange.entity.enumeration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public enum Packaging{
+public enum Packaging {
     @JsonProperty("Box")
     BOX,
     @JsonProperty("Basket")

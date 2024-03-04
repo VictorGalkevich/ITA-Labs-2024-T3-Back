@@ -8,5 +8,5 @@ public enum Currency {
     @JsonProperty("EUR")
     EUR,
     @JsonProperty("BYN")
-    BYN;
+    BYN
 }

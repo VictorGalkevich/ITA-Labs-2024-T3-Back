@@ -1,12 +1,10 @@
 package com.ventionteams.applicationexchange.entity;
 
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.EqualsAndHashCode.Include;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Data
@@ -15,8 +13,8 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @AllArgsConstructor
 @Entity
-@Table(name ="users")
-public class User extends AuditingEntity{
+@Table(name = "users")
+public class User extends AuditingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include
@@ -38,7 +36,7 @@ public class User extends AuditingEntity{
     @Column(nullable = false, name = "phone_number")
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "user")
-    @Builder.Default
-    private List<Bid> bids = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "preferred_currency")
+    private Currency currency;
 }

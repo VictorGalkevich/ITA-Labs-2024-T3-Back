@@ -6,7 +6,7 @@ import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import jakarta.persistence.*;
 import lombok.*;
 
-import static lombok.EqualsAndHashCode.*;
+import static lombok.EqualsAndHashCode.Include;
 
 @Data
 @Builder
@@ -22,13 +22,11 @@ public class Bid extends AuditingEntity {
     @Include
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false, name = "user_id")
+    private Long userId;
 
-    @OneToOne
-    @JoinColumn(name = "lot_id", nullable = false)
-    private Lot lot;
+    @Column(nullable = false, name = "lot_id")
+    private Long lotId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "status")

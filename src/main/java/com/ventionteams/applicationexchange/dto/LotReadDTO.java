@@ -6,36 +6,49 @@ import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 
-public record LotReadDTO(
-        @JsonProperty("lot_id")
-        Long id,
-        String title,
-        @JsonProperty("category_id")
-        Integer categoryId,
-        @JsonProperty("category_name")
-        String category,
-        Long quantity,
-        Weight weight,
-        @JsonProperty("price_per_unit")
-        Double pricePerUnit,
-        Location location,
-        String description,
-        LotStatus status,
-//    @JsonProperty("image_url")
+@Getter
+@Setter
+@RequiredArgsConstructor
+public class LotReadDTO {
+    @JsonProperty("lot_id")
+    private Long id;
+    private String title;
+    @JsonProperty("category_id")
+    private Integer categoryId;
+    @JsonProperty("category_name")
+    private String category;
+    private Long quantity;
+    private Weight weight;
+    @JsonProperty("price_per_unit")
+    private Double pricePerUnit;
+    private Location location;
+    private String description;
+    private LotStatus status;
+    //    @JsonProperty("image_url")
 //    String imageUrl,
-        @JsonProperty("expiration_date")
-        Instant expirationDate,
-        String variety,
-        Integer size,
-        Packaging packaging,
-        @JsonProperty("created_at")
-        Instant createdAt,
-        @JsonProperty("total_price")
-        Double totalPrice,
-        @JsonProperty("length_unit")
-        LengthUnit lengthUnit,
-        BidLotReadDto bid) {
+    @JsonProperty("expiration_date")
+    private Instant expirationDate;
+    private String variety;
+    private Integer size;
+    private Packaging packaging;
+    @JsonProperty("created_at")
+    private Instant createdAt;
+    @JsonProperty("created_by")
+    private String createdBy;
+    @JsonProperty("expires_through")
+    private Instant expiresThrough;
+    @JsonProperty("total_price")
+    private Double totalPrice;
+    @JsonProperty("length_unit")
+    private LengthUnit lengthUnit;
+    private BidReadDto leading;
+    private BidReadDto users;
+    @JsonProperty("bid_quantity")
+    private Integer bidQuantity;
 }

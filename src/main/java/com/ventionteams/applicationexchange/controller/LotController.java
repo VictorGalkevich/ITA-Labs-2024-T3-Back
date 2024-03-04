@@ -29,28 +29,6 @@ import static org.springframework.http.ResponseEntity.*;
 public class LotController {
     private final LotService lotService;
 
-    @GetMapping
-    public ResponseEntity<PageResponse<LotReadDTO>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
-                                                            @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
-                                                            @RequestParam(required = false) List<Integer> categories,
-                                                            @RequestParam(required = false) List<Packaging> packaging,
-                                                            @RequestParam(required = false) List<Integer> locations,
-                                                            @RequestParam(required = false) List<String> varieties,
-                                                            @RequestParam(required = false) List<Weight> weights,
-                                                            @RequestParam(required = false) Long fromQuantity,
-                                                            @RequestParam(required = false) Long toQuantity,
-                                                            @RequestParam(required = false) Integer fromSize,
-                                                            @RequestParam(required = false) Integer toSize,
-                                                            @RequestParam(required = false) LotSortField sortField,
-                                                            @RequestParam(required = false) Sort.Direction sortOrder) {
-        final LotFilterDTO filter = new LotFilterDTO(categories, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize);
-        final LotSortCriteria sort = LotSortCriteria.builder()
-                .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
-                .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
-                .build();
-        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, 123123L)));
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id) {
         return lotService.findById(id, 123123L)

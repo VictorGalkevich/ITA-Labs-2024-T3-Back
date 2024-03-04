@@ -2,16 +2,22 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.*;
+import com.ventionteams.applicationexchange.entity.LotSortCriteria;
+import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
+import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
+import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import com.ventionteams.applicationexchange.service.CategoryService;
 import com.ventionteams.applicationexchange.service.LotService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -36,10 +42,25 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}/lots")
-    public ResponseEntity<PageResponse<LotReadDTO>> findByCategoryId(@PathVariable("id") Integer id,
-                                                                     @RequestParam(defaultValue = "1") @Min(1) Integer page,
-                                                                     @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
-        return ok().body(PageResponse.of(lotService.findLotsByCategoryId(id, page, limit, 123123L)));
+    public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
+                                                            @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                            @PathVariable("id") Integer category,
+                                                            @RequestParam(required = false) List<Packaging> packaging,
+                                                            @RequestParam(required = false) List<Integer> locations,
+                                                            @RequestParam(required = false) List<String> varieties,
+                                                            @RequestParam(required = false) List<Weight> weights,
+                                                            @RequestParam(required = false) Long fromQuantity,
+                                                            @RequestParam(required = false) Long toQuantity,
+                                                            @RequestParam(required = false) Integer fromSize,
+                                                            @RequestParam(required = false) Integer toSize,
+                                                            @RequestParam(required = false) LotSortField sortField,
+                                                            @RequestParam(required = false) Sort.Direction sortOrder) {
+        final LotFilterDTO filter = new LotFilterDTO(category, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize);
+        final LotSortCriteria sort = LotSortCriteria.builder()
+                .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
+                .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
+                .build();
+        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort)));
     }
 
     @PostMapping

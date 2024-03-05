@@ -18,7 +18,6 @@ public record LotUpdateDTO(
         Double pricePerUnit,
         LocationCreateDto location,
         String description,
-        Status status,
         @JsonProperty("image_url")
         List<Image> images,
         LotStatus status,

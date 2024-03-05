@@ -1,6 +1,7 @@
 package com.ventionteams.applicationexchange.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ventionteams.applicationexchange.config.ConfigProperties;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
@@ -11,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -36,19 +34,16 @@ public class ImageService {
         return lot;
     }
 
-    public String upload(MultipartFile file) {
-        File localFile = convertNultiPartFileToFile(file);
-        amazonS3.putObject(new PutObjectRequest(configProperties.getBucketName(), file.getOriginalFilename(), localFile));
-        return file.getOriginalFilename();
-    }
+    public String upload(MultipartFile multipartFile) {
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(multipartFile.getSize());
+        metadata.setContentType(multipartFile.getContentType());
 
-    private File convertNultiPartFileToFile(MultipartFile file) {
-        File convertedFile = new File(file.getOriginalFilename());
         try {
-            Files.copy(file.getInputStream(), convertedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            amazonS3.putObject(new PutObjectRequest(configProperties.getBucketName(), configProperties.getAccessKey(), multipartFile.getInputStream(), metadata));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return convertedFile;
+        return multipartFile.getOriginalFilename(); // need to return key name from s3 or change key by myself
     }
 }

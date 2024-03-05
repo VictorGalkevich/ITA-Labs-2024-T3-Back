@@ -54,9 +54,8 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "variety")
     private String variety;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "size")
-    private Size size;
+    private Integer size;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "packaging")

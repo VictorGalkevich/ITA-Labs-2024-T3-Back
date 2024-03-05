@@ -5,7 +5,6 @@ import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
 import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.service.LotService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +41,7 @@ public class LotController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<LotReadDTO> create(@RequestParam("lot") LotUpdateDTO lot, @RequestParam(value = "files") List<MultipartFile> files) {
+    public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot, @RequestBody List<MultipartFile> files) {
         return ok(imageService.saveListImages(files, lotService.create(lot)));
     }
 

@@ -28,6 +28,7 @@ public class LotReadDTO {
     private Long quantity;
     private Weight weight;
     @JsonProperty("price_per_unit")
+    private Double pricePerUnit;
     @JsonProperty("image_url")
     private List<Image> images,
     private Double pricePerUnit;

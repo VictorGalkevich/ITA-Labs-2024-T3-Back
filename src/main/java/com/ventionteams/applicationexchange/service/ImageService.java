@@ -28,7 +28,7 @@ public class ImageService {
                     .lot(lotMapper.toLot(lot))
                     .build();
             if (storageService.upload(file, name)) {
-                lot.images().add(imageRepository.save(image));
+                lot.getImages().add(imageRepository.save(image));
             }
         }
         return lot;

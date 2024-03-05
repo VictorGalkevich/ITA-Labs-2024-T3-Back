@@ -26,6 +26,10 @@ public interface LotMapper {
 
     void map(@MappingTarget Lot to, LotUpdateDTO from);
 
+    @Mapping(target = "category", expression = "java(Category.builder().id(dto.categoryId()).build())")
+    @Mapping(target = "expirationDate", expression = "java(Instant.now().plusSeconds(86400 * 7 + 60))")
+    Lot toLot(LotReadDTO dto);
+
     default Instant distance(Instant a) {
         return Instant.now().minus(a.getNano(), ChronoUnit.NANOS);
     }

@@ -6,7 +6,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static lombok.EqualsAndHashCode.*;
+import static lombok.EqualsAndHashCode.Include;
 
 @Data
 @Builder
@@ -16,7 +16,7 @@ import static lombok.EqualsAndHashCode.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "categories")
-public class Category{
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include

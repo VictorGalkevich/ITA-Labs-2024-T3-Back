@@ -1,8 +1,9 @@
 package com.ventionteams.applicationexchange.entity;
 
+import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
-import com.ventionteams.applicationexchange.entity.enumeration.Size;
-import com.ventionteams.applicationexchange.entity.enumeration.Status;
+import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.EqualsAndHashCode.Include;
@@ -34,11 +35,15 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "quantity")
     private Long quantity;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "weight")
+    private Weight weight;
+
     @Column(nullable = false, name = "price_per_unit")
     private Double pricePerUnit;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "location_id", nullable = false)
+    @JoinColumn(nullable = false, name = "location_id")
     private Location location;
 
     @Column(nullable = false, name = "description")
@@ -46,8 +51,8 @@ public class Lot extends AuditingEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "status")
-    private Status status;
-
+    private LotStatus status;
+  
     @OneToMany(mappedBy = "lot")
     private List<Image> images = new ArrayList<>();
 
@@ -63,4 +68,14 @@ public class Lot extends AuditingEntity {
 
     @Column(nullable = false, name = "expiration_date")
     private Instant expirationDate;
+
+    @Column(nullable = false, name = "length_unit")
+    @Enumerated(EnumType.STRING)
+    private LengthUnit lengthUnit;
+
+    @Column(nullable = false, name = "bid_quantity")
+    private Integer bidQuantity;
+
+    @Column(nullable = false, name = "total_price")
+    private Double totalPrice;
 }

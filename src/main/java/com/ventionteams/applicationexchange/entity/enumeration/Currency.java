@@ -1,15 +1,12 @@
 package com.ventionteams.applicationexchange.entity.enumeration;
 
-import com.ventionteams.applicationexchange.entity.ResourceContainer;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Getter
-@AllArgsConstructor
-public enum Currency implements ResourceContainer {
-    USD("USD"),
-    EUR("EUR"),
-    BYN("BYN");
-
-    private String name;
+public enum Currency {
+    @JsonProperty("USD")
+    USD,
+    @JsonProperty("EUR")
+    EUR,
+    @JsonProperty("BYN")
+    BYN
 }

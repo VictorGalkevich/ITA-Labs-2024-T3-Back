@@ -2,28 +2,31 @@ package com.ventionteams.applicationexchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ventionteams.applicationexchange.entity.Image;
-import com.ventionteams.applicationexchange.entity.Location;
+import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
-import com.ventionteams.applicationexchange.entity.enumeration.Size;
-import com.ventionteams.applicationexchange.entity.enumeration.Status;
-import lombok.Builder;
-
+import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import java.util.List;
 
-@Builder
-public record LotUpdateDTO (
+public record LotUpdateDTO(
         String title,
         @JsonProperty("category_id")
         Integer categoryId,
         Long quantity,
+        Weight weight,
         @JsonProperty("price_per_unit")
         Double pricePerUnit,
-        Location location,
+        LocationCreateDto location,
         String description,
         Status status,
         @JsonProperty("image_url")
         List<Image> images,
+        LotStatus status,
         String variety,
         Integer size,
-        Packaging packaging) {
+        @JsonProperty("expiration_days")
+        Integer days,
+        Packaging packaging,
+        @JsonProperty("length_unit")
+        LengthUnit lengthUnit) {
 }

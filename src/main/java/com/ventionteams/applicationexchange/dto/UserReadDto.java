@@ -1,9 +1,12 @@
 package com.ventionteams.applicationexchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.Role;
 
-public record UserReadDto (
+import java.util.List;
+
+public record UserReadDto(
 
         @JsonProperty("user_id")
         Long id,
@@ -13,5 +16,8 @@ public record UserReadDto (
         String lastName,
         String email,
         Role role,
-        String phoneNumber) {
+        String phoneNumber,
+        @JsonProperty("preferred_currency")
+        Currency currency,
+        List<BidReadDto> bids) {
 }

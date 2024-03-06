@@ -18,3 +18,7 @@ spring:
         jwt:
           jwk-set-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_pVgpqPThD/.well-known/jwks.json
           issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_pVgpqPThD
+aws:
+  accessKey: AKIAXYKJRCXIYC3CQZUQ
+  secretAccessKey: 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
+  bucketName: ita-labs-2024-t3

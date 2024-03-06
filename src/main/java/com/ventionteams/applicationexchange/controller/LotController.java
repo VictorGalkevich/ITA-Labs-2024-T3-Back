@@ -4,6 +4,7 @@ import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
@@ -17,6 +18,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +32,7 @@ import static org.springframework.http.ResponseEntity.*;
 @RequiredArgsConstructor
 public class LotController {
     private final LotService lotService;
+    private final ImageService imageService;
 
     @GetMapping("/{id}")
     public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id) {
@@ -38,8 +43,8 @@ public class LotController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot) {
-        return ok(lotService.create(lot));
+    public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot, @RequestBody List<MultipartFile> files) {
+        return ok(imageService.saveListImages(files, lotService.create(lot)));
     }
 
     @PutMapping("/{id}")

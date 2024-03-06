@@ -1,6 +1,7 @@
 package com.ventionteams.applicationexchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.entity.Location;
 import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,11 +29,11 @@ public class LotReadDTO {
     private Weight weight;
     @JsonProperty("price_per_unit")
     private Double pricePerUnit;
+    @JsonProperty("image_url")
+    private List<Image> images;
     private Location location;
     private String description;
     private LotStatus status;
-    //    @JsonProperty("image_url")
-//    String imageUrl,
     @JsonProperty("expiration_date")
     private Instant expirationDate;
     private String variety;

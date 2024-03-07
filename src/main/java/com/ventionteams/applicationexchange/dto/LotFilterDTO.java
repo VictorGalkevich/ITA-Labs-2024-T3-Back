@@ -1,5 +1,6 @@
 package com.ventionteams.applicationexchange.dto;
 
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 
@@ -14,5 +15,6 @@ public record LotFilterDTO (
     Long fromQuantity,
     Long toQuantity,
     Integer fromSize,
-    Integer toSize
+    Integer toSize,
+    LotStatus lotStatus
 ){}

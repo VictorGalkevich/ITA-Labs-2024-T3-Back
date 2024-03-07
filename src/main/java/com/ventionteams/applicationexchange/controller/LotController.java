@@ -4,12 +4,11 @@ import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
-import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
-import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import com.ventionteams.applicationexchange.service.LotService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -22,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.*;
@@ -33,6 +31,20 @@ import static org.springframework.http.ResponseEntity.*;
 public class LotController {
     private final LotService lotService;
     private final ImageService imageService;
+
+    @GetMapping
+    public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
+                                                                       @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                                       @RequestParam(required = false) LotStatus lotStatus,
+                                                                       @RequestParam(required = false) LotSortField sortField,
+                                                                       @RequestParam(required = false) Sort.Direction sortOrder) {
+        final LotFilterDTO filter = new LotFilterDTO(null, null, null, null, null, null, null, null, null, lotStatus);
+        final LotSortCriteria sort = LotSortCriteria.builder()
+                .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
+                .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
+                .build();
+        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, 123123L)));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id) {

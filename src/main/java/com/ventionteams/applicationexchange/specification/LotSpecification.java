@@ -2,6 +2,7 @@ package com.ventionteams.applicationexchange.specification;
 
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.entity.Lot;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -27,7 +28,8 @@ public class LotSpecification {
                 .and(filter.fromQuantity() == null ? null : fromQuantity(filter.fromQuantity()))
                 .and(filter.toQuantity() == null ? null : toQuantity(filter.toQuantity()))
                 .and(filter.fromSize() == null ? null : fromSize(filter.fromSize()))
-                .and(filter.toSize() == null ? null : toSize(filter.toSize()));
+                .and(filter.toSize() == null ? null : toSize(filter.toSize()))
+                .and(filter.lotStatus() == null ? null : inLotStatus(filter.lotStatus()));
     }
 
     public static Specification<Lot> inCategories(Integer category) {
@@ -98,5 +100,10 @@ public class LotSpecification {
     private static Specification<Lot> toSize(Integer toSize) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.lessThanOrEqualTo(root.get("size"), toSize);
+    }
+
+    private static Specification<Lot> inLotStatus(LotStatus lotStatus) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("status"), lotStatus);
     }
 }

@@ -29,6 +29,8 @@ public class LotSpecification {
                 .and(filter.toQuantity() == null ? null : toQuantity(filter.toQuantity()))
                 .and(filter.fromSize() == null ? null : fromSize(filter.fromSize()))
                 .and(filter.toSize() == null ? null : toSize(filter.toSize()))
+                .and(filter.fromPrice() == null ? null : fromPrice(filter.fromPrice()))
+                .and(filter.toPrice() == null ? null : toPrice(filter.toPrice()))
                 .and(filter.lotStatus() == null ? null : inLotStatus(filter.lotStatus()));
     }
 
@@ -72,10 +74,10 @@ public class LotSpecification {
         };
     }
 
-    private static Specification<Lot> inVarieties(List<String> varieties) {
+    private static Specification<Lot> inVarieties(List<Integer> varieties) {
         return (root, query, criteriaBuilder) -> {
-            CriteriaBuilder.In<String> inClause = criteriaBuilder.in(root.get("variety"));
-            for (String variety : varieties) {
+            CriteriaBuilder.In<Integer> inClause = criteriaBuilder.in(root.get("category").get("id"));
+            for (Integer variety : varieties) {
                 inClause.value(variety);
             }
             return inClause;
@@ -105,5 +107,15 @@ public class LotSpecification {
     private static Specification<Lot> inLotStatus(LotStatus lotStatus) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("status"), lotStatus);
+    }
+
+    private static Specification<Lot> fromPrice(Integer fromPrice) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.greaterThanOrEqualTo(root.get("totalPrice"), fromPrice);
+    }
+
+    private static Specification<Lot> toPrice(Integer toPrice) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.lessThanOrEqualTo(root.get("totalPrice"), toPrice);
     }
 }

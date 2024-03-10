@@ -14,7 +14,7 @@ public class DataSelectorController {
     @GetMapping
     public DataSelection getData() {
         return new DataSelection(getList(Packaging.class), getList(Weight.class),
-                getList(Size.class), getList(Role.class), getList(LotStatus.class), getList(Currency.class));
+                getList(LengthUnit.class), getList(Role.class), getList(LotStatus.class), getList(Currency.class));
     }
 
     public static <T extends Enum<T>> T[] getList(Class<T> enumeration) {
@@ -24,7 +24,7 @@ public class DataSelectorController {
     public record DataSelection(
             Packaging[] packaging,
             Weight[] weight,
-            Size[] size,
+            LengthUnit[] lengthUnits,
             Role[] role,
             LotStatus[] status,
             Currency[] currency

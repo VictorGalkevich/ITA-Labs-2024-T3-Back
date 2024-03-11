@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +48,7 @@ public class CategoryController {
     @GetMapping("/{id}/lots")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                            @AuthenticationPrincipal Authentication principal,
                                                             @PathVariable("id") @Min(1) @Max(1000) Integer category,
                                                             @RequestParam(required = false) List<Packaging> packaging,
                                                             @RequestParam(required = false) List<Integer> locations,
@@ -63,16 +67,19 @@ public class CategoryController {
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
-        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, 123123L)));
+        UserReadDto user = (UserReadDto) principal.getPrincipal();
+        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, user.id())));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<CategoryReadDto> create(@RequestBody CategoryCreateEditDto dto) {
         return ok().body(categoryService.create(dto));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<CategoryReadDto> update(@PathVariable("id") Integer id,
                                                   @RequestBody CategoryCreateEditDto dto) {
         return categoryService.update(id, dto)
@@ -81,6 +88,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         return categoryService.delete(id)
                 ? noContent().build()

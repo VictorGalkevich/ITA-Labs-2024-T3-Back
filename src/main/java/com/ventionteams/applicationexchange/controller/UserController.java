@@ -12,6 +12,9 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +26,7 @@ import static org.springframework.http.ResponseEntity.*;
 public class UserController {
     private final UserService userService;
     private final BidService bidService;
+    private static final String EMPTY = "";
 
     @GetMapping
     public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
@@ -51,18 +55,29 @@ public class UserController {
         return ok().body(userService.create(dto));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserReadDto> update(@PathVariable("id") Long id,
+    @PutMapping
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
+    public ResponseEntity<UserReadDto> update(@AuthenticationPrincipal Authentication principal,
                                               @RequestBody @Validated UserCreateEditDto dto) {
-        return userService.update(id, dto)
+        UserReadDto user = (UserReadDto) principal.getPrincipal();
+        return userService.update(user.id(), dto)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        return userService.delete(id)
+    @DeleteMapping
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication principal) {
+        UserReadDto user = (UserReadDto) principal.getPrincipal();
+        return userService.delete(user.id())
                 ? noContent().build()
                 : notFound().build();
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
+    public ResponseEntity<UserReadDto> findSelf(@AuthenticationPrincipal Authentication principal) {
+        UserReadDto user = (UserReadDto) principal.getPrincipal();
+        return ok().body(user);
     }
 }

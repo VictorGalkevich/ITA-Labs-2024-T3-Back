@@ -1,5 +1,6 @@
 package com.ventionteams.applicationexchange.entity;
 
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
@@ -56,9 +57,6 @@ public class Lot extends AuditingEntity {
     @OneToMany(mappedBy = "lot")
     private List<Image> images = new ArrayList<>();
 
-    @Column(nullable = false, name = "variety")
-    private String variety;
-
     @Column(nullable = false, name = "size")
     private Integer size;
 
@@ -78,4 +76,8 @@ public class Lot extends AuditingEntity {
 
     @Column(nullable = false, name = "total_price")
     private Double totalPrice;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "currency")
+    private Currency currency;
 }

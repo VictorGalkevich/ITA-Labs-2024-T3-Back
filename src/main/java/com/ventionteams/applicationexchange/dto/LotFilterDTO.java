@@ -10,11 +10,13 @@ public record LotFilterDTO (
     Integer category,
     List<Packaging> packaging,
     List<Integer> locations,
-    List<String> varieties,
+    List<Integer> varieties,
     List<Weight> weights,
     Long fromQuantity,
     Long toQuantity,
     Integer fromSize,
     Integer toSize,
+    Integer fromPrice,
+    Integer toPrice,
     LotStatus lotStatus
 ){}

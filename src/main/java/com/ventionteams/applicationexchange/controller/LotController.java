@@ -38,7 +38,7 @@ public class LotController {
                                                                        @RequestParam(required = false) LotStatus lotStatus,
                                                                        @RequestParam(required = false) LotSortField sortField,
                                                                        @RequestParam(required = false) Sort.Direction sortOrder) {
-        final LotFilterDTO filter = new LotFilterDTO(null, null, null, null, null, null, null, null, null, lotStatus);
+        final LotFilterDTO filter = new LotFilterDTO(null, null, null, null, null, null, null, null, null, null, null, lotStatus);
         final LotSortCriteria sort = LotSortCriteria.builder()
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))

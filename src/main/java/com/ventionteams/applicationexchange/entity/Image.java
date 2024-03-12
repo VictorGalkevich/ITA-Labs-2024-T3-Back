@@ -1,7 +1,10 @@
 package com.ventionteams.applicationexchange.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +21,6 @@ public class Image {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name="lot_id", nullable=false)
+    @JoinColumn(name = "lot_id", nullable = false)
     private Lot lot;
 }

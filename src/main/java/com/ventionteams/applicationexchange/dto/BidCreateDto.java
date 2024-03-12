@@ -6,13 +6,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class BidCreateDto {
-        private Long userId;
-        @JsonProperty("lot_id")
-        private Long lotId;
-        private Long amount;
-        private Currency currency;
+    private UUID userId;
+    @JsonProperty("lot_id")
+    private Long lotId;
+    private Long amount;
+    private Currency currency;
 }

@@ -1,6 +1,6 @@
 package com.ventionteams.applicationexchange.filter;
 
-import com.ventionteams.applicationexchange.dto.UserReadDto;
+import com.ventionteams.applicationexchange.dto.UserAuthDto;
 import com.ventionteams.applicationexchange.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,12 +12,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final TokenService service;
     public static final String TOKEN_PREFIX = "Bearer ";
+
     @Override
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse resp,
@@ -30,12 +30,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = authorizationHeader.replace(TOKEN_PREFIX, "");
-        UserReadDto userPrincipal = service.parseToken(token);
+        UserAuthDto userPrincipal = service.parseToken(token);
 
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                 userPrincipal,
                 null,
-                List.of(userPrincipal.role())
+                userPrincipal.authorities()
         ));
     }
 

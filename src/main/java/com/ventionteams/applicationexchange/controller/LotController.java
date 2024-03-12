@@ -2,10 +2,10 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.*;
-import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
-import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.service.LotService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
 import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.*;
@@ -44,14 +43,14 @@ public class LotController {
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
-        UserReadDto user = (UserReadDto) principal.getPrincipal();
+        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
         return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, user.id())));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id,
                                                @AuthenticationPrincipal Authentication principal) {
-        UserReadDto user = (UserReadDto) principal.getPrincipal();
+        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
         return lotService.findById(id, user.id())
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
@@ -65,18 +64,18 @@ public class LotController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
     public ResponseEntity<LotReadDTO> update(@PathVariable("id") Long id,
                                              @RequestBody LotUpdateDTO lotUpdateDTO,
                                              @AuthenticationPrincipal Authentication principal) {
-        UserReadDto user = (UserReadDto) principal.getPrincipal();
+        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
         return lotService.update(id, lotUpdateDTO, user.id())
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         return lotService.delete(id)
                 ? noContent().build()

@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 
 public enum Role implements GrantedAuthority {
-    @JsonProperty("employee")
     EMPLOYEE,
-    @JsonProperty("administrator")
+    @JsonProperty("ADMIN")
     ADMINISTRATOR,
-    @JsonProperty("user")
     USER;
 
     @Override

@@ -47,27 +47,27 @@ public class CategoryController {
 
     @GetMapping("/{id}/lots")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
-                                                            @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
-                                                            @AuthenticationPrincipal Authentication principal,
-                                                            @PathVariable("id") @Min(1) @Max(1000) Integer category,
-                                                            @RequestParam(required = false) List<Packaging> packaging,
-                                                            @RequestParam(required = false) List<Integer> locations,
-                                                            @RequestParam(required = false) List<Integer> varieties,
-                                                            @RequestParam(required = false) List<Weight> weights,
-                                                            @RequestParam(required = false) @Min(1) @Max(1000) Long fromQuantity,
-                                                            @RequestParam(required = false) @Min(1) @Max(1000) Long toQuantity,
-                                                            @RequestParam(required = false) @Min(1) @Max(1000) Integer fromSize,
-                                                            @RequestParam(required = false) @Min(1) @Max(1000) Integer toSize,
-                                                            @RequestParam(required = false) @Min(1) @Max(100000) Integer fromPrice,
-                                                            @RequestParam(required = false) @Min(1) @Max(100000) Integer toPrice,
-                                                            @RequestParam(required = false) LotSortField sortField,
-                                                            @RequestParam(required = false) Sort.Direction sortOrder) {
+                                                                       @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                                       @AuthenticationPrincipal Authentication principal,
+                                                                       @PathVariable("id") @Min(1) @Max(1000) Integer category,
+                                                                       @RequestParam(required = false) List<Packaging> packaging,
+                                                                       @RequestParam(required = false) List<Integer> locations,
+                                                                       @RequestParam(required = false) List<Integer> varieties,
+                                                                       @RequestParam(required = false) List<Weight> weights,
+                                                                       @RequestParam(required = false) @Min(1) @Max(1000) Long fromQuantity,
+                                                                       @RequestParam(required = false) @Min(1) @Max(1000) Long toQuantity,
+                                                                       @RequestParam(required = false) @Min(1) @Max(1000) Integer fromSize,
+                                                                       @RequestParam(required = false) @Min(1) @Max(1000) Integer toSize,
+                                                                       @RequestParam(required = false) @Min(1) @Max(100000) Integer fromPrice,
+                                                                       @RequestParam(required = false) @Min(1) @Max(100000) Integer toPrice,
+                                                                       @RequestParam(required = false) LotSortField sortField,
+                                                                       @RequestParam(required = false) Sort.Direction sortOrder) {
         final LotFilterDTO filter = new LotFilterDTO(category, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize, fromPrice, toPrice, LotStatus.ACTIVE);
         final LotSortCriteria sort = LotSortCriteria.builder()
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
-        UserReadDto user = (UserReadDto) principal.getPrincipal();
+        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
         return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, user.id())));
     }
 

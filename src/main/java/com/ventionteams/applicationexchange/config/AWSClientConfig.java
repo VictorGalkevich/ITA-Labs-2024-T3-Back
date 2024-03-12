@@ -21,10 +21,10 @@ public class AWSClientConfig {
 
     @Bean
     public AmazonS3 amazonS3() {
-         return AmazonS3ClientBuilder
-                 .standard()
-                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(configProperties.getAccessKey(), configProperties.getSecretAccessKey())))
-                 .withRegion(region.toString())
-                 .build();
-     }
+        return AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(configProperties.getAccessKey(), configProperties.getSecretAccessKey())))
+                .withRegion(region.toString())
+                .build();
+    }
 }

@@ -1,10 +1,7 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.BidReadDto;
-import com.ventionteams.applicationexchange.dto.PageResponse;
-import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
-import com.ventionteams.applicationexchange.dto.UserReadDto;
+import com.ventionteams.applicationexchange.dto.*;
 import com.ventionteams.applicationexchange.service.BidService;
 import com.ventionteams.applicationexchange.service.UserService;
 import jakarta.validation.constraints.Max;
@@ -18,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 import static org.springframework.http.ResponseEntity.*;
 
 @ValidatedController
@@ -26,7 +25,6 @@ import static org.springframework.http.ResponseEntity.*;
 public class UserController {
     private final UserService userService;
     private final BidService bidService;
-    private static final String EMPTY = "";
 
     @GetMapping
     public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
@@ -35,31 +33,36 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserReadDto> findById(@PathVariable("id") Long id) {
-        return userService.findById(id)
+    public ResponseEntity<UserReadDto> findById(@PathVariable("id") String id) {
+        return userService.findById(UUID.fromString(id))
                 .map(obj -> ok()
                         .body(obj))
                 .orElseGet(notFound()::build);
     }
 
-    @GetMapping("/{id}/bids")
-    public ResponseEntity<PageResponse<BidReadDto>> findById(@PathVariable("id") Long id,
+    @GetMapping("/bids")
+    public ResponseEntity<PageResponse<BidReadDto>> findById(@AuthenticationPrincipal Authentication principal,
                                                              @RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                              @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
-        return ok().body(PageResponse.of(bidService.findBidsByUserId(id, page, limit)));
+        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+        return ok().body(PageResponse.of(bidService.findBidsByUserId(user.id(), page, limit)));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserCreateEditDto dto) {
+    public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserData data,
+                                              @AuthenticationPrincipal Authentication principal) {
+        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+        UserCreateEditDto dto = toDto(user, data);
         return ok().body(userService.create(dto));
     }
 
     @PutMapping
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
     public ResponseEntity<UserReadDto> update(@AuthenticationPrincipal Authentication principal,
-                                              @RequestBody @Validated UserCreateEditDto dto) {
-        UserReadDto user = (UserReadDto) principal.getPrincipal();
+                                              @RequestBody @Validated UserData data) {
+        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+        UserCreateEditDto dto = toDto(user, data);
         return userService.update(user.id(), dto)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
@@ -68,7 +71,7 @@ public class UserController {
     @DeleteMapping
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
     public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication principal) {
-        UserReadDto user = (UserReadDto) principal.getPrincipal();
+        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
         return userService.delete(user.id())
                 ? noContent().build()
                 : notFound().build();
@@ -77,7 +80,22 @@ public class UserController {
     @GetMapping("/me")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
     public ResponseEntity<UserReadDto> findSelf(@AuthenticationPrincipal Authentication principal) {
-        UserReadDto user = (UserReadDto) principal.getPrincipal();
-        return ok().body(user);
+        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+        return userService.findById(user.id())
+                .map(obj -> ok()
+                        .body(obj))
+                .orElseGet(notFound()::build);
+    }
+
+    private UserCreateEditDto toDto(UserAuthDto user, UserData data) {
+        return new UserCreateEditDto(
+                user.id(),
+                data.firstName(),
+                data.lastName(),
+                data.email(),
+                user.authorities().getFirst(),
+                data.phoneNumber(),
+                data.currency()
+        );
     }
 }

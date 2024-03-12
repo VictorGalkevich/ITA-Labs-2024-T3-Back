@@ -20,4 +20,7 @@ public class Image {
     @ManyToOne
     @JoinColumn(name="lot_id", nullable=false)
     private Lot lot;
+
+    @Transient
+    private byte[] bytes;
 }

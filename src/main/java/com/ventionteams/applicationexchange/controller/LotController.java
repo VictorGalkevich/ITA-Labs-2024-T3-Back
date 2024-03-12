@@ -1,10 +1,16 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
+import com.ventionteams.applicationexchange.dto.LocationCreateDto;
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.entity.Location;
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
+import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
+import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
@@ -19,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.Optional;
@@ -48,14 +55,18 @@ public class LotController {
 
     @GetMapping("/{id}")
     public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id) {
-        return lotService.findById(id, 123123L)
+        return imageService.getListImages(lotService.findById(id, 123123L))
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot, @RequestBody List<MultipartFile> files) {
+    public ResponseEntity<LotReadDTO> create(/*@RequestBody LotUpdateDTO lot,*/ @RequestBody List<MultipartFile> files) {
+        LocationCreateDto location = new LocationCreateDto("Belarus", "Minsk");
+
+    LotUpdateDTO lot = new LotUpdateDTO("banana", 3, 1000L, Weight.PCS, 1.2, location, "", new ArrayList<>(), LotStatus.MODERATED, 100, 7, Packaging.BAG, LengthUnit.CENTIMETER, Currency.USD);
+
         return ok(imageService.saveListImages(files, lotService.create(lot)));
     }
 

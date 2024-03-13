@@ -32,6 +32,7 @@ public class LotController {
     private final ImageService imageService;
 
     @GetMapping
+    @PreAuthorize("permitAll()")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
                                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                        @RequestParam(required = false) LotStatus lotStatus,
@@ -48,6 +49,7 @@ public class LotController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id,
                                                @AuthenticationPrincipal Authentication principal) {
         UserAuthDto user = (UserAuthDto) principal.getPrincipal();
@@ -58,13 +60,13 @@ public class LotController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot, @RequestBody List<MultipartFile> files) {
         return ok(imageService.saveListImages(files, lotService.create(lot)));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<LotReadDTO> update(@PathVariable("id") Long id,
                                              @RequestBody LotUpdateDTO lotUpdateDTO,
                                              @AuthenticationPrincipal Authentication principal) {
@@ -75,7 +77,7 @@ public class LotController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         return lotService.delete(id)
                 ? noContent().build()

@@ -2,6 +2,7 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.entity.enumeration.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DataSelectorController {
 
     @GetMapping
+    @PreAuthorize("permitAll()")
     public DataSelection getData() {
         return new DataSelection(getList(Packaging.class), getList(Weight.class),
                 getList(LengthUnit.class), getList(Role.class), getList(LotStatus.class), getList(Currency.class));

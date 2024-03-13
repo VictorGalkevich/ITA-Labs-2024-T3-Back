@@ -14,7 +14,6 @@ import java.util.Optional;
 public class AuditionConfiguration {
     @Bean
     public AuditorAware<String> auditorAware() {
-        //user from security context
         return () -> Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(authentication -> (UserAuthDto) authentication.getPrincipal())
                 .map(user -> user.id().toString());

@@ -27,13 +27,14 @@ public class BidController {
     private final BidService bidService;
 
     @GetMapping
+    @PreAuthorize("permitAll()")
     public ResponseEntity<PageResponse<BidReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
         return ok().body(PageResponse.of(bidService.findAll(page, limit)));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<BidReadDto> findById(@PathVariable("id") Long id) {
         return bidService.findById(id)
                 .map(obj -> ok()
@@ -43,7 +44,7 @@ public class BidController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<BidReadDto> create(@RequestBody BidCreateDto dto,
                                              @AuthenticationPrincipal Authentication principal) {
         UserReadDto user = (UserReadDto) principal.getPrincipal();

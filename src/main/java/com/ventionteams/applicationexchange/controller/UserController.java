@@ -27,14 +27,12 @@ public class UserController {
     private final BidService bidService;
 
     @GetMapping
-    @PreAuthorize("permitAll()")
     public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                              @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
         return ok().body(PageResponse.of(userService.findAll(page, limit)));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<UserReadDto> findById(@PathVariable("id") String id) {
         return userService.findById(UUID.fromString(id))
                 .map(obj -> ok()
@@ -43,7 +41,6 @@ public class UserController {
     }
 
     @GetMapping("/bids")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<PageResponse<BidReadDto>> findById(@AuthenticationPrincipal Authentication principal,
                                                              @RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                              @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
@@ -53,7 +50,6 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("permitAll()")
     public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserData data,
                                               @AuthenticationPrincipal Authentication principal) {
         UserAuthDto user = (UserAuthDto) principal.getPrincipal();

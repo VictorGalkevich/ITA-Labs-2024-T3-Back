@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class DataSelectorController {
 
     @GetMapping
-    @PreAuthorize("permitAll()")
     public DataSelection getData() {
         return new DataSelection(getList(Packaging.class), getList(Weight.class),
                 getList(LengthUnit.class), getList(Role.class), getList(LotStatus.class), getList(Currency.class));

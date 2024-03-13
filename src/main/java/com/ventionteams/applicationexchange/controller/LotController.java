@@ -32,7 +32,6 @@ public class LotController {
     private final ImageService imageService;
 
     @GetMapping
-    @PreAuthorize("permitAll()")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
                                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                        @RequestParam(required = false) LotStatus lotStatus,
@@ -49,7 +48,6 @@ public class LotController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id,
                                                @AuthenticationPrincipal Authentication principal) {
         UserAuthDto user = (UserAuthDto) principal.getPrincipal();

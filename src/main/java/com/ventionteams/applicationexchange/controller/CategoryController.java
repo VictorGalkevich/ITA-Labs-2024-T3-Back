@@ -33,13 +33,11 @@ public class CategoryController {
     private final LotService lotService;
 
     @GetMapping
-    @PreAuthorize("permitAll()")
     public ResponseEntity<List<MainPageCategoryReadDto>> findAll() {
         return ok().body(categoryService.findAll());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<CategoryReadDto> findById(@PathVariable("id") Integer id) {
         return categoryService.findById(id)
                 .map(obj -> ok()
@@ -48,7 +46,6 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}/lots")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
                                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                        @AuthenticationPrincipal Authentication principal,

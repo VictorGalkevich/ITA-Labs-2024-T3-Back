@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -67,13 +66,11 @@ public class LotController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot, @RequestBody List<MultipartFile> files) {
         return ok(imageService.saveListImages(files, lotService.create(lot)));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<LotReadDTO> update(@PathVariable("id") Long id,
                                              @RequestBody LotUpdateDTO lotUpdateDTO,
                                              @AuthenticationPrincipal Authentication principal) {
@@ -84,7 +81,6 @@ public class LotController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         return lotService.delete(id)
                 ? noContent().build()

@@ -35,11 +35,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET,
-                                "/bids", "/bids/**",
-                                "/categories", "/categories/**", "categories/*/lots",
+                                 "/bids/**",
+                                 "/categories/**",
                                 "/data-selection",
-                                "/lots", "/lots/**",
-                                "/users", "/users/**"
+                                "/lots/**"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -69,8 +68,9 @@ public class SecurityConfig {
             Map<String, Object> claims = jwt.getClaims();
             UUID sub = UUID.fromString((String) claims.get("sub"));
             String email = (String) claims.get("email");
-            Object first = ((List<Object>) claims.get("cognito:groups")).getFirst();
-            List<Role> authorities = List.of(Role.valueOf((String) first));
+            List<Role> authorities = ((List<Object>) claims.get("cognito:groups")).stream()
+                    .map(x -> Role.valueOf((String) x))
+                    .toList();
             UserAuthDto dto = new UserAuthDto(sub, email, authorities);
             return new UsernamePasswordAuthenticationToken(
                     dto, null, authorities

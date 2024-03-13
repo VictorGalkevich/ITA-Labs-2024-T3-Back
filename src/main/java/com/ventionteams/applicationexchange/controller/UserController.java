@@ -51,7 +51,6 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserData data,
                                               @AuthenticationPrincipal Authentication principal) {
         UserAuthDto user = (UserAuthDto) principal.getPrincipal();
@@ -60,7 +59,6 @@ public class UserController {
     }
 
     @PutMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<UserReadDto> update(@AuthenticationPrincipal Authentication principal,
                                               @RequestBody @Validated UserData data) {
         UserAuthDto user = (UserAuthDto) principal.getPrincipal();
@@ -71,7 +69,6 @@ public class UserController {
     }
 
     @DeleteMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication principal) {
         UserAuthDto user = (UserAuthDto) principal.getPrincipal();
         return userService.delete(user.id())

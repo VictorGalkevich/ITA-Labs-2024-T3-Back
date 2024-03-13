@@ -1,10 +1,6 @@
 package com.ventionteams.applicationexchange.entity;
 
-import com.ventionteams.applicationexchange.entity.enumeration.Currency;
-import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
-import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
-import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
-import com.ventionteams.applicationexchange.entity.enumeration.Weight;
+import com.ventionteams.applicationexchange.entity.enumeration.*;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.EqualsAndHashCode.Include;
@@ -53,7 +49,7 @@ public class Lot extends AuditingEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "status")
     private LotStatus status;
-  
+
     @OneToMany(mappedBy = "lot")
     private List<Image> images = new ArrayList<>();
 

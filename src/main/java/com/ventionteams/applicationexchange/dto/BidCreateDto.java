@@ -2,14 +2,19 @@ package com.ventionteams.applicationexchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-public record BidCreateDto(
-        @JsonProperty("user_id")
-        Long userId,
-        @JsonProperty("lot_id")
-        Long lotId,
-        Long amount,
-        Currency currency
-) {
+import java.util.UUID;
 
+@Getter
+@Setter
+@RequiredArgsConstructor
+public class BidCreateDto {
+    private UUID userId;
+    @JsonProperty("lot_id")
+    private Long lotId;
+    private Long amount;
+    private Currency currency;
 }

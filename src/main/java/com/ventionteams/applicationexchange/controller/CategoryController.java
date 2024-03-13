@@ -15,10 +15,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -44,35 +48,43 @@ public class CategoryController {
 
     @GetMapping("/{id}/lots")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
-                                                            @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
-                                                            @PathVariable("id") @Min(1) @Max(1000) Integer category,
-                                                            @RequestParam(required = false) List<Packaging> packaging,
-                                                            @RequestParam(required = false) List<Integer> locations,
-                                                            @RequestParam(required = false) List<Integer> varieties,
-                                                            @RequestParam(required = false) List<Weight> weights,
-                                                            @RequestParam(required = false) @Min(1) @Max(1000) Long fromQuantity,
-                                                            @RequestParam(required = false) @Min(1) @Max(1000) Long toQuantity,
-                                                            @RequestParam(required = false) @Min(1) @Max(1000) Integer fromSize,
-                                                            @RequestParam(required = false) @Min(1) @Max(1000) Integer toSize,
-                                                            @RequestParam(required = false) @Min(1) @Max(100000) Integer fromPrice,
-                                                            @RequestParam(required = false) @Min(1) @Max(100000) Integer toPrice,
-                                                            @RequestParam(required = false) LotSortField sortField,
-                                                            @RequestParam(required = false) Sort.Direction sortOrder) {
+                                                                       @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                                       @AuthenticationPrincipal Authentication principal,
+                                                                       @PathVariable("id") @Min(1) @Max(1000) Integer category,
+                                                                       @RequestParam(required = false) List<Packaging> packaging,
+                                                                       @RequestParam(required = false) List<Integer> locations,
+                                                                       @RequestParam(required = false) List<Integer> varieties,
+                                                                       @RequestParam(required = false) List<Weight> weights,
+                                                                       @RequestParam(required = false) @Min(1) @Max(1000) Long fromQuantity,
+                                                                       @RequestParam(required = false) @Min(1) @Max(1000) Long toQuantity,
+                                                                       @RequestParam(required = false) @Min(1) @Max(1000) Integer fromSize,
+                                                                       @RequestParam(required = false) @Min(1) @Max(1000) Integer toSize,
+                                                                       @RequestParam(required = false) @Min(1) @Max(100000) Integer fromPrice,
+                                                                       @RequestParam(required = false) @Min(1) @Max(100000) Integer toPrice,
+                                                                       @RequestParam(required = false) LotSortField sortField,
+                                                                       @RequestParam(required = false) Sort.Direction sortOrder) {
         final LotFilterDTO filter = new LotFilterDTO(category, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize, fromPrice, toPrice, LotStatus.ACTIVE);
         final LotSortCriteria sort = LotSortCriteria.builder()
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
-        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, 123123L)));
+        UUID id = null;
+        if (principal != null) {
+            UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+            id = user.id();
+        }
+        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, id)));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<CategoryReadDto> create(@RequestBody CategoryCreateEditDto dto) {
         return ok().body(categoryService.create(dto));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<CategoryReadDto> update(@PathVariable("id") Integer id,
                                                   @RequestBody CategoryCreateEditDto dto) {
         return categoryService.update(id, dto)
@@ -81,6 +93,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         return categoryService.delete(id)
                 ? noContent().build()

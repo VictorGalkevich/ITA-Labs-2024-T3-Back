@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -43,15 +44,23 @@ public class LotController {
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
-        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
-        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, user.id())));
+        UUID id = null;
+        if (principal != null) {
+            UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+            id = user.id();
+        }
+        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, id)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id,
                                                @AuthenticationPrincipal Authentication principal) {
-        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
-        return lotService.findById(id, user.id())
+        UUID uuid = null;
+        if (principal != null) {
+            UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+            uuid = user.id();
+        }
+        return lotService.findById(id, uuid)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }

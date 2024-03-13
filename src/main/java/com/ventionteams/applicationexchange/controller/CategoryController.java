@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -67,8 +68,12 @@ public class CategoryController {
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
-        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
-        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, user.id())));
+        UUID id = null;
+        if (principal != null) {
+            UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+            id = user.id();
+        }
+        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, id)));
     }
 
     @PostMapping

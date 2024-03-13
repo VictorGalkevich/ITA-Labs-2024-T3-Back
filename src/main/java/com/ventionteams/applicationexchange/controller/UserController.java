@@ -41,6 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/bids")
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PageResponse<BidReadDto>> findById(@AuthenticationPrincipal Authentication principal,
                                                              @RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                              @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
@@ -50,6 +51,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserData data,
                                               @AuthenticationPrincipal Authentication principal) {
         UserAuthDto user = (UserAuthDto) principal.getPrincipal();

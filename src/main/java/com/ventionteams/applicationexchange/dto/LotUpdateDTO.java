@@ -22,6 +22,8 @@ public record LotUpdateDTO(
         @JsonProperty("image_url")
         List<Image> images,
         LotStatus status,
+        @JsonProperty("start_price")
+        Double startPrice,
         Integer size,
         @JsonProperty("expiration_days")
         Integer days,

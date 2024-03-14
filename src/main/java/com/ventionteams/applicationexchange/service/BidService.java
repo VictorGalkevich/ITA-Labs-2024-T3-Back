@@ -48,9 +48,9 @@ public class BidService {
                 .orElseThrow();
     }
 
-    public Page<BidReadDto> findBidsByUserId(UUID id, Integer page, Integer limit) {
+    public Page<BidReadDto> findBidsByUserId(UUID id, Integer page, Integer limit, BidStatus status) {
         PageRequest req = PageRequest.of(page - 1, limit);
-        return bidRepository.findAllByUserId(id, req)
+        return bidRepository.findAllByUserIdAndStatus(id, req, status)
                 .map(bidMapper::toReadDto);
     }
 

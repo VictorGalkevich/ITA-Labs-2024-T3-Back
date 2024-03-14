@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface BidRepository extends JpaRepository<Bid, Long> {
-    Page<Bid> findAllByUserId(UUID id, PageRequest req);
+    Page<Bid> findAllByUserIdAndStatus(UUID id, PageRequest req, BidStatus status);
 
     Optional<Bid> findByLotIdAndStatus(Long id, BidStatus status);
 

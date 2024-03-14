@@ -2,6 +2,7 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.*;
+import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.service.BidService;
 import com.ventionteams.applicationexchange.service.UserService;
 import jakarta.validation.constraints.Max;
@@ -44,9 +45,10 @@ public class UserController {
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PageResponse<BidReadDto>> findById(@AuthenticationPrincipal Authentication principal,
                                                              @RequestParam(defaultValue = "1") @Min(1) Integer page,
-                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
+                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                             @RequestParam(defaultValue = "LEADING") BidStatus status) {
         UserAuthDto user = (UserAuthDto) principal.getPrincipal();
-        return ok().body(PageResponse.of(bidService.findBidsByUserId(user.id(), page, limit)));
+        return ok().body(PageResponse.of(bidService.findBidsByUserId(user.id(), page, limit, status)));
     }
 
     @PostMapping

@@ -73,6 +73,9 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "total_price")
     private Double totalPrice;
 
+    @Column(nullable = false, name = "start_price")
+    private Double startPrice;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "currency")
     private Currency currency;

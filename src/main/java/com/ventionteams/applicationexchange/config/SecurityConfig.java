@@ -38,7 +38,9 @@ public class SecurityConfig {
                                  "/bids/**",
                                  "/categories/**",
                                 "/data-selection",
-                                "/lots/**"
+                                "/lots/**",
+                                "/swagger-ui/**",
+                                "/v3/**"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )

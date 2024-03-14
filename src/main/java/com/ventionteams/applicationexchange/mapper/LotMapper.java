@@ -8,8 +8,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 
 @Mapper(config = MapperConfiguration.class, uses = {BidMapper.class, LocationMapper.class})
 public interface LotMapper {
@@ -30,7 +30,7 @@ public interface LotMapper {
     @Mapping(target = "expirationDate", expression = "java(java.time.Instant.now().plusSeconds(86400 * 7 + 60))")
     Lot toLot(LotReadDTO dto);
 
-    default Instant distance(Instant a) {
-        return Instant.now().minus(a.getNano(), ChronoUnit.NANOS);
+    default Duration distance(Instant a) {
+        return Duration.between(a, Instant.now());
     }
 }

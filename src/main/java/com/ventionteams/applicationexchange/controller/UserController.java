@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -42,26 +41,23 @@ public class UserController {
 
     @GetMapping("/bids")
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<PageResponse<BidReadDto>> findById(@AuthenticationPrincipal Authentication principal,
+    public ResponseEntity<PageResponse<BidReadDto>> findById(@AuthenticationPrincipal UserAuthDto user,
                                                              @RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                              @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
-        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
         return ok().body(PageResponse.of(bidService.findBidsByUserId(user.id(), page, limit)));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserData data,
-                                              @AuthenticationPrincipal Authentication principal) {
-        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+                                              @AuthenticationPrincipal UserAuthDto user) {
         UserCreateEditDto dto = toDto(user, data);
         return ok().body(userService.create(dto));
     }
 
     @PutMapping
-    public ResponseEntity<UserReadDto> update(@AuthenticationPrincipal Authentication principal,
+    public ResponseEntity<UserReadDto> update(@AuthenticationPrincipal UserAuthDto user,
                                               @RequestBody @Validated UserData data) {
-        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
         UserCreateEditDto dto = toDto(user, data);
         return userService.update(user.id(), dto)
                 .map(obj -> ok().body(obj))
@@ -69,8 +65,7 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication principal) {
-        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserAuthDto user) {
         return userService.delete(user.id())
                 ? noContent().build()
                 : notFound().build();
@@ -78,8 +73,7 @@ public class UserController {
 
     @GetMapping("/me")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
-    public ResponseEntity<UserReadDto> findSelf(@AuthenticationPrincipal Authentication principal) {
-        UserAuthDto user = (UserAuthDto) principal.getPrincipal();
+    public ResponseEntity<UserReadDto> findSelf(@AuthenticationPrincipal UserAuthDto user) {
         return userService.findById(user.id())
                 .map(obj -> ok()
                         .body(obj))

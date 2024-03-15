@@ -35,18 +35,18 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET,
-                                 "/bids/**",
-                                 "/categories/**",
+                                "/bids/**",
+                                "/categories/**",
                                 "/data-selection",
                                 "/lots/**",
                                 "/swagger-ui/**",
                                 "/v3/**"
-                                ).permitAll()
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt(
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(
                         jwt -> jwt.jwtAuthenticationConverter(
                                 new CustomAuthenticationConverter()
                         )

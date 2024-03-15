@@ -93,7 +93,7 @@ public class UserController {
                 user.id(),
                 data.firstName(),
                 data.lastName(),
-                data.email(),
+                user.email(),
                 user.authorities().getFirst(),
                 data.phoneNumber(),
                 data.currency()

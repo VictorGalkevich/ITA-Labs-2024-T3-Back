@@ -35,13 +35,13 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET,
-                                 "/bids/**",
-                                 "/categories/**",
+                                "/bids/**",
+                                "/categories/**",
                                 "/data-selection",
                                 "/lots/**",
                                 "/swagger-ui/**",
                                 "/v3/**"
-                                ).permitAll()
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

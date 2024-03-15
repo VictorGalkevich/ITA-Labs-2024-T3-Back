@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
@@ -43,8 +42,6 @@ public class LotReadDTO {
     private Instant createdAt;
     @JsonProperty("created_by")
     private String createdBy;
-    @JsonProperty("expires_through")
-    private Duration expiresThrough;
     @JsonProperty("total_price")
     private Double totalPrice;
     @JsonProperty("start_price")

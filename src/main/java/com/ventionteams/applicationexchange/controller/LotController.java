@@ -6,6 +6,7 @@ import com.ventionteams.applicationexchange.dto.LocationCreateDto;
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.dto.UserAuthDto;
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;

@@ -5,7 +5,6 @@ import com.ventionteams.applicationexchange.dto.BidReadDto;
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
-import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
@@ -21,9 +20,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @TransactionalService
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class LotService {
     private final LotMapper lotMapper;
     private final BidMapper bidMapper;
 
-    public Page<LotReadDTO> findAll(Integer page, Integer limit, LotFilterDTO filter, LotSortCriteria sort, Long userId) {
+    public Page<LotReadDTO> findAll(Integer page, Integer limit, LotFilterDTO filter, LotSortCriteria sort, UUID userId) {
         Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
         PageRequest req = PageRequest.of(page - 1, limit, by);
         Specification<Lot> specification = LotSpecification.getFilterSpecification(filter);
@@ -41,7 +40,7 @@ public class LotService {
                 .map(lot -> map(lot, userId));
     }
 
-    public Optional<LotReadDTO> findById(Long lotId, Long userId) {
+    public Optional<LotReadDTO> findById(Long lotId, UUID userId) {
         return lotRepository.findById(lotId)
                 .map(lot -> map(lot, userId));
     }
@@ -70,7 +69,7 @@ public class LotService {
     }
 
     @Transactional
-    public Optional<LotReadDTO> update(Long id, LotUpdateDTO dto, Long userId) {
+    public Optional<LotReadDTO> update(Long id, LotUpdateDTO dto, UUID userId) {
         return lotRepository.findById(id)
                 .map(lot -> {
                     lotMapper.map(lot, dto);
@@ -80,13 +79,7 @@ public class LotService {
                 .map(lot -> map(lot, userId));
     }
 
-    public Page<LotReadDTO> findLotsByCategoryId(Integer id, Integer page, Integer limit, Long userId) {
-        PageRequest req = PageRequest.of(page - 1, limit);
-        return lotRepository.findAllByCategoryId(id, req)
-                .map(lot -> map(lot, userId));
-    }
-
-    private LotReadDTO map(Lot lot, Long userId) {
+    private LotReadDTO map(Lot lot, UUID userId) {
         LotReadDTO lotReadDTO = lotMapper.toLotReadDTO(lot);
         BidReadDto leading = bidMapper.toReadDto(bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING).orElse(null));
         Optional<Bid> bid = bidRepository.findByUserIdAndLotId(userId, lot.getId());

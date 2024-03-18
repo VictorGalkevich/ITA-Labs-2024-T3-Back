@@ -43,10 +43,10 @@ public class LotReadDTO {
     private Instant createdAt;
     @JsonProperty("created_by")
     private String createdBy;
-    @JsonProperty("expires_through")
-    private Instant expiresThrough;
     @JsonProperty("total_price")
     private Double totalPrice;
+    @JsonProperty("start_price")
+    private Double startPrice;
     @JsonProperty("length_unit")
     private LengthUnit lengthUnit;
     private BidReadDto leading;

@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @TransactionalService
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class UserService {
                 .map(userMapper::toUserReadDto);
     }
 
-    public Optional<UserReadDto> findById(Long id) {
+    public Optional<UserReadDto> findById(UUID id) {
         return userRepository.findById(id)
                 .map(userMapper::toUserReadDto);
     }
@@ -44,7 +45,7 @@ public class UserService {
     }
 
     @Transactional
-    public Optional<UserReadDto> update(Long id, UserCreateEditDto dto) {
+    public Optional<UserReadDto> update(UUID id, UserCreateEditDto dto) {
         return userRepository.findById(id)
                 .map(user -> userMapper.toUser(dto))
                 .map(userRepository::saveAndFlush)
@@ -52,7 +53,7 @@ public class UserService {
     }
 
     @Transactional
-    public boolean delete(Long id) {
+    public boolean delete(UUID id) {
         return userRepository.findById(id)
                 .map(category -> {
                     userRepository.delete(category);

@@ -6,6 +6,8 @@ import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 import static lombok.EqualsAndHashCode.Include;
 
 @Data
@@ -23,7 +25,7 @@ public class Bid extends AuditingEntity {
     private Long id;
 
     @Column(nullable = false, name = "user_id")
-    private Long userId;
+    private UUID userId;
 
     @Column(nullable = false, name = "lot_id")
     private Long lotId;

@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.EqualsAndHashCode.Include;
 
+import java.util.UUID;
+
 
 @Data
 @Builder
@@ -16,9 +18,8 @@ import lombok.EqualsAndHashCode.Include;
 @Table(name = "users")
 public class User extends AuditingEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include
-    private Long id;
+    private UUID id;
 
     @Column(nullable = false, name = "first_name")
     private String firstName;

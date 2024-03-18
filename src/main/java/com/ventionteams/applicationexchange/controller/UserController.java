@@ -6,6 +6,7 @@ import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.UserReadDto;
 import com.ventionteams.applicationexchange.entity.Image;
+import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.service.BidService;
 import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.service.UserService;
@@ -14,9 +15,13 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -35,38 +40,64 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserReadDto> findById(@PathVariable("id") Long id) {
-        return userService.findById(id)
+    public ResponseEntity<UserReadDto> findById(@PathVariable("id") String id) {
+        return userService.findById(UUID.fromString(id))
                 .map(obj -> ok()
                         .body(obj))
                 .orElseGet(notFound()::build);
     }
 
-    @GetMapping("/{id}/bids")
-    public ResponseEntity<PageResponse<BidReadDto>> findById(@PathVariable("id") Long id,
+    @GetMapping("/bids")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<PageResponse<BidReadDto>> findById(@AuthenticationPrincipal UserAuthDto user,
                                                              @RequestParam(defaultValue = "1") @Min(1) Integer page,
-                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
-        return ok().body(PageResponse.of(bidService.findBidsByUserId(id, page, limit)));
+                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                             @RequestParam(defaultValue = "LEADING") BidStatus status) {
+        return ok().body(PageResponse.of(bidService.findBidsByUserId(user.id(), page, limit, status)));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserCreateEditDto dto, @RequestParam(required = false) MultipartFile avatar) {
-        return ok().body(userService.create(dto, imageService.saveAvatar(avatar)));
+    public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserData data,
+                                              @AuthenticationPrincipal UserAuthDto user, @RequestParam(required = false) MultipartFile avatar) {
+        UserCreateEditDto dto = toDto(user, data);  
+        return ok().body(userService.create(dto, imageService.saveAvatar(avatar)));      
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserReadDto> update(@PathVariable("id") Long id,
-                                              @RequestBody @Validated UserCreateEditDto dto) {
-        return userService.update(id, dto)
+    @PutMapping
+    public ResponseEntity<UserReadDto> update(@AuthenticationPrincipal UserAuthDto user,
+                                              @RequestBody @Validated UserData data) {
+        UserCreateEditDto dto = toDto(user, data);
+        return userService.update(user.id(), dto)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        return userService.delete(id)
+    @DeleteMapping
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserAuthDto user) {
+        return userService.delete(user.id())
                 ? noContent().build()
                 : notFound().build();
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
+    public ResponseEntity<UserReadDto> findSelf(@AuthenticationPrincipal UserAuthDto user) {
+        return userService.findById(user.id())
+                .map(obj -> ok()
+                        .body(obj))
+                .orElseGet(notFound()::build);
+    }
+
+    private UserCreateEditDto toDto(UserAuthDto user, UserData data) {
+        return new UserCreateEditDto(
+                user.id(),
+                data.firstName(),
+                data.lastName(),
+                user.email(),
+                user.authorities().getFirst(),
+                data.phoneNumber(),
+                data.currency()
+        );
     }
 }

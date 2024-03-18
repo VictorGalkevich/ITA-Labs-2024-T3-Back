@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @TransactionalService
 @RequiredArgsConstructor
@@ -47,24 +48,22 @@ public class BidService {
                 .orElseThrow();
     }
 
-    public Page<BidReadDto> findBidsByUserId(Long id, Integer page, Integer limit) {
+    public Page<BidReadDto> findBidsByUserId(UUID id, Integer page, Integer limit, BidStatus status) {
         PageRequest req = PageRequest.of(page - 1, limit);
-        return bidRepository.findAllByUserId(id, req)
+        return bidRepository.findAllByUserIdAndStatus(id, req, status)
                 .map(bidMapper::toReadDto);
     }
 
     private void setOverbidForLot(Bid bid) {
         Long lotId = bid.getLotId();
         Optional<Lot> byId = lotRepository.findById(lotId);
-        byId.ifPresent(it -> {
-            it.setBidQuantity(it.getBidQuantity() + 1);
-        });
+        byId.ifPresent(it -> it.setBidQuantity(it.getBidQuantity() + 1));
         Optional<Bid> byLotId = bidRepository.findByLotIdAndStatus(lotId, BidStatus.LEADING);
         byLotId.ifPresent(it -> it.setStatus(BidStatus.OVERBID));
     }
 
     private void deleteOldBidFromUser(Bid bid) {
-        Long userId = bid.getUserId();
+        UUID userId = bid.getUserId();
         Long lotId = bid.getLotId();
         Optional<Bid> byUserId = bidRepository.findByUserIdAndLotId(userId, lotId);
         byUserId.ifPresent(bidRepository::delete);

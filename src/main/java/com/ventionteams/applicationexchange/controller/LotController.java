@@ -1,11 +1,11 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
+import com.ventionteams.applicationexchange.dto.ImageUpdateDTO;
 import com.ventionteams.applicationexchange.dto.LocationCreateDto;
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
-import com.ventionteams.applicationexchange.entity.Location;
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
@@ -55,19 +55,15 @@ public class LotController {
 
     @GetMapping("/{id}")
     public ResponseEntity<LotReadDTO> findById(@PathVariable("id") Long id) {
-        return imageService.getListImages(lotService.findById(id, 123123L))
+        return lotService.findById(id, 123123L)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<LotReadDTO> create(/*@RequestBody LotUpdateDTO lot,*/ @RequestBody List<MultipartFile> files) {
-        LocationCreateDto location = new LocationCreateDto("Belarus", "Minsk");
-
-    LotUpdateDTO lot = new LotUpdateDTO("banana", 3, 1000L, Weight.PCS, 1.2, location, "", new ArrayList<>(), LotStatus.MODERATED, 100, 7, Packaging.BAG, LengthUnit.CENTIMETER, Currency.USD);
-
-        return ok(imageService.saveListImages(files, lotService.create(lot)));
+    public ResponseEntity<LotReadDTO> create(@RequestPart LotUpdateDTO lot, @RequestPart List<ImageUpdateDTO> images) {
+        return ok(imageService.saveListImagesForLot(images, lotService.create(lot)));
     }
 
     @PutMapping("/{id}")

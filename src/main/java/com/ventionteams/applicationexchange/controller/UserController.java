@@ -5,7 +5,9 @@ import com.ventionteams.applicationexchange.dto.BidReadDto;
 import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.UserReadDto;
+import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.service.BidService;
+import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.service.UserService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -23,6 +26,7 @@ import static org.springframework.http.ResponseEntity.*;
 public class UserController {
     private final UserService userService;
     private final BidService bidService;
+    private final ImageService imageService;
 
     @GetMapping
     public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
@@ -47,8 +51,8 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserCreateEditDto dto) {
-        return ok().body(userService.create(dto));
+    public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserCreateEditDto dto, @RequestParam(required = false) MultipartFile avatar) {
+        return ok().body(userService.create(dto, imageService.saveAvatar(avatar)));
     }
 
     @PutMapping("/{id}")

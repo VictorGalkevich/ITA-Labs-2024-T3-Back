@@ -1,53 +1,53 @@
 package com.ventionteams.applicationexchange.service;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.util.IOUtils;
 import com.ventionteams.applicationexchange.config.ConfigProperties;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StorageService {
-    private final AmazonS3 amazonS3;
+    private final S3Client s3Client;
     private final ConfigProperties configProperties;
 
-    public Boolean upload(MultipartFile multipartFile, String name) {
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(multipartFile.getSize());
-        metadata.setContentType(multipartFile.getContentType());
+    public String upload(MultipartFile multipartFile, String name) {
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(configProperties.getBucketName())
+                .key(name)
+                .contentType(multipartFile.getContentType())
+                .acl("public-read")
+                .build();
 
         try {
-            amazonS3.putObject(new PutObjectRequest(configProperties.getBucketName(), name, multipartFile.getInputStream(), metadata));
+            s3Client.putObject(request, RequestBody.fromBytes(multipartFile.getBytes()));
         } catch (IOException e) {
+            log.info("Error saving file to s3. Filename: {}", name);
             throw new RuntimeException(e);
         }
-        return amazonS3.doesObjectExist(configProperties.getBucketName(), name);
+        return getURL(name);
     }
 
-    public byte[] download(String fileName) {
+    private String getURL(String keyName) {
         try {
-            byte[] content;
-            final S3Object s3Object = amazonS3.getObject(configProperties.getBucketName(), fileName);
-            final S3ObjectInputStream stream = s3Object.getObjectContent();
-            content = IOUtils.toByteArray(stream);
-            s3Object.close();
-            return content;
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        } catch (AmazonServiceException serviceException) {
-            serviceException.printStackTrace();
-        } catch (AmazonClientException clientException) {
-            clientException.printStackTrace();
+            GetUrlRequest request = GetUrlRequest.builder()
+                    .bucket(configProperties.getBucketName())
+                    .key(keyName)
+                    .build();
+
+            return s3Client.utilities().getUrl(request).toExternalForm();
+
+        } catch (S3Exception e) {
+            log.info("Error getting file's url. Filename: {}. Error: {}", keyName, e.awsErrorDetails().errorMessage());
         }
         return null;
     }

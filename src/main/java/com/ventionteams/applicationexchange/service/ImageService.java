@@ -1,5 +1,7 @@
 package com.ventionteams.applicationexchange.service;
 
+import com.ventionteams.applicationexchange.config.ConfigProperties;
+import com.ventionteams.applicationexchange.dto.ImageUpdateDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
@@ -8,8 +10,12 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.waiters.WaiterResponse;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.waiters.S3Waiter;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,31 +25,47 @@ public class ImageService {
     private final LotMapper lotMapper;
     private final ImageRepository imageRepository;
     private final StorageService storageService;
+    private final S3Client s3Client;
+    private final ConfigProperties configProperties;
 
-    public LotReadDTO saveListImages(List<MultipartFile> files, LotReadDTO lot) {
-        for (MultipartFile file : files) {
-            String name = String.format("%s.%s", RandomStringUtils.randomAlphanumeric(12), file.getName());
-            Image image = null;
-            try {
-                image = Image.builder()
+    public LotReadDTO saveListImagesForLot(List<ImageUpdateDTO> images, LotReadDTO lot) {
+        for (ImageUpdateDTO imageDTO : images) {
+
+            String name = String.format("%s/%s", "lot", RandomStringUtils.randomAlphanumeric(12));
+            Image image = Image.builder()
                         .name(name)
                         .lot(lotMapper.toLot(lot))
-                        .bytes(file.getBytes())
+                        .url(storageService.upload(imageDTO.file(), name))
+                        .isMainImage(imageDTO.isMainImage())
                         .build();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            if (storageService.upload(file, name)) {
+
+            S3Waiter waiter = s3Client.waiter();
+            HeadObjectRequest waitRequest = HeadObjectRequest.builder()
+                    .bucket(configProperties.getBucketName())
+                    .key(name)
+                    .build();
+
+            WaiterResponse<HeadObjectResponse> waitResponse = waiter.waitUntilObjectExists(waitRequest);
+
+            waitResponse.matched().response().ifPresent(x -> {
                 lot.getImages().add(imageRepository.save(image));
-            }
+            });
+
+
         }
         return lot;
     }
 
-    public Optional<LotReadDTO> getListImages(Optional<LotReadDTO> lot) {
-        for (Image image : lot.get().getImages()) {
-            image.setBytes(storageService.download(image.getName()));
-        }
-        return lot;
+    public Image saveAvatar(MultipartFile avatar) {
+        String name = String.format("%s/%s", "avatar", RandomStringUtils.randomAlphanumeric(12));
+        Image image = Image.builder()
+                .name(name)
+                .url(storageService.upload(avatar, name))
+                .build();
+        return imageRepository.save(image);
+    }
+
+    public Optional<Image> getAvatar(Long id) {
+        return imageRepository.findById(id);
     }
 }

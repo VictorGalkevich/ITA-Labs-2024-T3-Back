@@ -39,4 +39,7 @@ public class User extends AuditingEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "preferred_currency")
     private Currency currency;
+
+    @Column(name = "avatar_id")
+    private Long avatarId;
 }

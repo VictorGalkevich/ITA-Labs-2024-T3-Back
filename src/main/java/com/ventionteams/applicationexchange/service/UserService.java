@@ -3,6 +3,7 @@ package com.ventionteams.applicationexchange.service;
 import com.ventionteams.applicationexchange.annotation.TransactionalService;
 import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.UserReadDto;
+import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.mapper.UserMapper;
 import com.ventionteams.applicationexchange.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,13 @@ public class UserService {
     }
 
     @Transactional
-    public UserReadDto create(UserCreateEditDto dto) {
+    public UserReadDto create(UserCreateEditDto dto, Image avatar) {
         return Optional.of(dto)
                 .map(userMapper::toUser)
+                .map(user -> {
+                    user.setAvatarId(avatar.getId());
+                    return user;
+                })
                 .map(userRepository::save)
                 .map(userMapper::toUserReadDto)
                 .orElseThrow();

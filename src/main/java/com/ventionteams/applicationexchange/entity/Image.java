@@ -1,5 +1,6 @@
 package com.ventionteams.applicationexchange.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,9 +19,13 @@ public class Image {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name="lot_id", nullable=false)
+    @JoinColumn(name="lot_id")
+    @JsonIgnore
     private Lot lot;
 
-    @Transient
-    private byte[] bytes;
+    @Column(name = "url")
+    private String url;
+
+    @Column(name = "is_main_image")
+    private boolean isMainImage;
 }

@@ -29,7 +29,7 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "title")
     private String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -54,7 +54,7 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "status")
     private LotStatus status;
   
-    @OneToMany(mappedBy = "lot")
+    @OneToMany(mappedBy = "lot", fetch = FetchType.EAGER)
     private List<Image> images = new ArrayList<>();
 
     @Column(nullable = false, name = "size")

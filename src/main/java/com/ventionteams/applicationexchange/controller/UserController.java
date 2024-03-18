@@ -42,7 +42,7 @@ public class UserController {
 
     @GetMapping("/bids")
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<PageResponse<BidReadDto>> findById(@AuthenticationPrincipal UserAuthDto user,
+    public ResponseEntity<PageResponse<BidForUserDto>> findById(@AuthenticationPrincipal UserAuthDto user,
                                                              @RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                              @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                              @RequestParam(defaultValue = "LEADING") BidStatus status) {

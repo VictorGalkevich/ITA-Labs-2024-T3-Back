@@ -82,7 +82,10 @@ public class LotService {
     private LotReadDTO map(Lot lot, UUID userId) {
         LotReadDTO lotReadDTO = lotMapper.toLotReadDTO(lot);
         BidReadDto leading = bidMapper.toReadDto(bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING).orElse(null));
-        Optional<Bid> bid = bidRepository.findByUserIdAndLotId(userId, lot.getId());
+        Optional<Bid> bid = null;
+        if (userId != null) {
+            bid = bidRepository.findByUserIdAndLotId(userId, lot.getId());
+        }
         BidReadDto users = bidMapper.toReadDto(bid.orElse(null));
         lotReadDTO.setLeading(leading);
         lotReadDTO.setUsers(users);

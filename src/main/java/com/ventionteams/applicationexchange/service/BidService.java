@@ -2,16 +2,20 @@ package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.annotation.TransactionalService;
 import com.ventionteams.applicationexchange.dto.BidCreateDto;
+import com.ventionteams.applicationexchange.dto.BidForUserDto;
 import com.ventionteams.applicationexchange.dto.BidReadDto;
 import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.exception.IllegalPriceException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
 import com.ventionteams.applicationexchange.repository.LotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -48,10 +52,9 @@ public class BidService {
                 .orElseThrow();
     }
 
-    public Page<BidReadDto> findBidsByUserId(UUID id, Integer page, Integer limit, BidStatus status) {
+    public Page<BidForUserDto> findBidsByUserId(UUID id, Integer page, Integer limit, BidStatus status) {
         PageRequest req = PageRequest.of(page - 1, limit);
-        return bidRepository.findAllByUserIdAndStatus(id, req, status)
-                .map(bidMapper::toReadDto);
+        return bidRepository.findAllByUserIdAndStatus(id, req, status);
     }
 
     private void setOverbidForLot(Bid bid) {
@@ -59,6 +62,25 @@ public class BidService {
         Optional<Lot> byId = lotRepository.findById(lotId);
         byId.ifPresent(it -> it.setBidQuantity(it.getBidQuantity() + 1));
         Optional<Bid> byLotId = bidRepository.findByLotIdAndStatus(lotId, BidStatus.LEADING);
+        byId.ifPresent(it -> {
+            byLotId.ifPresent(prev -> {
+                if (prev.getAmount() < bid.getAmount()) {
+                    it.setBidQuantity(it.getBidQuantity() + 1);
+                    it.setStartPrice((double) bid.getAmount() + 1);
+                    prev.setStatus(BidStatus.OVERBID);
+                    if ((double) bid.getAmount() == it.getTotalPrice()) {
+                        it.setStatus(LotStatus.SOLD);
+                    }
+                } else {
+                    throw new IllegalPriceException(
+                            "Price %s is less than current price (%s)".formatted(
+                                    bid.getAmount(),
+                                    prev.getAmount()),
+                            HttpStatus.NOT_FOUND
+                    );
+                }
+            });
+        });
         byLotId.ifPresent(it -> it.setStatus(BidStatus.OVERBID));
     }
 

@@ -39,8 +39,7 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "price_per_unit")
     private Double pricePerUnit;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(nullable = false, name = "location_id")
+    @Embedded
     private Location location;
 
     @Column(nullable = false, name = "description")

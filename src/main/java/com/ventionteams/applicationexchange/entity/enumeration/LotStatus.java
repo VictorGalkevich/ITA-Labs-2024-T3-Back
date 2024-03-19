@@ -9,5 +9,9 @@ public enum LotStatus {
     @JsonProperty("sold")
     SOLD,
     @JsonProperty("moderated")
-    MODERATED
+    MODERATED,
+    @JsonProperty("cancelled")
+    CANCELLED,
+    @JsonProperty("auction_ended")
+    AUCTION_ENDED
 }

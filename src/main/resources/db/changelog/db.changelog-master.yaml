@@ -19,3 +19,5 @@ databaseChangeLog:
       file: db/changelog/db.changelog-9.0.sql
   - include:
       file: db/changelog/db.changelog-10.0.sql
+  - include:
+      file: db/changelog/db.changelog-11.0.sql

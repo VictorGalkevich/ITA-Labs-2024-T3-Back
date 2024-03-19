@@ -3,6 +3,7 @@ package com.ventionteams.applicationexchange.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.entity.Location;
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
@@ -52,4 +53,5 @@ public class LotReadDTO {
     private BidReadDto users;
     @JsonProperty("bid_quantity")
     private Integer bidQuantity;
+    private Currency currency;
 }

@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,
                                 "/bids/**",
                                 "/categories/**",
-                                "/data-selection",
+                                "/data-selection/**",
                                 "/lots/**",
                                 "/swagger-ui/**",
                                 "/v3/**"

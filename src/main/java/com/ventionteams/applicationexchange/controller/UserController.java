@@ -1,13 +1,12 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.BidReadDto;
+import com.ventionteams.applicationexchange.dto.BidForUserDto;
 import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.dto.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.UserData;
 import com.ventionteams.applicationexchange.dto.UserReadDto;
-import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.service.BidService;
 import com.ventionteams.applicationexchange.service.ImageService;
@@ -52,9 +51,9 @@ public class UserController {
     @GetMapping("/bids")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PageResponse<BidForUserDto>> findById(@AuthenticationPrincipal UserAuthDto user,
-                                                             @RequestParam(defaultValue = "1") @Min(1) Integer page,
-                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
-                                                             @RequestParam(defaultValue = "LEADING") BidStatus status) {
+                                                                @RequestParam(defaultValue = "1") @Min(1) Integer page,
+                                                                @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                                @RequestParam(defaultValue = "LEADING") BidStatus status) {
         return ok().body(PageResponse.of(bidService.findBidsByUserId(user.id(), page, limit, status)));
     }
 

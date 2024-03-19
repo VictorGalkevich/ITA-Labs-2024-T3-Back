@@ -8,6 +8,7 @@ import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.exception.AuctionEndedException;
 import com.ventionteams.applicationexchange.exception.IllegalPriceException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
@@ -63,20 +64,30 @@ public class BidService {
         byId.ifPresent(it -> it.setBidQuantity(it.getBidQuantity() + 1));
         Optional<Bid> byLotId = bidRepository.findByLotIdAndStatus(lotId, BidStatus.LEADING);
         byId.ifPresent(it -> {
+            if (it.getStatus().equals(LotStatus.AUCTION_ENDED)) {
+                throw new AuctionEndedException("No more bids allowed, max bid has already been done",
+                        HttpStatus.BAD_REQUEST);
+            }
             byLotId.ifPresent(prev -> {
-                if (prev.getAmount() < bid.getAmount()) {
+                if ((double) it.getStartPrice() < bid.getAmount() && (double) bid.getAmount() <= it.getTotalPrice() - 1) {
                     it.setBidQuantity(it.getBidQuantity() + 1);
                     it.setStartPrice((double) bid.getAmount() + 1);
                     prev.setStatus(BidStatus.OVERBID);
-                    if ((double) bid.getAmount() == it.getTotalPrice()) {
-                        it.setStatus(LotStatus.SOLD);
+                    if ((double) bid.getAmount() == it.getTotalPrice() - 1) {
+                        it.setStatus(LotStatus.AUCTION_ENDED);
                     }
                 } else {
+                    String msg = "Price %s is not less than current start price (%s)";
+                    Double val = it.getStartPrice();
+                    if ((double) bid.getAmount() > it.getTotalPrice() - 1) {
+                        msg = "Price %s is bigger than current max price (%s)";
+                        val = it.getTotalPrice() - 1;
+                    }
                     throw new IllegalPriceException(
-                            "Price %s is less than current price (%s)".formatted(
+                            msg.formatted(
                                     bid.getAmount(),
-                                    prev.getAmount()),
-                            HttpStatus.NOT_FOUND
+                                    val),
+                            HttpStatus.BAD_REQUEST
                     );
                 }
             });

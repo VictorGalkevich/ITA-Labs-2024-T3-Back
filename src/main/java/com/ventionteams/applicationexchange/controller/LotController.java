@@ -1,7 +1,19 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.*;
+import com.ventionteams.applicationexchange.dto.ImageUpdateDTO;
+import com.ventionteams.applicationexchange.dto.LocationCreateDto;
+import com.ventionteams.applicationexchange.dto.LotFilterDTO;
+import com.ventionteams.applicationexchange.dto.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.dto.UserAuthDto;
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
+import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
+import com.ventionteams.applicationexchange.entity.enumeration.Weight;
+import com.ventionteams.applicationexchange.service.ImageService;
+import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
@@ -17,6 +29,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,8 +76,8 @@ public class LotController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<LotReadDTO> create(@RequestBody LotUpdateDTO lot, @RequestBody List<MultipartFile> files) {
-        return ok(imageService.saveListImages(files, lotService.create(lot)));
+    public ResponseEntity<LotReadDTO> create(@RequestPart LotUpdateDTO lot, @RequestPart List<ImageUpdateDTO> images) {
+        return ok(imageService.saveListImagesForLot(images, lotService.create(lot)));
     }
 
     @PutMapping("/{id}")

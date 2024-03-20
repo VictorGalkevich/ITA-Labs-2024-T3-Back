@@ -9,6 +9,7 @@ import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
@@ -61,6 +62,7 @@ public class LotService {
                 .map(lotMapper::toLot)
                 .map(x -> {
                     x.setBidQuantity(0);
+                    x.setStatus(LotStatus.MODERATED);
                     return x;
                 })
                 .map(lotRepository::save)

@@ -6,6 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface LotRepository extends JpaRepository<Lot, Long>, JpaSpecificationExecutor<Lot> {
+public interface LotRepository extends
+        JpaRepository<Lot, Long>,
+        JpaSpecificationExecutor<Lot>,
+        LotUpdateRepository
+{
     Page<Lot> findAllByCategoryId(Integer id, Pageable pageable);
 }

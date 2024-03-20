@@ -64,7 +64,7 @@ public class BidService {
         byId.ifPresent(it -> it.setBidQuantity(it.getBidQuantity() + 1));
         Optional<Bid> byLotId = bidRepository.findByLotIdAndStatus(lotId, BidStatus.LEADING);
         byId.ifPresent(it -> {
-            if (it.getStatus().equals(LotStatus.AUCTION_ENDED)) {
+            if (!it.getStatus().equals(LotStatus.ACTIVE)) {
                 throw new AuctionEndedException("No more bids allowed, max bid has already been done",
                         HttpStatus.BAD_REQUEST);
             }

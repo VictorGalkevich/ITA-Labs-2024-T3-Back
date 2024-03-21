@@ -70,10 +70,10 @@ public class Lot extends AuditingEntity {
     private Integer bidQuantity;
 
     @Column(nullable = false, name = "total_price")
-    private Double totalPrice;
+    private Long totalPrice;
 
     @Column(nullable = false, name = "start_price")
-    private Double startPrice;
+    private Long startPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "currency")

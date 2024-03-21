@@ -60,28 +60,28 @@ public class BidService {
 
     private void setOverbidForLot(Bid bid) {
         Long lotId = bid.getLotId();
-        Optional<Lot> byId = lotRepository.findById(lotId);
-        byId.ifPresent(it -> it.setBidQuantity(it.getBidQuantity() + 1));
-        Optional<Bid> byLotId = bidRepository.findByLotIdAndStatus(lotId, BidStatus.LEADING);
-        byId.ifPresent(it -> {
-            if (!it.getStatus().equals(LotStatus.ACTIVE)) {
+        Optional<Lot> lotWrapper = lotRepository.findById(lotId);
+        lotWrapper.ifPresent(it -> it.setBidQuantity(it.getBidQuantity() + 1));
+        Optional<Bid> bidWrapper = bidRepository.findByLotIdAndStatus(lotId, BidStatus.LEADING);
+        lotWrapper.ifPresent(lot -> {
+            if (!lot.getStatus().equals(LotStatus.ACTIVE)) {
                 throw new AuctionEndedException("No more bids allowed, max bid has already been done",
                         HttpStatus.BAD_REQUEST);
             }
-            byLotId.ifPresent(prev -> {
-                if ((double) it.getStartPrice() < bid.getAmount() && (double) bid.getAmount() <= it.getTotalPrice() - 1) {
-                    it.setBidQuantity(it.getBidQuantity() + 1);
-                    it.setStartPrice((double) bid.getAmount() + 1);
+            bidWrapper.ifPresent(prev -> {
+                if (lot.getStartPrice() < bid.getAmount() && bid.getAmount() <= lot.getTotalPrice() - 1) {
+                    lot.setBidQuantity(lot.getBidQuantity() + 1);
+                    lot.setStartPrice(bid.getAmount() + 1);
                     prev.setStatus(BidStatus.OVERBID);
-                    if ((double) bid.getAmount() == it.getTotalPrice() - 1) {
-                        it.setStatus(LotStatus.AUCTION_ENDED);
+                    if (bid.getAmount() == lot.getTotalPrice() - 1) {
+                        lot.setStatus(LotStatus.AUCTION_ENDED);
                     }
                 } else {
                     String msg = "Price %s is not less than current start price (%s)";
-                    Double val = it.getStartPrice();
-                    if ((double) bid.getAmount() > it.getTotalPrice() - 1) {
+                    Long val = lot.getStartPrice();
+                    if (bid.getAmount() > lot.getTotalPrice() - 1) {
                         msg = "Price %s is bigger than current max price (%s)";
-                        val = it.getTotalPrice() - 1;
+                        val = lot.getTotalPrice() - 1;
                     }
                     throw new IllegalPriceException(
                             msg.formatted(
@@ -92,7 +92,7 @@ public class BidService {
                 }
             });
         });
-        byLotId.ifPresent(it -> it.setStatus(BidStatus.OVERBID));
+        bidWrapper.ifPresent(it -> it.setStatus(BidStatus.OVERBID));
     }
 
     private void deleteOldBidFromUser(Bid bid) {

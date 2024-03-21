@@ -12,15 +12,15 @@ public record LotUpdateDTO(
         Integer categoryId,
         Long quantity,
         Weight weight,
-        @JsonProperty("price_per_unit")
-        Double pricePerUnit,
+        @JsonProperty("total_price")
+        Long totalPrice,
         LocationCreateDto location,
         String description,
         @JsonProperty("image_url")
         List<Image> images,
         LotStatus status,
         @JsonProperty("start_price")
-        Double startPrice,
+        Long startPrice,
         Integer size,
         @JsonProperty("expiration_days")
         Integer days,

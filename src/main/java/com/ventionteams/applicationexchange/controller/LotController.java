@@ -1,35 +1,27 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.ImageUpdateDTO;
-import com.ventionteams.applicationexchange.dto.LocationCreateDto;
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
 import com.ventionteams.applicationexchange.dto.UserAuthDto;
-import com.ventionteams.applicationexchange.entity.enumeration.Currency;
-import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
-import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
-import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.dto.PageResponse;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
-import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
-import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.service.LotService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -74,10 +66,10 @@ public class LotController {
                 .orElseGet(notFound()::build);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<LotReadDTO> create(@RequestPart LotUpdateDTO lot, @RequestPart List<ImageUpdateDTO> images) {
-        return ok(imageService.saveListImagesForLot(images, lotService.create(lot)));
+    public ResponseEntity<LotReadDTO> create(@RequestPart LotUpdateDTO lot, @RequestPart List<MultipartFile> images, @AuthenticationPrincipal UserAuthDto user) {
+        return ok().body(imageService.saveListImagesForLot(images, lotService.create(lot, user)));
     }
 
     @PutMapping("/{id}")

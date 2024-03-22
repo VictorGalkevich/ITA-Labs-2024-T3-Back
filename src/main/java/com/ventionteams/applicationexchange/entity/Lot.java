@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode.Include;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -78,4 +79,7 @@ public class Lot extends AuditingEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "currency")
     private Currency currency;
+
+    @Column(nullable = false, name = "user_id")
+    private UUID userId;
 }

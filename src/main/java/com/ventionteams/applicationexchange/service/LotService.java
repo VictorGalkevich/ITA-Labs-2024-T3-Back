@@ -5,6 +5,7 @@ import com.ventionteams.applicationexchange.dto.BidReadDto;
 import com.ventionteams.applicationexchange.dto.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.dto.UserAuthDto;
 import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
@@ -57,11 +58,12 @@ public class LotService {
     }
 
     @Transactional
-    public LotReadDTO create(LotUpdateDTO dto) {
+    public LotReadDTO create(LotUpdateDTO dto, UserAuthDto user) {
         return Optional.of(dto)
                 .map(lotMapper::toLot)
                 .map(x -> {
                     x.setBidQuantity(0);
+                    x.setUserId(user.id());
                     x.setStatus(LotStatus.MODERATED);
                     return x;
                 })

@@ -16,8 +16,6 @@ public record LotUpdateDTO(
         Long totalPrice,
         LocationCreateDto location,
         String description,
-        @JsonProperty("image_url")
-        List<Image> images,
         LotStatus status,
         @JsonProperty("start_price")
         Long startPrice,

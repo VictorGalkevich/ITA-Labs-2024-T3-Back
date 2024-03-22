@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,6 +38,7 @@ public class UserService {
                 .map(userMapper::toUser)
                 .map(user -> {
                     user.setAvatarId(avatar.getId());
+                    user.setCreatedAt(Instant.now());
                     return user;
                 })
                 .map(userRepository::save)

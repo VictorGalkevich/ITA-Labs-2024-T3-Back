@@ -10,11 +10,13 @@ import com.ventionteams.applicationexchange.dto.UserReadDto;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.service.BidService;
 import com.ventionteams.applicationexchange.service.ImageService;
+import com.ventionteams.applicationexchange.service.LotService;
 import com.ventionteams.applicationexchange.service.UserService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,12 +29,13 @@ import java.util.UUID;
 import static org.springframework.http.ResponseEntity.*;
 
 @ValidatedController
-@RequestMapping("/users")
+@RequestMapping(value = "/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final BidService bidService;
     private final ImageService imageService;
+    private final LotService lotService;
 
     @GetMapping
     public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
@@ -57,10 +60,10 @@ public class UserController {
         return ok().body(PageResponse.of(bidService.findBidsByUserId(user.id(), page, limit, status)));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserData data,
-                                              @AuthenticationPrincipal UserAuthDto user, @RequestParam(required = false) MultipartFile avatar) {
+    public ResponseEntity<UserReadDto> create(@RequestPart @Validated UserData data,
+                                              @AuthenticationPrincipal UserAuthDto user, @RequestPart MultipartFile avatar) {
         UserCreateEditDto dto = toDto(user, data);  
         return ok().body(userService.create(dto, imageService.saveAvatar(avatar)));      
     }

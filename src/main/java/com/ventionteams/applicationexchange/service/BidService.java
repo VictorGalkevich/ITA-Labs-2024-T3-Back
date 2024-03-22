@@ -10,18 +10,23 @@ import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.exception.AuctionEndedException;
 import com.ventionteams.applicationexchange.exception.IllegalPriceException;
+import com.ventionteams.applicationexchange.exception.LotNotFoundException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
 import com.ventionteams.applicationexchange.repository.LotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.ventionteams.applicationexchange.entity.enumeration.BidStatus.LEADING;
+import static com.ventionteams.applicationexchange.entity.enumeration.BidStatus.OVERBID;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @TransactionalService
 @RequiredArgsConstructor
@@ -61,47 +66,45 @@ public class BidService {
 
     private void setOverbidForLot(Bid bid) {
         Long lotId = bid.getLotId();
-        Optional<Lot> lotWrapper = lotRepository.findById(lotId);
-        lotWrapper.ifPresent(it -> it.setBidQuantity(it.getBidQuantity() + 1));
-        Optional<Bid> bidWrapper = bidRepository.findByLotIdAndStatus(lotId, BidStatus.LEADING);
-        lotWrapper.ifPresent(lot -> {
-            if (!lot.getStatus().equals(LotStatus.ACTIVE)) {
-                throw new AuctionEndedException("No more bids allowed, max bid has already been done",
-                        HttpStatus.BAD_REQUEST);
-            }
-            if (lot.getExpirationDate().isBefore(Instant.now())) {
-                lot.setStatus(lot.getBidQuantity() == 0
-                        ? LotStatus.EXPIRED
-                        : LotStatus.SOLD
-                );
-                throw new AuctionEndedException("No more bids allowed, max bid has already been done",
-                        HttpStatus.BAD_REQUEST);
-            }
-            bidWrapper.ifPresent(prev -> {
-                if (lot.getStartPrice() < bid.getAmount() && bid.getAmount() <= lot.getTotalPrice() - 1) {
+
+        lotRepository.findById(lotId)
+                .ifPresentOrElse(lot -> {
+                    if (bidsRestricted(lot)) {
+                        throw new AuctionEndedException("No more bids allowed, max bid has already been done",
+                                BAD_REQUEST);
+                    }
+
                     lot.setBidQuantity(lot.getBidQuantity() + 1);
-                    lot.setStartPrice(bid.getAmount() + 1);
-                    prev.setStatus(BidStatus.OVERBID);
-                    if (bid.getAmount() == lot.getTotalPrice() - 1) {
-                        lot.setStatus(LotStatus.AUCTION_ENDED);
-                    }
-                } else {
-                    String msg = "Price %s is not less than current start price (%s)";
-                    Long val = lot.getStartPrice();
-                    if (bid.getAmount() > lot.getTotalPrice() - 1) {
-                        msg = "Price %s is bigger than current max price (%s)";
-                        val = lot.getTotalPrice() - 1;
-                    }
-                    throw new IllegalPriceException(
-                            msg.formatted(
-                                    bid.getAmount(),
-                                    val),
-                            HttpStatus.BAD_REQUEST
-                    );
-                }
-            });
-        });
-        bidWrapper.ifPresent(it -> it.setStatus(BidStatus.OVERBID));
+
+                    bidRepository.findByLotIdAndStatus(lotId, LEADING)
+                            .ifPresentOrElse(prevBid -> {
+                                long bidAmount = bid.getAmount();
+                                long startPrice = lot.getStartPrice();
+                                long totalPrice = lot.getTotalPrice();
+
+                                if (startPrice < bidAmount && bidAmount <= totalPrice - 1) {
+                                    prevBid.setStatus(OVERBID);
+                                    if (bidAmount == totalPrice - 1) {
+                                        lot.setStatus(LotStatus.AUCTION_ENDED);
+                                    }
+                                } else {
+                                    String msg = "Price %s is not less than current start price (%s)";
+                                    long val = startPrice;
+                                    if (bidAmount > totalPrice - 1) {
+                                        msg = "Price %s is bigger than current max price (%s)";
+                                        val = totalPrice - 1;
+                                    }
+                                    throw new IllegalPriceException(
+                                            String.format(msg, bidAmount, val),
+                                            BAD_REQUEST
+                                    );
+                                }
+                            }, () -> lot.setStartPrice(bid.getAmount() + 1));
+                }, () -> {
+                    throw new LotNotFoundException(
+                            "lot with id %d doesn't exist".formatted(lotId),
+                            NOT_FOUND);
+                });
     }
 
     private void deleteOldBidFromUser(Bid bid) {
@@ -109,6 +112,11 @@ public class BidService {
         Long lotId = bid.getLotId();
         Optional<Bid> byUserId = bidRepository.findByUserIdAndLotId(userId, lotId);
         byUserId.ifPresent(bidRepository::delete);
+    }
+
+    private boolean bidsRestricted(Lot lot) {
+        return !lot.getStatus().equals(LotStatus.ACTIVE) ||
+               lot.getExpirationDate().isBefore(Instant.now());
     }
 }
 

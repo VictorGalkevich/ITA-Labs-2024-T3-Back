@@ -9,28 +9,29 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public interface LotRepository extends
         JpaRepository<Lot, Long>,
-        JpaSpecificationExecutor<Lot>
-{
+        JpaSpecificationExecutor<Lot> {
     Page<Lot> findAllByCategoryId(Integer id, Pageable pageable);
+
     Page<Lot> findByStatus(LotStatus status, Pageable pageable);
+
     Page<Lot> findByStatusAndUserId(LotStatus lotStatus, UUID userId, Pageable pageable);
 
     @Modifying
     @Query(
             value = """
-            UPDATE lots
-            SET status = CASE
-                             WHEN bid_quantity = 0 THEN 'EXPIRED'
-                             WHEN bid_quantity > 0 THEN 'SOLD'
-            ELSE status
-            END
-            WHERE expiration_date < NOW();
-            """,
-            nativeQuery = true
+                    UPDATE Lot l
+                    SET l.status = CASE
+                                     WHEN l.bidQuantity = 0 THEN 'EXPIRED'
+                                     WHEN l.bidQuantity > 0 THEN 'SOLD'
+                    ELSE l.status
+                    END
+                    WHERE l.expirationDate < ?1
+                    """
     )
-    int updateExpiredLots();
+    int updateExpiredLots(Instant time);
 }

@@ -33,11 +33,11 @@ public class ImageService {
 
             String name = String.format("%s/%s", "lot", RandomStringUtils.randomAlphanumeric(12));
             Image image = Image.builder()
-                        .name(name)
-                        .lot(lotMapper.toLot(lot))
-                        .url(storageService.upload(file, name))
-                        .isMainImage(isMainImage)
-                        .build();
+                    .name(name)
+                    .lot(lotMapper.toLot(lot))
+                    .url(storageService.upload(file, name))
+                    .isMainImage(isMainImage)
+                    .build();
 
             isMainImage = false;
 

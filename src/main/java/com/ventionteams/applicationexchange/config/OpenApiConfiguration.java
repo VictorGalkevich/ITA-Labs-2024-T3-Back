@@ -14,6 +14,7 @@ public class OpenApiConfiguration {
                 .bearerFormat("JWT")
                 .scheme("bearer");
     }
+
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI().addSecurityItem(new SecurityRequirement().

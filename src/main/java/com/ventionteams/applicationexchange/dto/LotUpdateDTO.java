@@ -1,10 +1,12 @@
 package com.ventionteams.applicationexchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ventionteams.applicationexchange.entity.Image;
-import com.ventionteams.applicationexchange.entity.enumeration.*;
-
-import java.util.List;
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
+import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
+import com.ventionteams.applicationexchange.entity.enumeration.Weight;
+import jakarta.validation.constraints.Min;
 
 public record LotUpdateDTO(
         String title,
@@ -12,13 +14,15 @@ public record LotUpdateDTO(
         Integer categoryId,
         Long quantity,
         Weight weight,
-        @JsonProperty("price_per_unit")
-        Double pricePerUnit,
+        @JsonProperty("total_price")
+        @Min(0)
+        Long totalPrice,
         LocationCreateDto location,
         String description,
         LotStatus status,
         @JsonProperty("start_price")
-        Double startPrice,
+        @Min(0)
+        Long startPrice,
         Integer size,
         @JsonProperty("expiration_days")
         Integer days,

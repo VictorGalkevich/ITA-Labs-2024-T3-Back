@@ -64,6 +64,7 @@ public class LotService {
                 .map(x -> {
                     x.setBidQuantity(0);
                     x.setUserId(user.id());
+                    x.setStatus(LotStatus.MODERATED);
                     return x;
                 })
                 .map(lotRepository::save)

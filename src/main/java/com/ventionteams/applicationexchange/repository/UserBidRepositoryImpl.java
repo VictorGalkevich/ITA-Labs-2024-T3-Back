@@ -1,7 +1,6 @@
 package com.ventionteams.applicationexchange.repository;
 
 import com.ventionteams.applicationexchange.dto.BidForUserDto;
-import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +37,7 @@ public class UserBidRepositoryImpl implements UserBidRepository {
         List<BidForUserDto> list = client.sql(FIND_ALL_BY_USER_ID_AND_STATUS)
                 .params(
                         status.toString(),
-                        id.toString(),
+                        id,
                         req.getOffset(),
                         req.getPageSize()
                 )
@@ -47,10 +45,10 @@ public class UserBidRepositoryImpl implements UserBidRepository {
                         rs.getLong("id"),
                         rs.getLong("lot_id"),
                         BidStatus.valueOf(rs.getString("status")),
-                        rs.getLong("bids.amount"),
+                        rs.getLong("amount"),
                         Currency.valueOf(rs.getString("currency")),
                         rs.getString("title"),
-                        Instant.parse(rs.getString("expiration_date")),
+                        rs.getTimestamp("expiration_date").toInstant(),
                         rs.getDouble("total_price"),
                         rs.getDouble("price_per_unit"),
                         Weight.valueOf(rs.getString("weight"))

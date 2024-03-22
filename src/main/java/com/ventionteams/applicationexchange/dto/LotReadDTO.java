@@ -45,9 +45,9 @@ public class LotReadDTO {
     @JsonProperty("created_by")
     private String createdBy;
     @JsonProperty("total_price")
-    private Double totalPrice;
+    private Long totalPrice;
     @JsonProperty("start_price")
-    private Double startPrice;
+    private Long startPrice;
     @JsonProperty("length_unit")
     private LengthUnit lengthUnit;
     private BidReadDto leading;

@@ -13,7 +13,7 @@ public record UserData(
         @JsonProperty("last_name")
         @NotBlank
         String lastName,
-        @Pattern(regexp = "[+]375 [0-9]{2} [0-9]{3}-[0-9]{2}-[0-9]{2}")
+        @Pattern(regexp = "[+]375\\d{9}")
         String phoneNumber,
         @JsonProperty("preferred_currency")
         Currency currency

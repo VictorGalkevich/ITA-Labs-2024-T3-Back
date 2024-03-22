@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -65,6 +66,14 @@ public class BidService {
         Optional<Bid> bidWrapper = bidRepository.findByLotIdAndStatus(lotId, BidStatus.LEADING);
         lotWrapper.ifPresent(lot -> {
             if (!lot.getStatus().equals(LotStatus.ACTIVE)) {
+                throw new AuctionEndedException("No more bids allowed, max bid has already been done",
+                        HttpStatus.BAD_REQUEST);
+            }
+            if (lot.getExpirationDate().isBefore(Instant.now())) {
+                lot.setStatus(lot.getBidQuantity() == 0
+                        ? LotStatus.EXPIRED
+                        : LotStatus.SOLD
+                );
                 throw new AuctionEndedException("No more bids allowed, max bid has already been done",
                         HttpStatus.BAD_REQUEST);
             }

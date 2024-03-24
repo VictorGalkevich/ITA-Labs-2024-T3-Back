@@ -31,7 +31,8 @@ public class LotSpecification {
                 .and(filter.toSize() == null ? null : toSize(filter.toSize()))
                 .and(filter.fromPrice() == null ? null : fromPrice(filter.fromPrice()))
                 .and(filter.toPrice() == null ? null : toPrice(filter.toPrice()))
-                .and(filter.lotStatus() == null ? null : inLotStatus(filter.lotStatus()));
+                .and(filter.lotStatus() == null ? null : inLotStatus(filter.lotStatus()))
+                .and(filter.keyword() == null ? null : byKeyword(filter.keyword()));
     }
 
     public static Specification<Lot> inCategories(Integer category) {
@@ -117,5 +118,10 @@ public class LotSpecification {
     private static Specification<Lot> toPrice(Integer toPrice) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.lessThanOrEqualTo(root.get("totalPrice"), toPrice);
+    }
+
+    private static Specification<Lot> byKeyword(String keyword){
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(criteriaBuilder.literal("KEYWORD"), criteriaBuilder.literal(keyword));
     }
 }

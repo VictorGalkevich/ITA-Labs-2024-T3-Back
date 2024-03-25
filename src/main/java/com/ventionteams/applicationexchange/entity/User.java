@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.EqualsAndHashCode.Include;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -43,4 +45,7 @@ public class User extends AuditingEntity {
 
     @Column(name = "avatar_id")
     private Long avatarId;
+
+    @OneToMany(mappedBy = "user")
+    private List<Lot> userLots = new ArrayList<>();
 }

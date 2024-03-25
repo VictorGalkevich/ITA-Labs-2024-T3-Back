@@ -44,13 +44,12 @@ public class LotController {
     private final ImageService imageService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
+    public ResponseEntity<PageResponse<LotReadDTO>> findLotsByStatus(@RequestParam(defaultValue = "1") Integer page,
                                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
-                                                                       @RequestParam(required = false) LotStatus lotStatus,
+                                                                       @RequestParam LotStatus lotStatus,
                                                                        @RequestParam(required = false) LotSortField sortField,
                                                                        @RequestParam(required = false) Sort.Direction sortOrder,
                                                                        @AuthenticationPrincipal UserAuthDto user) {
-        final LotFilterDTO filter = new LotFilterDTO(null, null, null, null, null, null, null, null, null, null, null, lotStatus);
         final LotSortCriteria sort = LotSortCriteria.builder()
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
@@ -59,7 +58,7 @@ public class LotController {
         if (user != null) {
             id = user.id();
         }
-        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, id)));
+        return ok(PageResponse.of(lotService.findByStatus(page, limit, lotStatus, sort, id)));
     }
 
     @GetMapping("/{id}")

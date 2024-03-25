@@ -9,6 +9,7 @@ import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
@@ -37,6 +38,20 @@ public class LotService {
         PageRequest req = PageRequest.of(page - 1, limit, by);
         Specification<Lot> specification = LotSpecification.getFilterSpecification(filter);
         return lotRepository.findAll(specification, req)
+                .map(lot -> map(lot, userId));
+    }
+
+    public Page<LotReadDTO> findUsersLotsByStatus(Integer page, Integer limit, LotStatus status, LotSortCriteria sort, UUID userId) {
+        Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
+        PageRequest req = PageRequest.of(page - 1, limit, by);
+        return lotRepository.findByStatusAndUserId(status, userId, req)
+                .map(lot -> map(lot, userId));
+    }
+
+    public Page<LotReadDTO> findByStatus(Integer page, Integer limit, LotStatus status, LotSortCriteria sort, UUID userId) {
+        Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
+        PageRequest req = PageRequest.of(page - 1, limit, by);
+        return lotRepository.findByStatus(status, req)
                 .map(lot -> map(lot, userId));
     }
 

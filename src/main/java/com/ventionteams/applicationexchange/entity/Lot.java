@@ -78,4 +78,8 @@ public class Lot extends AuditingEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "currency")
     private Currency currency;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

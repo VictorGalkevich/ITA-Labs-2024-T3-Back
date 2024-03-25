@@ -1,7 +1,6 @@
 package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.config.ConfigProperties;
-import com.ventionteams.applicationexchange.dto.ImageUpdateDTO;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
@@ -28,16 +27,19 @@ public class ImageService {
     private final S3Client s3Client;
     private final ConfigProperties configProperties;
 
-    public LotReadDTO saveListImagesForLot(List<ImageUpdateDTO> images, LotReadDTO lot) {
-        for (ImageUpdateDTO imageDTO : images) {
+    public LotReadDTO saveListImagesForLot(List<MultipartFile> images, LotReadDTO lot) {
+        boolean isMainImage = true;
+        for (MultipartFile file : images) {
 
             String name = String.format("%s/%s", "lot", RandomStringUtils.randomAlphanumeric(12));
             Image image = Image.builder()
-                        .name(name)
-                        .lot(lotMapper.toLot(lot))
-                        .url(storageService.upload(imageDTO.file(), name))
-                        .isMainImage(imageDTO.isMainImage())
-                        .build();
+                    .name(name)
+                    .lot(lotMapper.toLot(lot))
+                    .url(storageService.upload(file, name))
+                    .isMainImage(isMainImage)
+                    .build();
+
+            isMainImage = false;
 
             S3Waiter waiter = s3Client.waiter();
             HeadObjectRequest waitRequest = HeadObjectRequest.builder()

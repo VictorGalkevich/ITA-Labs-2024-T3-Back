@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -31,7 +32,7 @@ public class LotReadDTO {
     @JsonProperty("price_per_unit")
     private Double pricePerUnit;
     @JsonProperty("image_url")
-    private List<Image> images;
+    private List<Image> images = new ArrayList<>();
     private Location location;
     private String description;
     private LotStatus status;
@@ -44,9 +45,9 @@ public class LotReadDTO {
     @JsonProperty("created_by")
     private String createdBy;
     @JsonProperty("total_price")
-    private Double totalPrice;
+    private Long totalPrice;
     @JsonProperty("start_price")
-    private Double startPrice;
+    private Long startPrice;
     @JsonProperty("length_unit")
     private LengthUnit lengthUnit;
     private BidReadDto leading;

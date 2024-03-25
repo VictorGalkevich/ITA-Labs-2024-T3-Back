@@ -10,17 +10,23 @@ import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.exception.AuctionEndedException;
 import com.ventionteams.applicationexchange.exception.IllegalPriceException;
+import com.ventionteams.applicationexchange.exception.LotNotFoundException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
 import com.ventionteams.applicationexchange.repository.LotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.ventionteams.applicationexchange.entity.enumeration.BidStatus.LEADING;
+import static com.ventionteams.applicationexchange.entity.enumeration.BidStatus.OVERBID;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @TransactionalService
 @RequiredArgsConstructor
@@ -60,39 +66,45 @@ public class BidService {
 
     private void setOverbidForLot(Bid bid) {
         Long lotId = bid.getLotId();
-        Optional<Lot> byId = lotRepository.findById(lotId);
-        byId.ifPresent(it -> it.setBidQuantity(it.getBidQuantity() + 1));
-        Optional<Bid> byLotId = bidRepository.findByLotIdAndStatus(lotId, BidStatus.LEADING);
-        byId.ifPresent(it -> {
-            if (it.getStatus().equals(LotStatus.AUCTION_ENDED)) {
-                throw new AuctionEndedException("No more bids allowed, max bid has already been done",
-                        HttpStatus.BAD_REQUEST);
-            }
-            byLotId.ifPresent(prev -> {
-                if ((double) it.getStartPrice() < bid.getAmount() && (double) bid.getAmount() <= it.getTotalPrice() - 1) {
-                    it.setBidQuantity(it.getBidQuantity() + 1);
-                    it.setStartPrice((double) bid.getAmount() + 1);
-                    prev.setStatus(BidStatus.OVERBID);
-                    if ((double) bid.getAmount() == it.getTotalPrice() - 1) {
-                        it.setStatus(LotStatus.AUCTION_ENDED);
+
+        lotRepository.findById(lotId)
+                .ifPresentOrElse(lot -> {
+                    if (bidsRestricted(lot)) {
+                        throw new AuctionEndedException("No more bids allowed, max bid has already been done",
+                                BAD_REQUEST);
                     }
-                } else {
-                    String msg = "Price %s is not less than current start price (%s)";
-                    Double val = it.getStartPrice();
-                    if ((double) bid.getAmount() > it.getTotalPrice() - 1) {
-                        msg = "Price %s is bigger than current max price (%s)";
-                        val = it.getTotalPrice() - 1;
-                    }
-                    throw new IllegalPriceException(
-                            msg.formatted(
-                                    bid.getAmount(),
-                                    val),
-                            HttpStatus.BAD_REQUEST
-                    );
-                }
-            });
-        });
-        byLotId.ifPresent(it -> it.setStatus(BidStatus.OVERBID));
+
+                    lot.setBidQuantity(lot.getBidQuantity() + 1);
+
+                    bidRepository.findByLotIdAndStatus(lotId, LEADING)
+                            .ifPresentOrElse(prevBid -> {
+                                long bidAmount = bid.getAmount();
+                                long startPrice = lot.getStartPrice();
+                                long totalPrice = lot.getTotalPrice();
+
+                                if (startPrice < bidAmount && bidAmount <= totalPrice - 1) {
+                                    prevBid.setStatus(OVERBID);
+                                    if (bidAmount == totalPrice - 1) {
+                                        lot.setStatus(LotStatus.AUCTION_ENDED);
+                                    }
+                                } else {
+                                    String msg = "Price %s is not less than current start price (%s)";
+                                    long val = startPrice;
+                                    if (bidAmount > totalPrice - 1) {
+                                        msg = "Price %s is bigger than current max price (%s)";
+                                        val = totalPrice - 1;
+                                    }
+                                    throw new IllegalPriceException(
+                                            String.format(msg, bidAmount, val),
+                                            BAD_REQUEST
+                                    );
+                                }
+                            }, () -> lot.setStartPrice(bid.getAmount() + 1));
+                }, () -> {
+                    throw new LotNotFoundException(
+                            "lot with id %d doesn't exist".formatted(lotId),
+                            NOT_FOUND);
+                });
     }
 
     private void deleteOldBidFromUser(Bid bid) {
@@ -100,6 +112,11 @@ public class BidService {
         Long lotId = bid.getLotId();
         Optional<Bid> byUserId = bidRepository.findByUserIdAndLotId(userId, lotId);
         byUserId.ifPresent(bidRepository::delete);
+    }
+
+    private boolean bidsRestricted(Lot lot) {
+        return !lot.getStatus().equals(LotStatus.ACTIVE) ||
+               lot.getExpirationDate().isBefore(Instant.now());
     }
 }
 

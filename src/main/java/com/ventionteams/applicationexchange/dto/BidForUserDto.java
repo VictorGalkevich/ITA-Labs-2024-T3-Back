@@ -7,7 +7,7 @@ import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 
 import java.time.Instant;
 
-public record BidForUserDto (
+public record BidForUserDto(
         @JsonProperty("bid_id")
         Long id,
         @JsonProperty("lot_id")

@@ -17,7 +17,7 @@ public interface LotMapper {
 
     @Mapping(target = "category", expression = "java(Category.builder().id(dto.categoryId()).build())")
     @Mapping(target = "expirationDate", expression = "java(java.time.Instant.now().plus(dto.days(), java.time.temporal.ChronoUnit.DAYS))")
-    @Mapping(target = "totalPrice", expression = "java(dto.pricePerUnit() * dto.quantity())")
+    @Mapping(target = "pricePerUnit", expression = "java((double) dto.totalPrice() / dto.quantity())")
     Lot toLot(LotUpdateDTO dto);
 
     void map(@MappingTarget Lot to, LotUpdateDTO from);

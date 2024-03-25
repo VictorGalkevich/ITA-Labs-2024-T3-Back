@@ -16,25 +16,38 @@ import com.ventionteams.applicationexchange.service.BidService;
 import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.service.LotService;
 import com.ventionteams.applicationexchange.service.UserService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.http.ResponseEntity.*;
+import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.notFound;
+import static org.springframework.http.ResponseEntity.ok;
 
 @ValidatedController
-@RequestMapping("/users")
+@RequestMapping(value = "/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -65,12 +78,13 @@ public class UserController {
         return ok().body(PageResponse.of(bidService.findBidsByUserId(user.id(), page, limit, status)));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserReadDto> create(@RequestBody @Validated UserData data,
-                                              @AuthenticationPrincipal UserAuthDto user, @RequestParam(required = false) MultipartFile avatar) {
-        UserCreateEditDto dto = toDto(user, data);  
-        return ok().body(userService.create(dto, imageService.saveAvatar(avatar)));      
+    public ResponseEntity<UserReadDto> create(@RequestPart @Valid UserData data,
+                                              @AuthenticationPrincipal UserAuthDto user,
+                                              @RequestPart MultipartFile avatar) {
+        UserCreateEditDto dto = toDto(user, data);
+        return ok().body(userService.create(dto, imageService.saveAvatar(avatar)));
     }
 
     @PutMapping

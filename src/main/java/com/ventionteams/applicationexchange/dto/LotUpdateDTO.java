@@ -19,7 +19,6 @@ public record LotUpdateDTO(
         Long totalPrice,
         LocationCreateDto location,
         String description,
-        LotStatus status,
         @JsonProperty("start_price")
         @Min(0)
         Long startPrice,

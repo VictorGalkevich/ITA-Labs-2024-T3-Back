@@ -3,7 +3,6 @@ package com.ventionteams.applicationexchange.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
-import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import jakarta.validation.constraints.Min;

@@ -11,16 +11,19 @@ import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.exception.UserNotRegisteredException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
 import com.ventionteams.applicationexchange.repository.LotRepository;
 import com.ventionteams.applicationexchange.specification.LotSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -59,17 +62,24 @@ public class LotService {
 
     @Transactional
     public LotReadDTO create(LotUpdateDTO dto, UserAuthDto user) {
-        return Optional.of(dto)
-                .map(lotMapper::toLot)
-                .map(x -> {
-                    x.setBidQuantity(0);
-                    x.setUserId(user.id());
-                    x.setStatus(LotStatus.MODERATED);
-                    return x;
-                })
-                .map(lotRepository::save)
-                .map(lotMapper::toLotReadDTO)
-                .orElseThrow();
+        try {
+            return Optional.of(dto)
+                    .map(lotMapper::toLot)
+                    .map(x -> {
+                        x.setBidQuantity(0);
+                        x.setUserId(user.id());
+                        x.setStatus(LotStatus.MODERATED);
+                        return x;
+                    })
+                    .map(lotRepository::save)
+                    .map(lotMapper::toLotReadDTO)
+                    .orElseThrow();
+        } catch (DataIntegrityViolationException e) {
+            throw new UserNotRegisteredException(
+                    "You haven't completed the onboarding yet",
+                    HttpStatus.FORBIDDEN
+            );
+        }
     }
 
     @Transactional

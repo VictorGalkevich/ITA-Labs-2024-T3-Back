@@ -9,6 +9,7 @@ import com.ventionteams.applicationexchange.dto.UserAuthDto;
 import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
+import com.ventionteams.applicationexchange.entity.User;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.exception.UserNotRegisteredException;
@@ -16,6 +17,7 @@ import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
 import com.ventionteams.applicationexchange.repository.LotRepository;
+import com.ventionteams.applicationexchange.repository.UserRepository;
 import com.ventionteams.applicationexchange.specification.LotSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -34,6 +36,7 @@ import java.util.UUID;
 public class LotService {
     private final LotRepository lotRepository;
     private final BidRepository bidRepository;
+    private final UserRepository userRepository;
     private final LotMapper lotMapper;
     private final BidMapper bidMapper;
 
@@ -42,6 +45,20 @@ public class LotService {
         PageRequest req = PageRequest.of(page - 1, limit, by);
         Specification<Lot> specification = LotSpecification.getFilterSpecification(filter);
         return lotRepository.findAll(specification, req)
+                .map(lot -> map(lot, userId));
+    }
+
+    public Page<LotReadDTO> findUsersLotsByStatus(Integer page, Integer limit, LotStatus status, LotSortCriteria sort, UUID userId) {
+        Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
+        PageRequest req = PageRequest.of(page - 1, limit, by);
+        return lotRepository.findByStatusAndUserId(status, userId, req)
+                .map(lot -> map(lot, userId));
+    }
+
+    public Page<LotReadDTO> findByStatus(Integer page, Integer limit, LotStatus status, LotSortCriteria sort, UUID userId) {
+        Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
+        PageRequest req = PageRequest.of(page - 1, limit, by);
+        return lotRepository.findByStatus(status, req)
                 .map(lot -> map(lot, userId));
     }
 
@@ -61,25 +78,23 @@ public class LotService {
     }
 
     @Transactional
-    public LotReadDTO create(LotUpdateDTO dto, UserAuthDto user) {
-        try {
+    public LotReadDTO create(LotUpdateDTO dto, UserAuthDto userDto) {
+            Optional<User> user = userRepository.findById(userDto.id());
+            if (user.isEmpty()) {
+                throw new UserNotRegisteredException("You haven't completed the onboarding yet",
+                        HttpStatus.FORBIDDEN);
+            }
             return Optional.of(dto)
                     .map(lotMapper::toLot)
                     .map(x -> {
                         x.setBidQuantity(0);
-                        x.setUserId(user.id());
+                        x.setUser(user.get());
                         x.setStatus(LotStatus.MODERATED);
                         return x;
                     })
                     .map(lotRepository::save)
                     .map(lotMapper::toLotReadDTO)
                     .orElseThrow();
-        } catch (DataIntegrityViolationException e) {
-            throw new UserNotRegisteredException(
-                    "You haven't completed the onboarding yet",
-                    HttpStatus.FORBIDDEN
-            );
-        }
     }
 
     @Transactional

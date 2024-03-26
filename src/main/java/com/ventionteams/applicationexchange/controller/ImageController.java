@@ -19,7 +19,7 @@ public class ImageController {
     private final ImageService imageService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Image> getAvatar(@PathVariable("id") Long id) {
+    public ResponseEntity<Image> getImageById(@PathVariable("id") Long id) {
         return imageService.getAvatar(id)
                 .map(obj -> ok()
                         .body(obj))

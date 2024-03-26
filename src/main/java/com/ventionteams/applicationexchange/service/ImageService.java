@@ -3,9 +3,11 @@ package com.ventionteams.applicationexchange.service;
 import com.ventionteams.applicationexchange.config.ConfigProperties;
 import com.ventionteams.applicationexchange.dto.LotReadDTO;
 import com.ventionteams.applicationexchange.entity.Image;
+import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ImageService {
     private final LotMapper lotMapper;
     private final ImageRepository imageRepository;
@@ -53,21 +56,35 @@ public class ImageService {
                 lot.getImages().add(imageRepository.save(image));
             });
 
-
         }
         return lot;
     }
 
-    public Image saveAvatar(MultipartFile avatar) {
-        String name = String.format("%s/%s", "avatar", RandomStringUtils.randomAlphanumeric(12));
+    public Long saveSingleImage(MultipartFile file, String folder) {
+        if (file == null) return null;
+        String name = String.format("%s/%s", folder, RandomStringUtils.randomAlphanumeric(12));
         Image image = Image.builder()
                 .name(name)
-                .url(storageService.upload(avatar, name))
+                .url(storageService.upload(file, name))
                 .build();
-        return imageRepository.save(image);
+
+        return imageRepository.save(image).getId();
     }
 
     public Optional<Image> getAvatar(Long id) {
         return imageRepository.findById(id);
+    }
+
+    public void deleteAvatar(Long id) {
+        if (id == null) return;
+        Image image = imageRepository.findById(id).get();
+
+        storageService.delete(image.getName());
+        imageRepository.delete(image);
+        log.info("Delete image with id: {}", id);
+    }
+
+    public void updateListImagesForLot(List<MultipartFile> newListImages, Lot lot) {
+
     }
 }

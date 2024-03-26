@@ -86,9 +86,10 @@ public class LotController {
         return ok().body(imageService.saveListImagesForLot(images, lotService.create(lot, user)));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<LotReadDTO> update(@PathVariable("id") Long id,
-                                             @RequestBody LotUpdateDTO lotUpdateDTO,
+                                             @RequestPart LotUpdateDTO lotUpdateDTO,
+                                             @RequestPart List<MultipartFile> newImages,
                                              @AuthenticationPrincipal UserAuthDto user) {
         return lotService.update(id, lotUpdateDTO, user.id())
                 .map(obj -> ok().body(obj))

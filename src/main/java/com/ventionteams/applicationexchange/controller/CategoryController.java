@@ -20,6 +20,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,8 +32,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.attribute.standard.Media;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -90,11 +94,11 @@ public class CategoryController {
         return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, id)));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<CategoryReadDto> create(@RequestBody CategoryCreateEditDto dto) {
-        return ok().body(categoryService.create(dto));
+    public ResponseEntity<CategoryReadDto> create(@RequestPart CategoryCreateEditDto dto, @RequestPart(required = false) MultipartFile image) {
+        return ok().body(categoryService.create(dto, image));
     }
 
     @PutMapping("/{id}")

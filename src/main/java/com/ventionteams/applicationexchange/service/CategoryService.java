@@ -9,6 +9,7 @@ import com.ventionteams.applicationexchange.mapper.CategoryMapper;
 import com.ventionteams.applicationexchange.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final ImageService imageService;
 
     public List<MainPageCategoryReadDto> findAll() {
         return categoryRepository.findAllByParentIdIsNull().stream()
@@ -41,12 +43,13 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryReadDto create(CategoryCreateEditDto categoryDto) {
+    public CategoryReadDto create(CategoryCreateEditDto categoryDto, MultipartFile image) {
         return Optional.of(categoryDto)
                 .map(categoryMapper::toCategory)
                 .map(category -> {
                     Category parent = categoryDto.parentId() == null ? null : categoryRepository.findById(categoryDto.parentId()).get();
                     category.setParent(parent);
+                    category.setImageId(imageService.saveSingleImage(image, "category"));
                     return category;
                 })
                 .map(categoryRepository::save)

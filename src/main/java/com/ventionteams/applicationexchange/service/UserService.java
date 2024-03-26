@@ -49,7 +49,10 @@ public class UserService {
     @Transactional
     public Optional<UserReadDto> update(UUID id, UserCreateEditDto dto) {
         return userRepository.findById(id)
-                .map(user -> userMapper.toUser(dto))
+                .map(user -> {
+                    userMapper.map(user, dto);
+                    return user;
+                })
                 .map(userRepository::saveAndFlush)
                 .map(userMapper::toUserReadDto);
     }

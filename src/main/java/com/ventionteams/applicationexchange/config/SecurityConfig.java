@@ -70,7 +70,10 @@ public class SecurityConfig {
             Map<String, Object> claims = jwt.getClaims();
             UUID sub = UUID.fromString((String) claims.get("sub"));
             String email = (String) claims.get("email");
-            List<Role> authorities = ((List<Object>) claims.get("cognito:groups")).stream()
+            List<Object> notParsedAuthorities = (List<Object>) claims.get("cognito:groups");
+            List<Role> authorities = notParsedAuthorities == null
+                    ? List.of(Role.USER)
+                    : (notParsedAuthorities).stream()
                     .map(x -> Role.valueOf((String) x))
                     .toList();
             UserAuthDto dto = new UserAuthDto(sub, email, authorities);

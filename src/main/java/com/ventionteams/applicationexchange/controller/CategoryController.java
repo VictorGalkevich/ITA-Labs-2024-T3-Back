@@ -20,6 +20,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,8 +32,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.attribute.standard.Media;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -77,8 +81,9 @@ public class CategoryController {
                                                                        @RequestParam(required = false) @Min(1) @Max(100000) Integer fromPrice,
                                                                        @RequestParam(required = false) @Min(1) @Max(100000) Integer toPrice,
                                                                        @RequestParam(required = false) LotSortField sortField,
-                                                                       @RequestParam(required = false) Sort.Direction sortOrder) {
-        final LotFilterDTO filter = new LotFilterDTO(category, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize, fromPrice, toPrice, LotStatus.ACTIVE);
+                                                                       @RequestParam(required = false) Sort.Direction sortOrder,
+                                                                       @RequestParam(required = false) String keyword) {
+        final LotFilterDTO filter = new LotFilterDTO(category, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize, fromPrice, toPrice, LotStatus.ACTIVE, keyword);
         final LotSortCriteria sort = LotSortCriteria.builder()
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
@@ -90,18 +95,18 @@ public class CategoryController {
         return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, id)));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<CategoryReadDto> create(@RequestBody CategoryCreateEditDto dto) {
-        return ok().body(categoryService.create(dto));
+    public ResponseEntity<CategoryReadDto> create(@RequestPart CategoryCreateEditDto dto, @RequestPart(required = false) MultipartFile image) {
+        return ok().body(categoryService.create(dto, image));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<CategoryReadDto> update(@PathVariable("id") Integer id,
-                                                  @RequestBody CategoryCreateEditDto dto) {
-        return categoryService.update(id, dto)
+                                                  @RequestPart CategoryCreateEditDto dto, @RequestPart(required = false) MultipartFile newImage) {
+        return categoryService.update(id, dto, newImage)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }

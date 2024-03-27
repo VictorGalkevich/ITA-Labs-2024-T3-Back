@@ -18,6 +18,7 @@ public record LotFilterDTO(
         Integer toSize,
         Integer fromPrice,
         Integer toPrice,
-        LotStatus lotStatus
+        LotStatus lotStatus,
+        String keyword
 ) {
 }

@@ -1,19 +1,21 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.read.BidForUserDto;
+import com.ventionteams.applicationexchange.dto.BidForUserDto;
+import com.ventionteams.applicationexchange.dto.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.PageResponse;
+import com.ventionteams.applicationexchange.dto.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
+import com.ventionteams.applicationexchange.dto.UserData;
+import com.ventionteams.applicationexchange.dto.UserReadDto;
+import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.read.PageResponse;
-import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
-import com.ventionteams.applicationexchange.dto.create.UserCreateEditDto;
-import com.ventionteams.applicationexchange.dto.create.UserData;
 import com.ventionteams.applicationexchange.dto.read.RequestReadDto;
-import com.ventionteams.applicationexchange.dto.read.UserReadDto;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
-import com.ventionteams.applicationexchange.repository.RequestRepository;
 import com.ventionteams.applicationexchange.service.BidService;
 import com.ventionteams.applicationexchange.service.ImageService;
 import com.ventionteams.applicationexchange.service.LotService;
@@ -56,7 +58,6 @@ public class UserController {
     private final UserService userService;
     private final BidService bidService;
     private final RequestService requestService;
-    private final ImageService imageService;
     private final LotService lotService;
 
     @GetMapping
@@ -76,9 +77,9 @@ public class UserController {
     @GetMapping("/bids")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PageResponse<LotReadDTO>> findById(@AuthenticationPrincipal UserAuthDto user,
-                                                                @RequestParam(defaultValue = "1") @Min(1) Integer page,
-                                                                @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
-                                                                @RequestParam(defaultValue = "LEADING") BidStatus status) {
+                                                             @RequestParam(defaultValue = "1") @Min(1) Integer page,
+                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                             @RequestParam(defaultValue = "LEADING") BidStatus status) {
         return ok().body(PageResponse.of(lotService.findBidsByUserId(user.id(), page, limit, status)));
     }
 
@@ -93,18 +94,17 @@ public class UserController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserReadDto> create(@RequestPart @Valid UserData data,
-                                              @AuthenticationPrincipal UserAuthDto user,
-                                              @RequestPart MultipartFile avatar) {
+    public ResponseEntity<UserReadDto> create(@RequestPart @Validated UserData data,
+                                              @AuthenticationPrincipal UserAuthDto user, @RequestPart(required = false) MultipartFile avatar) {
         UserCreateEditDto dto = toDto(user, data);
-        return ok().body(userService.create(dto, imageService.saveAvatar(avatar)));
+        return ok().body(userService.create(dto, avatar));
     }
 
-    @PutMapping
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserReadDto> update(@AuthenticationPrincipal UserAuthDto user,
-                                              @RequestBody @Validated UserData data) {
+                                              @RequestPart @Validated UserData data, @RequestPart(required = false) MultipartFile newAvatar) {
         UserCreateEditDto dto = toDto(user, data);
-        return userService.update(user.id(), dto)
+        return userService.update(user.id(), dto, newAvatar)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }

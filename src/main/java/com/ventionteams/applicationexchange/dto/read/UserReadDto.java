@@ -20,5 +20,6 @@ public record UserReadDto(
         String phoneNumber,
         @JsonProperty("preferred_currency")
         Currency currency,
-        List<BidReadDto> bids) {
+        List<BidReadDto> bids,
+        Long avatarId) {
 }

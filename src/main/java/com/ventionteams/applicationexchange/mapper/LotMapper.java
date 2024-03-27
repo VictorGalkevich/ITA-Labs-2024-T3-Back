@@ -21,6 +21,8 @@ public interface LotMapper {
     Lot toLot(LotUpdateDTO dto);
 
     void map(@MappingTarget Lot to, LotUpdateDTO from);
+    @Mapping(target = "category", expression = "java(Category.builder().id(from.getCategoryId()).build())")
+    void map(@MappingTarget Lot to, LotReadDTO from);
 
     @Mapping(target = "category", expression = "java(Category.builder().id(dto.getCategoryId()).build())")
     @Mapping(target = "expirationDate", expression = "java(java.time.Instant.now().plusSeconds(86400 * 7 + 60))")

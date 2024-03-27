@@ -1,12 +1,14 @@
 package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.annotation.TransactionalService;
-import com.ventionteams.applicationexchange.dto.read.BidForUserDto;
-import com.ventionteams.applicationexchange.dto.read.BidReadDto;
-import com.ventionteams.applicationexchange.dto.create.LotFilterDTO;
-import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.BidReadDto;
+import com.ventionteams.applicationexchange.dto.LotFilterDTO;
+import com.ventionteams.applicationexchange.dto.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.dto.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.create.LotUpdateDTO;
 import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
 import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.Category;
 import com.ventionteams.applicationexchange.entity.Lot;
@@ -17,7 +19,6 @@ import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.exception.AuctionEndedException;
 import com.ventionteams.applicationexchange.exception.UserNotRegisteredException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
-import com.ventionteams.applicationexchange.mapper.CategoryMapper;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
 import com.ventionteams.applicationexchange.repository.CategoryRepository;
@@ -25,12 +26,16 @@ import com.ventionteams.applicationexchange.repository.LotRepository;
 import com.ventionteams.applicationexchange.repository.UserRepository;
 import com.ventionteams.applicationexchange.specification.LotSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,6 +51,7 @@ public class LotService extends UserItemService {
     private final UserRepository userRepository;
     private final LotMapper lotMapper;
     private final BidMapper bidMapper;
+    private final ImageService imageService;
 
     public Page<LotReadDTO> findAll(Integer page, Integer limit, LotFilterDTO filter, LotSortCriteria sort, UUID userId) {
         Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
@@ -89,30 +95,31 @@ public class LotService extends UserItemService {
 
     @Transactional
     public LotReadDTO create(LotUpdateDTO dto, UserAuthDto userDto) {
-            Optional<User> user = userRepository.findById(userDto.id());
-            entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
-            Optional<Category> category = categoryRepository.findById(dto.categoryId());
-            entityValidator.validate(category, Category.class);
-            return Optional.of(dto)
-                    .map(lotMapper::toLot)
-                    .map(x -> {
-                        x.setBidQuantity(0);
-                        x.setUser(user.get());
-                        x.setStatus(LotStatus.MODERATED);
-                        return x;
-                    })
-                    .map(lotRepository::save)
-                    .map(lotMapper::toLotReadDTO)
-                    .orElseThrow();
+        Optional<User> user = userRepository.findById(userDto.id());
+        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        Optional<Category> category = categoryRepository.findById(dto.categoryId());
+        entityValidator.validate(category, Category.class);
+        return Optional.of(dto)
+                .map(lotMapper::toLot)
+                .map(x -> {
+                    x.setBidQuantity(0);
+                    x.setUser(user.get());
+                    x.setStatus(LotStatus.MODERATED);
+                    return x;
+                })
+                .map(lotRepository::save)
+                .map(lotMapper::toLotReadDTO)
+                .orElseThrow();
     }
 
     @Transactional
-    public Optional<LotReadDTO> update(Long id, LotUpdateDTO dto, UserAuthDto userDto) {
+    public Optional<LotReadDTO> update(Long id, LotUpdateDTO dto, UserAuthDto userDto, List<MultipartFile> newImages) {
         Optional<User> user = userRepository.findById(userDto.id());
         entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
         return lotRepository.findById(id)
                 .map(lot -> {
                     permissionValidator.validate(lot, userDto);
+                    lotMapper.map(lot, imageService.updateListImagesForLot(newImages, lot));
                     lotMapper.map(lot, dto);
                     return lot;
                 })

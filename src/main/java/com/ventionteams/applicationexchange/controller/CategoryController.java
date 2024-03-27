@@ -81,8 +81,9 @@ public class CategoryController {
                                                                        @RequestParam(required = false) @Min(1) @Max(100000) Integer fromPrice,
                                                                        @RequestParam(required = false) @Min(1) @Max(100000) Integer toPrice,
                                                                        @RequestParam(required = false) LotSortField sortField,
-                                                                       @RequestParam(required = false) Sort.Direction sortOrder) {
-        final LotFilterDTO filter = new LotFilterDTO(category, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize, fromPrice, toPrice, LotStatus.ACTIVE);
+                                                                       @RequestParam(required = false) Sort.Direction sortOrder,
+                                                                       @RequestParam(required = false) String keyword) {
+        final LotFilterDTO filter = new LotFilterDTO(category, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize, fromPrice, toPrice, LotStatus.ACTIVE, keyword);
         final LotSortCriteria sort = LotSortCriteria.builder()
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))

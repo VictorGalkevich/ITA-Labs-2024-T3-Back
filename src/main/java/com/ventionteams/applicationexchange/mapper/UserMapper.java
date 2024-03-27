@@ -12,5 +12,6 @@ public interface UserMapper {
     UserReadDto toUserReadDto(User user);
 
     User toUser(UserCreateEditDto dto);
+
     void map(@MappingTarget User to, UserCreateEditDto from);
 }

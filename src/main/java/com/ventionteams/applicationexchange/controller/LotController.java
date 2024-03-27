@@ -1,11 +1,10 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.LotFilterDTO;
-import com.ventionteams.applicationexchange.dto.LotReadDTO;
-import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
-import com.ventionteams.applicationexchange.dto.PageResponse;
-import com.ventionteams.applicationexchange.dto.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.create.LotUpdateDTO;
+import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.read.PageResponse;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
@@ -50,11 +49,11 @@ public class LotController {
 
     @GetMapping
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsByStatus(@RequestParam(defaultValue = "1") Integer page,
-                                                                       @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
-                                                                       @RequestParam LotStatus lotStatus,
-                                                                       @RequestParam(required = false) LotSortField sortField,
-                                                                       @RequestParam(required = false) Sort.Direction sortOrder,
-                                                                       @AuthenticationPrincipal UserAuthDto user) {
+                                                                     @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                                     @RequestParam LotStatus lotStatus,
+                                                                     @RequestParam(required = false) LotSortField sortField,
+                                                                     @RequestParam(required = false) Sort.Direction sortOrder,
+                                                                     @AuthenticationPrincipal UserAuthDto user) {
         final LotSortCriteria sort = LotSortCriteria.builder()
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
@@ -89,17 +88,18 @@ public class LotController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<LotReadDTO> update(@PathVariable("id") Long id,
-                                                                                         @RequestBody LotUpdateDTO lotUpdateDTO,
-                                                                                         @RequestPart List<MultipartFile> newImages,
-                                                                                         @AuthenticationPrincipal UserAuthDto user) {
+                                             @RequestBody LotUpdateDTO lotUpdateDTO,
+                                             @RequestPart List<MultipartFile> newImages,
+                                             @AuthenticationPrincipal UserAuthDto user) {
         return lotService.update(id, lotUpdateDTO, user, newImages)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        return lotService.delete(id)
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id,
+                                       @AuthenticationPrincipal UserAuthDto user) {
+        return lotService.delete(id, user)
                 ? noContent().build()
                 : notFound().build();
     }

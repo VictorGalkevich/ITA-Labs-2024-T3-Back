@@ -3,13 +3,13 @@ package com.ventionteams.applicationexchange.service;
 import com.ventionteams.applicationexchange.annotation.TransactionalService;
 import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.UserReadDto;
-import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.mapper.UserMapper;
 import com.ventionteams.applicationexchange.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -20,6 +20,7 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final ImageService imageService;
 
     public Page<UserReadDto> findAll(Integer page, Integer limit) {
         PageRequest req = PageRequest.of(page - 1, limit);
@@ -33,11 +34,11 @@ public class UserService {
     }
 
     @Transactional
-    public UserReadDto create(UserCreateEditDto dto, Image avatar) {
+    public UserReadDto create(UserCreateEditDto dto, MultipartFile avatar) {
         return Optional.of(dto)
                 .map(userMapper::toUser)
                 .map(user -> {
-                    user.setAvatarId(avatar.getId());
+                    user.setAvatarId(imageService.saveSingleImage(avatar, "avatar"));
                     user.setCreatedAt(Instant.now());
                     return user;
                 })
@@ -47,9 +48,11 @@ public class UserService {
     }
 
     @Transactional
-    public Optional<UserReadDto> update(UUID id, UserCreateEditDto dto) {
+    public Optional<UserReadDto> update(UUID id, UserCreateEditDto dto, MultipartFile newAvatar) {
         return userRepository.findById(id)
                 .map(user -> {
+                    imageService.deleteImage(user.getAvatarId());
+                    user.setAvatarId(imageService.saveSingleImage(newAvatar, "avatar"));
                     userMapper.map(user, dto);
                     return user;
                 })

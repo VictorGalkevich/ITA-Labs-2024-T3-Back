@@ -1,34 +1,13 @@
 package com.ventionteams.applicationexchange.entity;
 
-import com.ventionteams.applicationexchange.entity.enumeration.Currency;
-import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
-import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
-import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
-import com.ventionteams.applicationexchange.entity.enumeration.Weight;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.ventionteams.applicationexchange.entity.enumeration.*;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.EqualsAndHashCode.Include;
-import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -69,7 +48,7 @@ public class Lot extends AuditingEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "status")
     private LotStatus status;
-
+  
     @OneToMany(mappedBy = "lot", fetch = FetchType.EAGER)
     private List<Image> images = new ArrayList<>();
 
@@ -100,6 +79,7 @@ public class Lot extends AuditingEntity {
     @Column(nullable = false, name = "currency")
     private Currency currency;
 
-    @Column(nullable = false, name = "user_id")
-    private UUID userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

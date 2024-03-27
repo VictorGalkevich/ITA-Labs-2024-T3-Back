@@ -88,7 +88,7 @@ public class LotController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<LotReadDTO> update(@PathVariable("id") Long id,
-                                             @RequestBody LotUpdateDTO lotUpdateDTO,
+                                             @RequestPart LotUpdateDTO lotUpdateDTO,
                                              @RequestPart List<MultipartFile> newImages,
                                              @AuthenticationPrincipal UserAuthDto user) {
         return lotService.update(id, lotUpdateDTO, user, newImages)

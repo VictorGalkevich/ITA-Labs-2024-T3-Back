@@ -1,9 +1,9 @@
 package com.ventionteams.applicationexchange.mapper;
 
 import com.ventionteams.applicationexchange.config.MapperConfiguration;
-import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
-import com.ventionteams.applicationexchange.dto.CategoryReadDto;
-import com.ventionteams.applicationexchange.dto.MainPageCategoryReadDto;
+import com.ventionteams.applicationexchange.dto.create.CategoryCreateEditDto;
+import com.ventionteams.applicationexchange.dto.read.CategoryReadDto;
+import com.ventionteams.applicationexchange.dto.read.MainPageCategoryReadDto;
 import com.ventionteams.applicationexchange.entity.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

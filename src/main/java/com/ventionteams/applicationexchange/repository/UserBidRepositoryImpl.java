@@ -1,6 +1,6 @@
 package com.ventionteams.applicationexchange.repository;
 
-import com.ventionteams.applicationexchange.dto.BidForUserDto;
+import com.ventionteams.applicationexchange.dto.read.BidForUserDto;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;

@@ -1,7 +1,7 @@
 package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.config.ConfigProperties;
-import com.ventionteams.applicationexchange.dto.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
 import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.ImageRepository;

@@ -1,8 +1,8 @@
 package com.ventionteams.applicationexchange.mapper;
 
 import com.ventionteams.applicationexchange.config.MapperConfiguration;
-import com.ventionteams.applicationexchange.dto.LotReadDTO;
-import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
+import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.create.LotUpdateDTO;
 import com.ventionteams.applicationexchange.entity.Lot;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

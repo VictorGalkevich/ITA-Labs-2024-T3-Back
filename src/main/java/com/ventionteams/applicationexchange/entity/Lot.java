@@ -13,10 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+@ToString(onlyExplicitlyIncluded = true)
 @Builder
 @Entity
 @Table(name = "lots")
-public class Lot extends AuditingEntity {
+public class Lot extends AuditingEntity implements UserMappedEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Include
@@ -82,4 +83,7 @@ public class Lot extends AuditingEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(name = "reject_message")
+    private String rejectMessage;
 }

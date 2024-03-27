@@ -1,10 +1,10 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.BidCreateDto;
-import com.ventionteams.applicationexchange.dto.BidReadDto;
-import com.ventionteams.applicationexchange.dto.PageResponse;
-import com.ventionteams.applicationexchange.dto.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.create.BidCreateDto;
+import com.ventionteams.applicationexchange.dto.read.BidReadDto;
+import com.ventionteams.applicationexchange.dto.read.PageResponse;
+import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.service.BidService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -32,13 +32,13 @@ public class BidController {
     private final BidService bidService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<PageResponse<BidReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
         return ok().body(PageResponse.of(bidService.findAll(page, limit)));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'USER')")
     public ResponseEntity<BidReadDto> findById(@PathVariable("id") Long id) {
         return bidService.findById(id)
                 .map(obj -> ok()
@@ -48,10 +48,10 @@ public class BidController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<BidReadDto> create(@RequestBody BidCreateDto dto,
                                              @AuthenticationPrincipal UserAuthDto user) {
         dto.setUserId(user.id());
-        return ok().body(bidService.create(dto));
+        return ok().body(bidService.create(dto, user));
     }
 }

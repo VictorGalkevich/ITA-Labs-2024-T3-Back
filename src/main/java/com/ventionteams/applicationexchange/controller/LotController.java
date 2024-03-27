@@ -1,11 +1,10 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.LotFilterDTO;
-import com.ventionteams.applicationexchange.dto.LotReadDTO;
-import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
-import com.ventionteams.applicationexchange.dto.PageResponse;
-import com.ventionteams.applicationexchange.dto.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.create.LotUpdateDTO;
+import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.read.PageResponse;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,12 +48,13 @@ public class LotController {
     private final ImageService imageService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsByStatus(@RequestParam(defaultValue = "1") Integer page,
-                                                                       @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
-                                                                       @RequestParam LotStatus lotStatus,
-                                                                       @RequestParam(required = false) LotSortField sortField,
-                                                                       @RequestParam(required = false) Sort.Direction sortOrder,
-                                                                       @AuthenticationPrincipal UserAuthDto user) {
+                                                                     @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                                     @RequestParam LotStatus lotStatus,
+                                                                     @RequestParam(required = false) LotSortField sortField,
+                                                                     @RequestParam(required = false) Sort.Direction sortOrder,
+                                                                     @AuthenticationPrincipal UserAuthDto user) {
         final LotSortCriteria sort = LotSortCriteria.builder()
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
@@ -79,24 +80,54 @@ public class LotController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<LotReadDTO> create(@RequestPart @Validated LotUpdateDTO lot,
                                              @RequestPart List<MultipartFile> images,
                                              @AuthenticationPrincipal UserAuthDto user) {
         return ok().body(imageService.saveListImagesForLot(images, lotService.create(lot, user)));
     }
 
+    @PostMapping("/{id}/buy")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public ResponseEntity<LotReadDTO> buy(@PathVariable Long id,
+                                          @AuthenticationPrincipal UserAuthDto user) {
+        return lotService.buy(id, user)
+                .map(obj -> ok().body(obj))
+                .orElseGet(notFound()::build);
+    }
+
+    @PostMapping("/{id}/reject")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
+    public ResponseEntity<Void> reject(@PathVariable Long id,
+                                       @RequestBody String message) {
+        return lotService.reject(id, message).isPresent()
+                ? ok().build()
+                : notFound().build();
+    }
+
+    @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
+    public ResponseEntity<Void> approve(@PathVariable Long id) {
+        return lotService.approve(id).isPresent()
+                ? ok().build()
+                : notFound().build();
+    }
+
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<LotReadDTO> update(@PathVariable("id") Long id,
                                              @RequestBody LotUpdateDTO lotUpdateDTO,
                                              @AuthenticationPrincipal UserAuthDto user) {
-        return lotService.update(id, lotUpdateDTO, user.id())
+        return lotService.update(id, lotUpdateDTO, user)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        return lotService.delete(id)
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id,
+                                       @AuthenticationPrincipal UserAuthDto user) {
+        return lotService.delete(id, user)
                 ? noContent().build()
                 : notFound().build();
     }

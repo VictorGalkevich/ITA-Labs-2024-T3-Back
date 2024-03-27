@@ -2,9 +2,9 @@ package com.ventionteams.applicationexchange.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class LotNotFoundException extends BaseException {
+public class EntityNotFoundException extends BaseException {
 
-    public LotNotFoundException(String message, HttpStatus status) {
+    public EntityNotFoundException(String message, HttpStatus status) {
         super(message, status);
     }
 }

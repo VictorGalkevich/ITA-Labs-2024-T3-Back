@@ -1,7 +1,7 @@
 package com.ventionteams.applicationexchange.config;
 
 
-import com.ventionteams.applicationexchange.dto.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.entity.enumeration.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

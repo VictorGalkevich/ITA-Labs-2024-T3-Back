@@ -1,6 +1,6 @@
 package com.ventionteams.applicationexchange.repository;
 
-import com.ventionteams.applicationexchange.dto.BidForUserDto;
+import com.ventionteams.applicationexchange.dto.read.BidForUserDto;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

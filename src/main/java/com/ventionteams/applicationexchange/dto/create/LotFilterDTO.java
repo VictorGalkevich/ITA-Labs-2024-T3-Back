@@ -1,4 +1,4 @@
-package com.ventionteams.applicationexchange.dto;
+package com.ventionteams.applicationexchange.dto.create;
 
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;

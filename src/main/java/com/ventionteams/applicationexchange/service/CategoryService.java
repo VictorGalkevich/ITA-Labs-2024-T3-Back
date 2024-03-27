@@ -1,9 +1,9 @@
 package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.annotation.TransactionalService;
-import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
-import com.ventionteams.applicationexchange.dto.CategoryReadDto;
-import com.ventionteams.applicationexchange.dto.MainPageCategoryReadDto;
+import com.ventionteams.applicationexchange.dto.create.CategoryCreateEditDto;
+import com.ventionteams.applicationexchange.dto.read.CategoryReadDto;
+import com.ventionteams.applicationexchange.dto.read.MainPageCategoryReadDto;
 import com.ventionteams.applicationexchange.entity.Category;
 import com.ventionteams.applicationexchange.mapper.CategoryMapper;
 import com.ventionteams.applicationexchange.repository.CategoryRepository;

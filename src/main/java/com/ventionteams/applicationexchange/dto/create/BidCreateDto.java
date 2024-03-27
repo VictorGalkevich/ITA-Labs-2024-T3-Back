@@ -1,4 +1,4 @@
-package com.ventionteams.applicationexchange.dto;
+package com.ventionteams.applicationexchange.dto.create;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

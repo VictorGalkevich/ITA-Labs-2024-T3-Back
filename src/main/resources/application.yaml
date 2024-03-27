@@ -10,7 +10,7 @@ spring:
       fetch_size: 50
       show_sql: true
       format_sql: true
-      hbm2ddl.auto: validate
+      hbm2ddl.auto: update
     open-in-view: false
   security:
     oauth2:

@@ -91,7 +91,7 @@ public class LotController {
                                              @RequestPart LotUpdateDTO lotUpdateDTO,
                                              @RequestPart List<MultipartFile> newImages,
                                              @AuthenticationPrincipal UserAuthDto user) {
-        return lotService.update(id, lotUpdateDTO, user.id())
+        return lotService.update(id, lotUpdateDTO, user.id(), newImages)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }

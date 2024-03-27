@@ -101,11 +101,11 @@ public class CategoryController {
         return ok().body(categoryService.create(dto, image));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<CategoryReadDto> update(@PathVariable("id") Integer id,
-                                                  @RequestBody CategoryCreateEditDto dto) {
-        return categoryService.update(id, dto)
+                                                  @RequestPart CategoryCreateEditDto dto, @RequestPart(required = false) MultipartFile newImage) {
+        return categoryService.update(id, dto, newImage)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }

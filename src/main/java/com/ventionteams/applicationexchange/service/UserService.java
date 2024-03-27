@@ -51,7 +51,7 @@ public class UserService {
     public Optional<UserReadDto> update(UUID id, UserCreateEditDto dto, MultipartFile newAvatar) {
         return userRepository.findById(id)
                 .map(user -> {
-                    imageService.deleteAvatar(user.getAvatarId());
+                    imageService.deleteImage(user.getAvatarId());
                     user.setAvatarId(imageService.saveSingleImage(newAvatar, "avatar"));
                     userMapper.map(user, dto);
                     return user;

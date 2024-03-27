@@ -17,6 +17,7 @@ import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.waiters.S3Waiter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,7 +76,7 @@ public class ImageService {
         return imageRepository.findById(id);
     }
 
-    public void deleteAvatar(Long id) {
+    public void deleteImage(Long id) {
         if (id == null) return;
         Image image = imageRepository.findById(id).get();
 
@@ -84,7 +85,12 @@ public class ImageService {
         log.info("Delete image with id: {}", id);
     }
 
-    public void updateListImagesForLot(List<MultipartFile> newListImages, Lot lot) {
+    public LotReadDTO updateListImagesForLot(List<MultipartFile> newListImages, Lot lot) {
+        List<Image> lotsImages = new ArrayList<>(lot.getImages());
+        for (Image image : lotsImages) {
+            deleteImage(image.getId());
+        }
 
+        return saveListImagesForLot(newListImages, lotMapper.toLotReadDTO(lot));
     }
 }

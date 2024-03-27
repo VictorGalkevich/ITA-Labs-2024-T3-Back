@@ -58,12 +58,14 @@ public class CategoryService {
     }
 
     @Transactional
-    public Optional<CategoryReadDto> update(Integer id, CategoryCreateEditDto categoryDto) {
+    public Optional<CategoryReadDto> update(Integer id, CategoryCreateEditDto categoryDto, MultipartFile newImage) {
         return categoryRepository.findById(id)
                 .map(category -> {
                     categoryMapper.map(category, categoryDto);
                     Category parent = categoryDto.parentId() == null ? null : categoryRepository.findById(categoryDto.parentId()).get();
                     category.setParent(parent);
+                    imageService.deleteImage(category.getImageId());
+                    category.setImageId(imageService.saveSingleImage(newImage, "category"));
                     return category;
                 })
                 .map(categoryRepository::save)

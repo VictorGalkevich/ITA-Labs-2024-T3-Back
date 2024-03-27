@@ -13,6 +13,7 @@ import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.service.BidService;
+import com.ventionteams.applicationexchange.service.LotService;
 import com.ventionteams.applicationexchange.service.UserService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -38,6 +39,7 @@ import static org.springframework.http.ResponseEntity.*;
 public class UserController {
     private final UserService userService;
     private final BidService bidService;
+    private final LotService lotService;
 
     @GetMapping
     public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,

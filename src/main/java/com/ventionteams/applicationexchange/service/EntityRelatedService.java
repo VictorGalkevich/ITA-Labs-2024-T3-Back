@@ -1,15 +1,23 @@
 package com.ventionteams.applicationexchange.service;
 
-import com.ventionteams.applicationexchange.validator.MissingEntityValidator;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ventionteams.applicationexchange.exception.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 
-@RequiredArgsConstructor
+import java.util.Optional;
+
 public class EntityRelatedService {
-    protected MissingEntityValidator entityValidator;
+    public static <T> void validateEntity(Optional<T> entity, Class<T> clazz) {
+        if (entity.isEmpty()) {
+            throw new EntityNotFoundException("specified %s doesn't exist"
+                    .formatted(clazz.getSimpleName()
+                            .toLowerCase()),
+                    HttpStatus.NOT_FOUND);
+        }
+    }
 
-    @Autowired
-    public final void setEntityValidator(MissingEntityValidator entityValidator) {
-        this.entityValidator = entityValidator;
+    public static  <T> void validateEntity(Optional<T> entity, Runnable onEmptyAction) {
+        if (entity.isEmpty()) {
+            onEmptyAction.run();
+        }
     }
 }

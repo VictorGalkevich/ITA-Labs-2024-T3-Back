@@ -12,6 +12,7 @@ import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.exception.AuctionEndedException;
 import com.ventionteams.applicationexchange.exception.IllegalPriceException;
+import com.ventionteams.applicationexchange.exception.PermissionsDeniedException;
 import com.ventionteams.applicationexchange.exception.UserNotRegisteredException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
@@ -20,6 +21,7 @@ import com.ventionteams.applicationexchange.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -52,11 +54,11 @@ public class BidService extends EntityRelatedService {
     @Transactional
     public BidReadDto create(BidCreateDto dto, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
         return Optional.of(dto)
                 .map(bidMapper::toBid)
                 .map(bid -> {
-                    setOverbidForLot(bid);
+                    setOverbidForLot(bid, userDto);
                     deleteOldBidFromUser(bid);
                     return bidRepository.save(bid);
                 })
@@ -64,11 +66,16 @@ public class BidService extends EntityRelatedService {
                 .orElseThrow();
     }
 
-    private void setOverbidForLot(Bid bid) {
+    private void setOverbidForLot(Bid bid, UserAuthDto userDto) {
         Long lotId = bid.getLotId();
         Optional<Lot> lotWrapper = lotRepository.findById(lotId);
-        entityValidator.validate(lotWrapper, Lot.class);
+        validateEntity(lotWrapper, Lot.class);
+
         Lot lot = lotWrapper.get();
+
+        if (lot.getUser().getId().equals(userDto.id())) {
+            throw new PermissionsDeniedException("You can't make bids at yout lots", HttpStatus.FORBIDDEN);
+        }
 
         if (bidsRestricted(lot)) {
             throw new AuctionEndedException("No more bids allowed, max bid has already been done",

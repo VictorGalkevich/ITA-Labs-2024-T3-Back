@@ -78,10 +78,10 @@ public class LotService extends UserItemService {
     @Transactional
     public boolean delete(Long id, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
         return lotRepository.findById(id)
                 .map(lot -> {
-                    permissionValidator.validate(lot, userDto);
+                    validatePermissions(lot, userDto);
                     lotRepository.delete(lot);
                     return true;
                 })
@@ -91,9 +91,9 @@ public class LotService extends UserItemService {
     @Transactional
     public LotReadDTO create(LotUpdateDTO dto, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
         Optional<Category> category = categoryRepository.findById(dto.categoryId());
-        entityValidator.validate(category, Category.class);
+        validateEntity(category, Category.class);
         return Optional.of(dto)
                 .map(lotMapper::toLot)
                 .map(x -> {
@@ -110,10 +110,10 @@ public class LotService extends UserItemService {
     @Transactional
     public Optional<LotReadDTO> update(Long id, LotUpdateDTO dto, UserAuthDto userDto, List<MultipartFile> newImages) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
         return lotRepository.findById(id)
                 .map(lot -> {
-                    permissionValidator.validate(lot, userDto);
+                    validatePermissions(lot, userDto);
                     lotMapper.map(lot, imageService.updateListImagesForLot(newImages, lot));
                     lotMapper.map(lot, dto);
                     return lot;
@@ -135,9 +135,10 @@ public class LotService extends UserItemService {
         return lotReadDTO;
     }
 
+    @Transactional
     public Optional<LotReadDTO> buy(Long lotId, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
         return lotRepository.findById(lotId)
                 .map(lot -> {
                     if (!(lot.getStatus().equals(LotStatus.ACTIVE)
@@ -152,6 +153,7 @@ public class LotService extends UserItemService {
                 .map(lotMapper::toLotReadDTO);
     }
 
+    @Transactional
     public Optional<LotReadDTO> reject(Long id, String message) {
         return lotRepository.findById(id)
                 .map(lot -> {
@@ -163,6 +165,7 @@ public class LotService extends UserItemService {
                 .map(lotMapper::toLotReadDTO);
     }
 
+    @Transactional
     public Optional<LotReadDTO> approve(Long id) {
         return lotRepository.findById(id)
                 .map(lot -> {

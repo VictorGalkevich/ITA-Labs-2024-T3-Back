@@ -43,9 +43,9 @@ public class RequestService extends UserItemService {
     @Transactional
     public RequestReadDto create(RequestCreateEditDto dto, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
         Optional<Category> category = categoryRepository.findById(dto.categoryId());
-        entityValidator.validate(category, Category.class);
+        validateEntity(category, Category.class);
         return Optional.of(dto)
                 .map(requestMapper::toPurchase)
                 .map(x -> {
@@ -61,12 +61,12 @@ public class RequestService extends UserItemService {
     @Transactional
     public Optional<RequestReadDto> update(Long id, RequestCreateEditDto dto, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
         Optional<Category> category = categoryRepository.findById(dto.categoryId());
-        entityValidator.validate(category, Category.class);
+        validateEntity(category, Category.class);
         return requestRepository.findById(id)
                 .map(request -> {
-                    permissionValidator.validate(request, userDto);
+                    validatePermissions(request, userDto);
                     requestMapper.map(request, dto);
                     return request;
                 })
@@ -78,13 +78,14 @@ public class RequestService extends UserItemService {
     public boolean delete(Long id, UserAuthDto user) {
         return requestRepository.findById(id)
                 .map(request -> {
-                    permissionValidator.validate(request, user);
+                    validatePermissions(request, user);
                     requestRepository.delete(request);
                     return true;
                 })
                 .orElse(false);
     }
 
+    @Transactional
     public Optional<RequestReadDto> approve(Long id) {
         return requestRepository.findById(id)
                 .map(request -> {
@@ -96,6 +97,7 @@ public class RequestService extends UserItemService {
                 .map(requestMapper::toReadDto);
     }
 
+    @Transactional
     public Optional<RequestReadDto> reject(Long id, String message) {
         return requestRepository.findById(id)
                 .map(request -> {

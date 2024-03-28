@@ -51,14 +51,14 @@ public class OfferService extends UserItemService {
     @Transactional
     public OfferReadDto create(OfferCreateEditDto dto, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {
+        validateEntity(user, () -> {
             throw new UserNotRegisteredException();
         });
         Optional<Lot> lot = lotRepository.findById(dto.lotId());
         Optional<PurchaseRequest> req = requestRepository.findById(dto.purchaseRequestId());
         validateLot(lot);
         validateRequest(req);
-        permissionValidator.validate(lot.get(), userDto);
+        validatePermissions(lot.get(), userDto);
         return Optional.of(dto)
                 .map(offerMapper::toOffer)
                 .map(offer -> {
@@ -75,7 +75,7 @@ public class OfferService extends UserItemService {
     }
 
     private void validateLot(Optional<Lot> lot) {
-        entityValidator.validate(lot, Lot.class);
+        validateEntity(lot, Lot.class);
         if (!(lot.get().getStatus().equals(LotStatus.ACTIVE)
               || lot.get().getStatus().equals(AUCTION_ENDED))) {
             throw new AuctionEndedException("This lot can't be sold, please check it's status",
@@ -84,22 +84,23 @@ public class OfferService extends UserItemService {
     }
 
     private void validateRequest(Optional<PurchaseRequest> request) {
-        entityValidator.validate(request, PurchaseRequest.class);
+        validateEntity(request, PurchaseRequest.class);
         if (!request.get().getStatus().equals(LotStatus.ACTIVE)) {
             throw new AuctionEndedException("No more offers allowed. The owner either has closed the topic or found the item",
                     BAD_REQUEST);
         }
     }
 
+    @Transactional
     public Optional<OfferReadDto> decide(Long id, UserAuthDto userDto, OfferStatus status) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
 
         return offerRepository.findById(id)
                 .map(offer -> {
                     Optional<PurchaseRequest> req = requestRepository.findById(offer.getPurchaseRequestId());
-                    entityValidator.validate(req, PurchaseRequest.class);
-                    permissionValidator.validate(req.get(), userDto);
+                    validateEntity(req, PurchaseRequest.class);
+                    validatePermissions(req.get(), userDto);
                     offer.setStatus(status);
                     return offer;
                 })
@@ -107,14 +108,15 @@ public class OfferService extends UserItemService {
                 .map(offerMapper::toReadDto);
     }
 
+    @Transactional
     public Optional<OfferReadDto> sell(Long id, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
 
         return offerRepository.findById(id)
                 .map(offer -> {
                     Lot lot = offer.getLot();
-                    permissionValidator.validate(lot, userDto);
+                    validatePermissions(lot, userDto);
                     lot.setStatus(SOLD);
                     offer.setStatus(WON);
                     return offer;
@@ -123,12 +125,13 @@ public class OfferService extends UserItemService {
                 .map(offerMapper::toReadDto);
     }
 
+    @Transactional
     public boolean delete(Long id, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        entityValidator.validate(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
         return offerRepository.findById(id)
                 .map(offer -> {
-                    permissionValidator.validate(offer.getLot(), userDto);
+                    validatePermissions(offer.getLot(), userDto);
                     PurchaseRequest purchaseRequest = requestRepository.findById(offer.getPurchaseRequestId()).get();
                     purchaseRequest.setOfferQuantity(purchaseRequest.getOfferQuantity() - 1);
                     offerRepository.delete(offer);

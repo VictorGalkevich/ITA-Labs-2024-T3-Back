@@ -3,6 +3,8 @@ package com.ventionteams.applicationexchange.entity;
 import com.ventionteams.applicationexchange.entity.enumeration.OfferStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,5 +42,6 @@ public class Offer extends AuditingEntity {
     private Long purchaseRequestId;
 
     @Column(nullable = false, name = "status")
+    @Enumerated(EnumType.STRING)
     private OfferStatus status;
 }

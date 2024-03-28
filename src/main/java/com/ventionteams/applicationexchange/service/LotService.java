@@ -15,6 +15,7 @@ import com.ventionteams.applicationexchange.entity.User;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.exception.AuctionEndedException;
+import com.ventionteams.applicationexchange.exception.EntityStatusViolationException;
 import com.ventionteams.applicationexchange.exception.UserNotRegisteredException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
@@ -31,11 +32,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.ACTIVE;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.AUCTION_ENDED;
+import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.CANCELLED;
+import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.EXPIRED;
+import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.MODERATED;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @TransactionalService
@@ -86,6 +92,7 @@ public class LotService extends UserItemService {
                     for (Image image : images) {
                         imageService.deleteImage(image.getId());
                     }
+                    validateLotStatus(lot, MODERATED, CANCELLED, EXPIRED);
                     validatePermissions(lot, userDto);
                     lotRepository.delete(lot);
                     return true;
@@ -119,6 +126,7 @@ public class LotService extends UserItemService {
         return lotRepository.findById(id)
                 .map(lot -> {
                     validatePermissions(lot, userDto);
+                    validateLotStatus(lot, MODERATED, CANCELLED);
                     lotMapper.map(lot, imageService.updateListImagesForLot(newImages, lot));
                     lotMapper.map(lot, dto);
                     return lot;
@@ -146,11 +154,7 @@ public class LotService extends UserItemService {
         validateEntity(user, () -> {throw new UserNotRegisteredException();});
         return lotRepository.findById(lotId)
                 .map(lot -> {
-                    if (!(lot.getStatus().equals(LotStatus.ACTIVE)
-                          || lot.getStatus().equals(AUCTION_ENDED))) {
-                        throw new AuctionEndedException("This lot can't be sold, please check it's status",
-                                BAD_REQUEST);
-                    }
+                    validateLotStatus(lot, ACTIVE, AUCTION_ENDED);
                     lot.setStatus(LotStatus.SOLD);
                     return lot;
                 })
@@ -162,7 +166,8 @@ public class LotService extends UserItemService {
     public Optional<LotReadDTO> reject(Long id, String message) {
         return lotRepository.findById(id)
                 .map(lot -> {
-                    lot.setStatus(LotStatus.CANCELLED);
+                    validateLotStatus(lot, MODERATED);
+                    lot.setStatus(CANCELLED);
                     lot.setRejectMessage(message);
                     return  lot;
                 })
@@ -174,6 +179,7 @@ public class LotService extends UserItemService {
     public Optional<LotReadDTO> approve(Long id) {
         return lotRepository.findById(id)
                 .map(lot -> {
+                    validateLotStatus(lot, MODERATED);
                     lot.setStatus(LotStatus.ACTIVE);
                     lot.setRejectMessage(null);
                     return  lot;
@@ -186,5 +192,15 @@ public class LotService extends UserItemService {
         PageRequest req = PageRequest.of(page - 1, limit);
         return lotRepository.findAllByBidStatus(status, id, req)
                 .map(lot -> map(lot, id));
+    }
+
+    public void validateLotStatus(Lot lot, LotStatus... statuses) {
+        boolean statusIsValid = Arrays.stream(statuses).anyMatch(x -> x.equals(lot.getStatus()));
+        if (!statusIsValid) {
+            throw new EntityStatusViolationException(
+                    "Lot might be in another state to proceed this operation",
+                    BAD_REQUEST
+            );
+        }
     }
 }

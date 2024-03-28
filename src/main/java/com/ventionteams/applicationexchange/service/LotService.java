@@ -180,6 +180,6 @@ public class LotService extends UserItemService {
     public Page<LotReadDTO> findBidsByUserId(UUID id, Integer page, Integer limit, BidStatus status) {
         PageRequest req = PageRequest.of(page - 1, limit);
         return lotRepository.findAllByBidStatus(status, id, req)
-                .map(lotMapper::toLotReadDTO);
+                .map(lot -> map(lot, id));
     }
 }

@@ -2,7 +2,7 @@ package com.ventionteams.applicationexchange.mapper;
 
 
 import com.ventionteams.applicationexchange.config.MapperConfiguration;
-import com.ventionteams.applicationexchange.dto.LocationCreateDto;
+import com.ventionteams.applicationexchange.dto.create.LocationCreateDto;
 import com.ventionteams.applicationexchange.entity.Location;
 import org.mapstruct.Mapper;
 

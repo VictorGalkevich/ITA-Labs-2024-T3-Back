@@ -1,4 +1,4 @@
-package com.ventionteams.applicationexchange.dto;
+package com.ventionteams.applicationexchange.dto.read;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,6 +1,7 @@
 package com.ventionteams.applicationexchange.scheduler;
 
 import com.ventionteams.applicationexchange.repository.LotRepository;
+import com.ventionteams.applicationexchange.repository.RequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,13 +13,16 @@ import java.time.Instant;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class LotScheduler {
+public class LotAndRequestScheduler {
     private final LotRepository lotRepository;
+    private final RequestRepository requestRepository;
 
     @Scheduled(fixedDelayString = "PT${app.scheduler.interval}")
     @Transactional
     public void updateStatuses() {
-        int count = lotRepository.updateExpiredLots(Instant.now());
-        log.trace("Updated statuses of %d lots".formatted(count));
+        int countLot = lotRepository.updateExpiredLots(Instant.now());
+        int countRequest = requestRepository.updateExpiredLots(Instant.now());
+        log.trace("Updated statuses of %d lots".formatted(countLot));
+        log.trace("Updated statuses of %d requests".formatted(countRequest));
     }
 }

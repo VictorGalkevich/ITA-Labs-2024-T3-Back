@@ -1,8 +1,8 @@
 package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.annotation.TransactionalService;
-import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
-import com.ventionteams.applicationexchange.dto.UserReadDto;
+import com.ventionteams.applicationexchange.dto.create.UserCreateEditDto;
+import com.ventionteams.applicationexchange.dto.read.UserReadDto;
 import com.ventionteams.applicationexchange.mapper.UserMapper;
 import com.ventionteams.applicationexchange.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

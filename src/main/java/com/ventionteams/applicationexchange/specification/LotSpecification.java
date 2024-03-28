@@ -1,6 +1,6 @@
 package com.ventionteams.applicationexchange.specification;
 
-import com.ventionteams.applicationexchange.dto.LotFilterDTO;
+import com.ventionteams.applicationexchange.dto.create.LotFilterDTO;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;

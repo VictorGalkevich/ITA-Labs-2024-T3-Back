@@ -1,19 +1,20 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.BidForUserDto;
-import com.ventionteams.applicationexchange.dto.LotReadDTO;
-import com.ventionteams.applicationexchange.dto.PageResponse;
-import com.ventionteams.applicationexchange.dto.UserAuthDto;
-import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
-import com.ventionteams.applicationexchange.dto.UserData;
-import com.ventionteams.applicationexchange.dto.UserReadDto;
+import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.create.UserCreateEditDto;
+import com.ventionteams.applicationexchange.dto.create.UserData;
+import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.read.PageResponse;
+import com.ventionteams.applicationexchange.dto.read.RequestReadDto;
+import com.ventionteams.applicationexchange.dto.read.UserReadDto;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.service.BidService;
 import com.ventionteams.applicationexchange.service.LotService;
+import com.ventionteams.applicationexchange.service.RequestService;
 import com.ventionteams.applicationexchange.service.UserService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -25,13 +26,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.http.ResponseEntity.*;
+import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.notFound;
+import static org.springframework.http.ResponseEntity.ok;
 
 @ValidatedController
 @RequestMapping(value = "/users")
@@ -39,6 +50,7 @@ import static org.springframework.http.ResponseEntity.*;
 public class UserController {
     private final UserService userService;
     private final BidService bidService;
+    private final RequestService requestService;
     private final LotService lotService;
 
     @GetMapping
@@ -57,18 +69,27 @@ public class UserController {
 
     @GetMapping("/bids")
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<PageResponse<BidForUserDto>> findById(@AuthenticationPrincipal UserAuthDto user,
-                                                                @RequestParam(defaultValue = "1") @Min(1) Integer page,
-                                                                @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
-                                                                @RequestParam(defaultValue = "LEADING") BidStatus status) {
-        return ok().body(PageResponse.of(bidService.findBidsByUserId(user.id(), page, limit, status)));
+    public ResponseEntity<PageResponse<LotReadDTO>> findById(@AuthenticationPrincipal UserAuthDto user,
+                                                             @RequestParam(defaultValue = "1") @Min(1) Integer page,
+                                                             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                             @RequestParam(defaultValue = "LEADING") BidStatus status) {
+        return ok().body(PageResponse.of(lotService.findBidsByUserId(user.id(), page, limit, status)));
+    }
+
+    @GetMapping("/requests")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<PageResponse<RequestReadDto>> findRequests(@AuthenticationPrincipal UserAuthDto user,
+                                                                     @RequestParam(defaultValue = "1") @Min(1) Integer page,
+                                                                     @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                                     @RequestParam(defaultValue = "ACTIVE") LotStatus status) {
+        return ok().body(PageResponse.of(requestService.findAllRequests(user.id(), page, limit, status)));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserReadDto> create(@RequestPart @Validated UserData data,
                                               @AuthenticationPrincipal UserAuthDto user, @RequestPart(required = false) MultipartFile avatar) {
-        UserCreateEditDto dto = toDto(user, data);  
+        UserCreateEditDto dto = toDto(user, data);
         return ok().body(userService.create(dto, avatar));
     }
 
@@ -89,7 +110,6 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<UserReadDto> findSelf(@AuthenticationPrincipal UserAuthDto user) {
         return userService.findById(user.id())
                 .map(obj -> ok()

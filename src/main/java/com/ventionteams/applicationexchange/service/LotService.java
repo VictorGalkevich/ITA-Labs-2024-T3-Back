@@ -1,31 +1,32 @@
 package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.annotation.TransactionalService;
-import com.ventionteams.applicationexchange.dto.BidReadDto;
-import com.ventionteams.applicationexchange.dto.LotFilterDTO;
-import com.ventionteams.applicationexchange.dto.LotReadDTO;
-import com.ventionteams.applicationexchange.dto.LotUpdateDTO;
-import com.ventionteams.applicationexchange.dto.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.create.LotFilterDTO;
+import com.ventionteams.applicationexchange.dto.create.LotUpdateDTO;
+import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.read.BidReadDto;
+import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
 import com.ventionteams.applicationexchange.entity.Bid;
+import com.ventionteams.applicationexchange.entity.Category;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.User;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.exception.AuctionEndedException;
 import com.ventionteams.applicationexchange.exception.UserNotRegisteredException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
 import com.ventionteams.applicationexchange.mapper.LotMapper;
 import com.ventionteams.applicationexchange.repository.BidRepository;
+import com.ventionteams.applicationexchange.repository.CategoryRepository;
 import com.ventionteams.applicationexchange.repository.LotRepository;
 import com.ventionteams.applicationexchange.repository.UserRepository;
 import com.ventionteams.applicationexchange.specification.LotSpecification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,11 +34,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.AUCTION_ENDED;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 @TransactionalService
 @RequiredArgsConstructor
-public class LotService {
+public class LotService extends UserItemService {
     private final LotRepository lotRepository;
     private final BidRepository bidRepository;
+    private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final LotMapper lotMapper;
     private final BidMapper bidMapper;
@@ -71,9 +76,12 @@ public class LotService {
     }
 
     @Transactional
-    public boolean delete(Long id) {
+    public boolean delete(Long id, UserAuthDto userDto) {
+        Optional<User> user = userRepository.findById(userDto.id());
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
         return lotRepository.findById(id)
                 .map(lot -> {
+                    validatePermissions(lot, userDto);
                     lotRepository.delete(lot);
                     return true;
                 })
@@ -82,34 +90,36 @@ public class LotService {
 
     @Transactional
     public LotReadDTO create(LotUpdateDTO dto, UserAuthDto userDto) {
-            Optional<User> user = userRepository.findById(userDto.id());
-            if (user.isEmpty()) {
-                throw new UserNotRegisteredException("You haven't completed the onboarding yet",
-                        HttpStatus.FORBIDDEN);
-            }
-            return Optional.of(dto)
-                    .map(lotMapper::toLot)
-                    .map(x -> {
-                        x.setBidQuantity(0);
-                        x.setUser(user.get());
-                        x.setStatus(LotStatus.MODERATED);
-                        return x;
-                    })
-                    .map(lotRepository::save)
-                    .map(lotMapper::toLotReadDTO)
-                    .orElseThrow();
+        Optional<User> user = userRepository.findById(userDto.id());
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        Optional<Category> category = categoryRepository.findById(dto.categoryId());
+        validateEntity(category, Category.class);
+        return Optional.of(dto)
+                .map(lotMapper::toLot)
+                .map(x -> {
+                    x.setBidQuantity(0);
+                    x.setUser(user.get());
+                    x.setStatus(LotStatus.MODERATED);
+                    return x;
+                })
+                .map(lotRepository::save)
+                .map(lotMapper::toLotReadDTO)
+                .orElseThrow();
     }
 
     @Transactional
-    public Optional<LotReadDTO> update(Long id, LotUpdateDTO dto, UUID userId, List<MultipartFile> newImages) {
+    public Optional<LotReadDTO> update(Long id, LotUpdateDTO dto, UserAuthDto userDto, List<MultipartFile> newImages) {
+        Optional<User> user = userRepository.findById(userDto.id());
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
         return lotRepository.findById(id)
                 .map(lot -> {
-                    lotMapper.map(lot, dto);
+                    validatePermissions(lot, userDto);
                     lotMapper.map(lot, imageService.updateListImagesForLot(newImages, lot));
+                    lotMapper.map(lot, dto);
                     return lot;
                 })
                 .map(lotRepository::save)
-                .map(lot -> map(lot, userId));
+                .map(lot -> map(lot, userDto.id()));
     }
 
     private LotReadDTO map(Lot lot, UUID userId) {
@@ -123,5 +133,53 @@ public class LotService {
         lotReadDTO.setLeading(leading);
         lotReadDTO.setUsers(users);
         return lotReadDTO;
+    }
+
+    @Transactional
+    public Optional<LotReadDTO> buy(Long lotId, UserAuthDto userDto) {
+        Optional<User> user = userRepository.findById(userDto.id());
+        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        return lotRepository.findById(lotId)
+                .map(lot -> {
+                    if (!(lot.getStatus().equals(LotStatus.ACTIVE)
+                          || lot.getStatus().equals(AUCTION_ENDED))) {
+                        throw new AuctionEndedException("This lot can't be sold, please check it's status",
+                                BAD_REQUEST);
+                    }
+                    lot.setStatus(LotStatus.SOLD);
+                    return lot;
+                })
+                .map(lotRepository::save)
+                .map(lotMapper::toLotReadDTO);
+    }
+
+    @Transactional
+    public Optional<LotReadDTO> reject(Long id, String message) {
+        return lotRepository.findById(id)
+                .map(lot -> {
+                    lot.setStatus(LotStatus.CANCELLED);
+                    lot.setRejectMessage(message);
+                    return  lot;
+                })
+                .map(lotRepository::save)
+                .map(lotMapper::toLotReadDTO);
+    }
+
+    @Transactional
+    public Optional<LotReadDTO> approve(Long id) {
+        return lotRepository.findById(id)
+                .map(lot -> {
+                    lot.setStatus(LotStatus.ACTIVE);
+                    lot.setRejectMessage(null);
+                    return  lot;
+                })
+                .map(lotRepository::save)
+                .map(lotMapper::toLotReadDTO);
+    }
+
+    public Page<LotReadDTO> findBidsByUserId(UUID id, Integer page, Integer limit, BidStatus status) {
+        PageRequest req = PageRequest.of(page - 1, limit);
+        return lotRepository.findAllByBidStatus(status, id, req)
+                .map(lotMapper::toLotReadDTO);
     }
 }

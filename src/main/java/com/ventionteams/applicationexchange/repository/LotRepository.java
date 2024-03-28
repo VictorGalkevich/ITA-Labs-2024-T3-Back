@@ -1,6 +1,7 @@
 package com.ventionteams.applicationexchange.repository;
 
 import com.ventionteams.applicationexchange.entity.Lot;
+import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,4 +35,7 @@ public interface LotRepository extends
                     """
     )
     int updateExpiredLots(Instant time);
+
+    @Query("SELECT l FROM Bid b JOIN Lot l ON l.id = b.lotId WHERE b.status =?1 AND b.userId=?2")
+    Page<Lot> findAllByBidStatus(BidStatus status, UUID uuid, Pageable pageable);
 }

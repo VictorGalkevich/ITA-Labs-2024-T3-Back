@@ -29,3 +29,5 @@ databaseChangeLog:
       file: db/changelog/db.changelog-14.0.sql
   - include:
       file: db/changelog/db.changelog-15.0.sql
+  - include:
+      file: db/changelog/db.changelog-16.0.sql

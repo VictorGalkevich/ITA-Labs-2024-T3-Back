@@ -1,13 +1,13 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.CategoryCreateEditDto;
-import com.ventionteams.applicationexchange.dto.CategoryReadDto;
-import com.ventionteams.applicationexchange.dto.LotFilterDTO;
-import com.ventionteams.applicationexchange.dto.LotReadDTO;
-import com.ventionteams.applicationexchange.dto.MainPageCategoryReadDto;
-import com.ventionteams.applicationexchange.dto.PageResponse;
-import com.ventionteams.applicationexchange.dto.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.create.CategoryCreateEditDto;
+import com.ventionteams.applicationexchange.dto.read.CategoryReadDto;
+import com.ventionteams.applicationexchange.dto.create.LotFilterDTO;
+import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.read.MainPageCategoryReadDto;
+import com.ventionteams.applicationexchange.dto.read.PageResponse;
+import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;

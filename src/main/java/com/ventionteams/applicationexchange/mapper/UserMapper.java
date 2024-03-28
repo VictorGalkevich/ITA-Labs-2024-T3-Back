@@ -1,8 +1,8 @@
 package com.ventionteams.applicationexchange.mapper;
 
 import com.ventionteams.applicationexchange.config.MapperConfiguration;
-import com.ventionteams.applicationexchange.dto.UserCreateEditDto;
-import com.ventionteams.applicationexchange.dto.UserReadDto;
+import com.ventionteams.applicationexchange.dto.create.UserCreateEditDto;
+import com.ventionteams.applicationexchange.dto.read.UserReadDto;
 import com.ventionteams.applicationexchange.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

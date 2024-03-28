@@ -1,4 +1,4 @@
-package com.ventionteams.applicationexchange.dto;
+package com.ventionteams.applicationexchange.dto.create;
 
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.Role;

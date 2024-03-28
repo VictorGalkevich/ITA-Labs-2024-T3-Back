@@ -36,6 +36,7 @@ public class CategoryService {
     public boolean delete(Integer id) {
         return categoryRepository.findById(id)
                 .map(category -> {
+                    imageService.deleteImage(category.getImageId());
                     categoryRepository.delete(category);
                     return true;
                 })

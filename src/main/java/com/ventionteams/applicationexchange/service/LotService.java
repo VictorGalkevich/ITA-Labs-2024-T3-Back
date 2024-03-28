@@ -8,6 +8,7 @@ import com.ventionteams.applicationexchange.dto.read.BidReadDto;
 import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
 import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.Category;
+import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.User;
@@ -81,6 +82,10 @@ public class LotService extends UserItemService {
         validateEntity(user, () -> {throw new UserNotRegisteredException();});
         return lotRepository.findById(id)
                 .map(lot -> {
+                    List<Image> images = lot.getImages();
+                    for (Image image : images) {
+                        imageService.deleteImage(image.getId());
+                    }
                     validatePermissions(lot, userDto);
                     lotRepository.delete(lot);
                     return true;

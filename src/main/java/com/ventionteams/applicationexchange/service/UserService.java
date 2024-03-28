@@ -63,8 +63,9 @@ public class UserService {
     @Transactional
     public boolean delete(UUID id) {
         return userRepository.findById(id)
-                .map(category -> {
-                    userRepository.delete(category);
+                .map(user -> {
+                    imageService.deleteImage(user.getAvatarId());
+                    userRepository.delete(user);
                     return true;
                 })
                 .orElse(false);

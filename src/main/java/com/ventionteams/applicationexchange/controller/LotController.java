@@ -77,8 +77,35 @@ public class LotController {
                 .orElseGet(notFound()::build);
     }
 
+    @PostMapping("/{id}/buy")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public ResponseEntity<LotReadDTO> buy(@PathVariable Long id,
+                                          @AuthenticationPrincipal UserAuthDto user) {
+        return lotService.buy(id, user)
+                .map(obj -> ok().body(obj))
+                .orElseGet(notFound()::build);
+    }
+
+    @PostMapping("/{id}/reject")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
+    public ResponseEntity<Void> reject(@PathVariable Long id,
+                                       @RequestBody String message) {
+        return lotService.reject(id, message).isPresent()
+                ? ok().build()
+                : notFound().build();
+    }
+
+    @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
+    public ResponseEntity<Void> approve(@PathVariable Long id) {
+        return lotService.approve(id).isPresent()
+                ? ok().build()
+                : notFound().build();
+    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<LotReadDTO> create(@RequestPart @Validated LotUpdateDTO lot,
                                              @RequestPart List<MultipartFile> images,
                                              @AuthenticationPrincipal UserAuthDto user) {

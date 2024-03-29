@@ -90,11 +90,12 @@ public class BidService extends EntityRelatedService {
                     long startPrice = lot.getStartPrice();
                     long totalPrice = lot.getTotalPrice();
 
-                    if (startPrice < bidAmount && bidAmount <= totalPrice - 1) {
+                    if (startPrice <= bidAmount && bidAmount <= totalPrice - 1) {
                         prevBid.setStatus(OVERBID);
                         if (bidAmount == totalPrice - 1) {
                             lot.setStatus(LotStatus.AUCTION_ENDED);
                         }
+                        lot.setStartPrice(bid.getAmount() + 1);
                     } else {
                         String msg = "Price %s is not less than current start price (%s)";
                         long val = startPrice;

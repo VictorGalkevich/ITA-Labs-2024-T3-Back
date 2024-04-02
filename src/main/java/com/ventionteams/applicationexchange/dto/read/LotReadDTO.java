@@ -56,4 +56,6 @@ public class LotReadDTO {
     @JsonProperty("bid_quantity")
     private Integer bidQuantity;
     private Currency currency;
+    @JsonProperty("reject_message")
+    private String rejectMessage;
 }

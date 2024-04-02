@@ -15,5 +15,7 @@ public enum LotStatus {
     @JsonProperty("auction_ended")
     AUCTION_ENDED,
     @JsonProperty("expired")
-    EXPIRED
+    EXPIRED,
+    @JsonProperty("deactivated")
+    DEACTIVATED
 }

@@ -12,7 +12,6 @@ import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
-import com.ventionteams.applicationexchange.service.BidService;
 import com.ventionteams.applicationexchange.service.LotService;
 import com.ventionteams.applicationexchange.service.RequestService;
 import com.ventionteams.applicationexchange.service.UserService;

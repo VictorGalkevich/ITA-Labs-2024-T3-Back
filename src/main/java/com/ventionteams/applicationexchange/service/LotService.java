@@ -129,9 +129,9 @@ public class LotService extends UserItemService {
                 .map(lot -> {
                     validatePermissions(lot, userDto);
                     validateLotStatus(lot, MODERATED, CANCELLED);
-                    convertPrice(lot, true);
                     lotMapper.map(lot, imageService.updateListImagesForLot(newImages, lot));
                     lotMapper.map(lot, dto);
+                    convertPrice(lot, true);
                     return lot;
                 })
                 .map(lotRepository::save)
@@ -222,7 +222,20 @@ public class LotService extends UserItemService {
             start = ratesService.convertFromUSD(lot.getStartPrice(), preferred);
         }
         lot.setTotalPrice(total);
-        lot.setTotalPrice(start);
+        lot.setStartPrice(start);
         lot.setCurrency(preferred);
+    }
+
+    @Transactional
+    public Optional<LotReadDTO> deactivate(Long id) {
+        return lotRepository.findById(id)
+                .map(lot -> {
+                    validateLotStatus(lot, MODERATED, CANCELLED, EXPIRED);
+                    lot.setStatus(LotStatus.DEACTIVATED);
+                    lot.setRejectMessage(null);
+                    return  lot;
+                })
+                .map(lotRepository::save)
+                .map(lotMapper::toLotReadDTO);
     }
 }

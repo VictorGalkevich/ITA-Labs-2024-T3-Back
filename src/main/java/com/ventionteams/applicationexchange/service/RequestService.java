@@ -36,11 +36,19 @@ public class RequestService extends UserItemService {
     public Page<RequestReadDto> findAll(Integer page, Integer limit, String status) {
         PageRequest req = PageRequest.of(page - 1, limit);
         return requestRepository.findByStatus(LotStatus.valueOf(status), req)
+                .map(request -> {
+                    convertPrice(request, false);
+                    return request;
+                })
                 .map(requestMapper::toReadDto);
     }
 
     public Optional<RequestReadDto> findById(Long id) {
         return requestRepository.findById(id)
+                .map(request -> {
+                    convertPrice(request, false);
+                    return request;
+                })
                 .map(requestMapper::toReadDto);
     }
 
@@ -55,9 +63,14 @@ public class RequestService extends UserItemService {
                 .map(x -> {
                     x.setUser(user.get());
                     x.setStatus(LotStatus.MODERATED);
+                    convertPrice(x, true);
                     return x;
                 })
                 .map(requestRepository::save)
+                .map(request -> {
+                    convertPrice(request, false);
+                    return request;
+                })
                 .map(requestMapper::toReadDto)
                 .orElseThrow();
     }
@@ -72,9 +85,14 @@ public class RequestService extends UserItemService {
                 .map(request -> {
                     validatePermissions(request, userDto);
                     requestMapper.map(request, dto);
+                    convertPrice(request, true);
                     return request;
                 })
                 .map(requestRepository::save)
+                .map(request -> {
+                    convertPrice(request, false);
+                    return request;
+                })
                 .map(requestMapper::toReadDto);
     }
 
@@ -116,6 +134,10 @@ public class RequestService extends UserItemService {
     public Page<RequestReadDto> findAllRequests(UUID id, Integer page, Integer limit, LotStatus status) {
         PageRequest req = PageRequest.of(page - 1, limit);
         return requestRepository.findAllByUserId(id, req)
+                .map(request -> {
+                    convertPrice(request, false);
+                    return request;
+                })
                 .map(requestMapper::toReadDto);
     }
 

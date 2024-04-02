@@ -1,8 +1,12 @@
 package com.ventionteams.applicationexchange.dto.read;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ventionteams.applicationexchange.entity.Location;
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
+import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
+import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 
 import java.util.UUID;
 
@@ -16,9 +20,17 @@ public record RequestReadDto(
         LotStatus status,
         @JsonProperty("desired_price")
         Long desiredPrice,
-
         String description,
-
-        Currency currency
+        Currency currency,
+        Long quantity,
+        Weight weight,
+        @JsonProperty("price_per_unit")
+        Double pricePerUnit,Location location,
+        Integer size,
+        Packaging packaging,
+        @JsonProperty("length_unit")
+        LengthUnit lengthUnit,
+        @JsonProperty("reject_message")
+        String rejectMessage
 ) {
 }

@@ -104,6 +104,14 @@ public class LotController {
                 : notFound().build();
     }
 
+    @PostMapping("/{id}/deactivate")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public ResponseEntity<Void> deactivate(@PathVariable Long id) {
+        return lotService.deactivate(id).isPresent()
+                ? ok().build()
+                : notFound().build();
+    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('USER')")

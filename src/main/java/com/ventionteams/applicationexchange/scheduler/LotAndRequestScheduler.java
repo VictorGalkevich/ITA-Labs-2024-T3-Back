@@ -17,7 +17,7 @@ public class LotAndRequestScheduler {
     private final LotRepository lotRepository;
     private final RequestRepository requestRepository;
 
-    @Scheduled(fixedDelayString = "PT${app.scheduler.interval}")
+    @Scheduled(fixedDelayString = "PT${app.lot-scheduler.interval}")
     @Transactional
     public void updateStatuses() {
         int countLot = lotRepository.updateExpiredLots(Instant.now());

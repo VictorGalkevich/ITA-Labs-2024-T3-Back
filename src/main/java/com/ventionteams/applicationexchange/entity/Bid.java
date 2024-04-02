@@ -47,7 +47,7 @@ public class Bid extends AuditingEntity {
     private BidStatus status;
 
     @Column(nullable = false, name = "amount")
-    private Long amount;
+    private Double amount;
 
     @Column(nullable = false, name = "currency")
     @Enumerated(EnumType.STRING)

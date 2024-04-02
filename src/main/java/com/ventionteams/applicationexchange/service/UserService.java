@@ -64,7 +64,9 @@ public class UserService {
     public boolean delete(UUID id) {
         return userRepository.findById(id)
                 .map(user -> {
-                    imageService.deleteImage(user.getAvatarId());
+                    Long avatarId = user.getAvatarId();
+                    user.setAvatarId(null);
+                    imageService.deleteImage(avatarId);
                     userRepository.delete(user);
                     return true;
                 })

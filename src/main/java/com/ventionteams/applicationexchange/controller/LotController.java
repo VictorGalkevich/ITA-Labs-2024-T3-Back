@@ -48,6 +48,7 @@ public class LotController {
     private final ImageService imageService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsByStatus(@RequestParam(defaultValue = "1") Integer page,
                                                                      @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                      @RequestParam LotStatus lotStatus,
@@ -103,6 +104,14 @@ public class LotController {
                 : notFound().build();
     }
 
+    @PostMapping("/{id}/deactivate")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public ResponseEntity<Void> deactivate(@PathVariable Long id) {
+        return lotService.deactivate(id).isPresent()
+                ? ok().build()
+                : notFound().build();
+    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('USER')")
@@ -124,6 +133,7 @@ public class LotController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id,
                                        @AuthenticationPrincipal UserAuthDto user) {
         return lotService.delete(id, user)

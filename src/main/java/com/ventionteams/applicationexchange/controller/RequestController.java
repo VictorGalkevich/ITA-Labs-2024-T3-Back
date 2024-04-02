@@ -68,7 +68,7 @@ public class RequestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('USER')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id,
                                        @AuthenticationPrincipal UserAuthDto user) {
         return requestService.delete(id, user)

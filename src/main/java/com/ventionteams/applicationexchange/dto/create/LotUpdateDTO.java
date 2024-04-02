@@ -21,7 +21,8 @@ public record LotUpdateDTO(
         @JsonProperty("start_price")
         @Min(0)
         Long startPrice,
-        Integer size,
+        Integer fromSize,
+        Integer toSize,
         @JsonProperty("expiration_days")
         Integer days,
         Packaging packaging,

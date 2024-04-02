@@ -38,7 +38,8 @@ public class LotReadDTO {
     private LotStatus status;
     @JsonProperty("expiration_date")
     private Instant expirationDate;
-    private Integer size;
+    private Integer fromSize;
+    private Integer toSize;
     private Packaging packaging;
     @JsonProperty("created_at")
     private Instant createdAt;

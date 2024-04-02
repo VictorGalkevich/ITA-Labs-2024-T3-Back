@@ -53,8 +53,11 @@ public class Lot extends AuditingEntity implements UserMappedEntity{
     @OneToMany(mappedBy = "lot", fetch = FetchType.EAGER)
     private List<Image> images = new ArrayList<>();
 
-    @Column(nullable = false, name = "size")
-    private Integer size;
+    @Column(nullable = false, name = "from_size")
+    private Integer fromSize;
+
+    @Column(nullable = false, name = "to_size")
+    private Integer toSize;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "packaging")

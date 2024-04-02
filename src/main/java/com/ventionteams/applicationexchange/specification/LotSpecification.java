@@ -97,12 +97,12 @@ public class LotSpecification {
 
     private static Specification<Lot> fromSize(Integer fromSize) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.greaterThanOrEqualTo(root.get("size"), fromSize);
+                criteriaBuilder.greaterThanOrEqualTo(root.get("fromSize"), fromSize);
     }
 
     private static Specification<Lot> toSize(Integer toSize) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.lessThanOrEqualTo(root.get("size"), toSize);
+                criteriaBuilder.lessThanOrEqualTo(root.get("toSize"), toSize);
     }
 
     private static Specification<Lot> inLotStatus(LotStatus lotStatus) {

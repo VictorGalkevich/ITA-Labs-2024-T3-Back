@@ -1,6 +1,7 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
+import com.ventionteams.applicationexchange.dto.create.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.create.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.create.UserData;
@@ -133,7 +134,7 @@ public class UserController {
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
                                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                        @AuthenticationPrincipal UserAuthDto user,
-                                                                       @RequestParam LotStatus status,
+                                                                       @RequestParam(required = false, defaultValue = "ACTIVE") String status,
                                                                        @RequestParam(required = false) LotSortField sortField,
                                                                        @RequestParam(required = false) Sort.Direction sortOrder) {
         final LotSortCriteria sort = LotSortCriteria.builder()
@@ -144,6 +145,7 @@ public class UserController {
         if (user != null) {
             id = user.id();
         }
-        return ok(PageResponse.of(lotService.findUsersLotsByStatus(page, limit, status, sort, id)));
+        LotFilterDTO lotFilterDTO = LotFilterDTO.builder().lotStatus(status).build();
+        return ok(PageResponse.of(lotService.findUsersLotsByStatus(page, limit, sort, lotFilterDTO, id)));
     }
 }

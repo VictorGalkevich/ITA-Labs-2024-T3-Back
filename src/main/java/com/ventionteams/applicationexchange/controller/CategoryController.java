@@ -2,12 +2,12 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.create.CategoryCreateEditDto;
-import com.ventionteams.applicationexchange.dto.read.CategoryReadDto;
 import com.ventionteams.applicationexchange.dto.create.LotFilterDTO;
+import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.read.CategoryReadDto;
 import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.read.MainPageCategoryReadDto;
 import com.ventionteams.applicationexchange.dto.read.PageResponse;
-import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
@@ -24,26 +24,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.print.attribute.standard.Media;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.http.ResponseEntity.noContent;
-import static org.springframework.http.ResponseEntity.notFound;
-import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.ResponseEntity.*;
 
 @ValidatedController
 @RequestMapping("/categories")
@@ -82,8 +70,9 @@ public class CategoryController {
                                                                        @RequestParam(required = false) @Min(1) @Max(100000) Integer toPrice,
                                                                        @RequestParam(required = false) LotSortField sortField,
                                                                        @RequestParam(required = false) Sort.Direction sortOrder,
+                                                                       @RequestParam(required = false, defaultValue = "ACTIVE") String status,
                                                                        @RequestParam(required = false) String keyword) {
-        final LotFilterDTO filter = new LotFilterDTO(category, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize, fromPrice, toPrice, LotStatus.ACTIVE, keyword);
+        final LotFilterDTO filter = new LotFilterDTO(category, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize, fromPrice, toPrice, status, keyword);
         final LotSortCriteria sort = LotSortCriteria.builder()
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))

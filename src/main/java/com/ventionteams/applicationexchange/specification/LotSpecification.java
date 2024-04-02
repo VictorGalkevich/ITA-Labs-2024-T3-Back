@@ -8,6 +8,7 @@ import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -31,7 +32,7 @@ public class LotSpecification {
                 .and(filter.toSize() == null ? null : toSize(filter.toSize()))
                 .and(filter.fromPrice() == null ? null : fromPrice(filter.fromPrice()))
                 .and(filter.toPrice() == null ? null : toPrice(filter.toPrice()))
-                .and(filter.lotStatus() == null ? null : inLotStatus(filter.lotStatus()))
+                .and(filter.lotStatus() == null ? null : inLotStatus(getStatusList(filter.lotStatus())))
                 .and(filter.keyword() == null ? null : byKeyword(filter.keyword()));
     }
 
@@ -105,9 +106,12 @@ public class LotSpecification {
                 criteriaBuilder.lessThanOrEqualTo(root.get("toSize"), toSize);
     }
 
-    private static Specification<Lot> inLotStatus(LotStatus lotStatus) {
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("status"), lotStatus);
+    private static Specification<Lot> inLotStatus(List<LotStatus> lotStatuses) {
+        return (root, query, criteriaBuilder) -> {
+            CriteriaBuilder.In<LotStatus> inClause = criteriaBuilder.in(root.get("status"));
+            lotStatuses.forEach(inClause::value);
+            return inClause;
+        };
     }
 
     private static Specification<Lot> fromPrice(Integer fromPrice) {
@@ -123,5 +127,12 @@ public class LotSpecification {
     private static Specification<Lot> byKeyword(String keyword){
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(criteriaBuilder.literal("KEYWORD"), criteriaBuilder.literal(keyword));
+    }
+
+    private static List<LotStatus> getStatusList(String statuses){
+        return Arrays.stream(statuses.split(","))
+                .map(String::trim)
+                .map(LotStatus::valueOf)
+                .toList();
     }
 }

@@ -13,8 +13,8 @@ import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.User;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
-import com.ventionteams.applicationexchange.exception.AuctionEndedException;
 import com.ventionteams.applicationexchange.exception.EntityStatusViolationException;
 import com.ventionteams.applicationexchange.exception.UserNotRegisteredException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
@@ -54,6 +54,7 @@ public class LotService extends UserItemService {
     private final LotMapper lotMapper;
     private final BidMapper bidMapper;
     private final ImageService imageService;
+    private final RatesService ratesService;
 
     public Page<LotReadDTO> findAll(Integer page, Integer limit, LotFilterDTO filter, LotSortCriteria sort, UUID userId) {
         Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
@@ -112,6 +113,7 @@ public class LotService extends UserItemService {
                     x.setBidQuantity(0);
                     x.setUser(user.get());
                     x.setStatus(LotStatus.MODERATED);
+                    convertPrice(x, true);
                     return x;
                 })
                 .map(lotRepository::save)
@@ -127,6 +129,7 @@ public class LotService extends UserItemService {
                 .map(lot -> {
                     validatePermissions(lot, userDto);
                     validateLotStatus(lot, MODERATED, CANCELLED);
+                    convertPrice(lot, true);
                     lotMapper.map(lot, imageService.updateListImagesForLot(newImages, lot));
                     lotMapper.map(lot, dto);
                     return lot;
@@ -136,6 +139,7 @@ public class LotService extends UserItemService {
     }
 
     private LotReadDTO map(Lot lot, UUID userId) {
+        convertPrice(lot, false);
         LotReadDTO lotReadDTO = lotMapper.toLotReadDTO(lot);
         BidReadDto leading = bidMapper.toReadDto(bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING).orElse(null));
         Optional<Bid> bid = Optional.empty();
@@ -156,6 +160,8 @@ public class LotService extends UserItemService {
                 .map(lot -> {
                     validateLotStatus(lot, ACTIVE, AUCTION_ENDED);
                     lot.setStatus(LotStatus.SOLD);
+                    bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING)
+                            .ifPresent(bid -> bid.setStatus(BidStatus.WON));
                     return lot;
                 })
                 .map(lotRepository::save)
@@ -169,7 +175,7 @@ public class LotService extends UserItemService {
                     validateLotStatus(lot, MODERATED);
                     lot.setStatus(CANCELLED);
                     lot.setRejectMessage(message);
-                    return  lot;
+                    return lot;
                 })
                 .map(lotRepository::save)
                 .map(lotMapper::toLotReadDTO);
@@ -179,7 +185,7 @@ public class LotService extends UserItemService {
     public Optional<LotReadDTO> approve(Long id) {
         return lotRepository.findById(id)
                 .map(lot -> {
-                    validateLotStatus(lot, MODERATED);
+                    validateLotStatus(lot, MODERATED, CANCELLED);
                     lot.setStatus(LotStatus.ACTIVE);
                     lot.setRejectMessage(null);
                     return  lot;
@@ -194,7 +200,7 @@ public class LotService extends UserItemService {
                 .map(lot -> map(lot, id));
     }
 
-    public void validateLotStatus(Lot lot, LotStatus... statuses) {
+    private void validateLotStatus(Lot lot, LotStatus... statuses) {
         boolean statusIsValid = Arrays.stream(statuses).anyMatch(x -> x.equals(lot.getStatus()));
         if (!statusIsValid) {
             throw new EntityStatusViolationException(
@@ -202,5 +208,21 @@ public class LotService extends UserItemService {
                     BAD_REQUEST
             );
         }
+    }
+
+    private void convertPrice(Lot lot, boolean toUsd) {
+        Currency preferred = lot.getUser().getCurrency();
+        double total;
+        double start;
+        if (toUsd) {
+            total = ratesService.convertToUSD(lot.getTotalPrice(), lot.getCurrency());
+            start = ratesService.convertToUSD(lot.getStartPrice(), lot.getCurrency());
+        } else {
+            total = ratesService.convertFromUSD(lot.getTotalPrice(), preferred);
+            start = ratesService.convertFromUSD(lot.getStartPrice(), preferred);
+        }
+        lot.setTotalPrice(total);
+        lot.setTotalPrice(start);
+        lot.setCurrency(preferred);
     }
 }

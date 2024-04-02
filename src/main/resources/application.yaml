@@ -23,5 +23,7 @@ aws:
   secretAccessKey: zK4O+iFUGskM5dJkbyh55AxWK9y+bqWXEdxro+5I
   bucketName: ita-labs-2024-t3
 app:
-  scheduler:
+  lot-scheduler:
     interval: 20s
+  rate-scheduler:
+    interval: 86400s

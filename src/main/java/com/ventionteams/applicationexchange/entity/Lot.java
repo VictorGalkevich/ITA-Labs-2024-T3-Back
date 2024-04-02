@@ -71,10 +71,10 @@ public class Lot extends AuditingEntity implements UserMappedEntity{
     private Integer bidQuantity;
 
     @Column(nullable = false, name = "total_price")
-    private Long totalPrice;
+    private Double totalPrice;
 
     @Column(nullable = false, name = "start_price")
-    private Long startPrice;
+    private Double startPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "currency")

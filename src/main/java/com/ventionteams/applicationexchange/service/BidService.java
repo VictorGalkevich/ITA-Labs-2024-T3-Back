@@ -39,6 +39,7 @@ public class BidService extends EntityRelatedService {
     private final LotRepository lotRepository;
     private final UserRepository userRepository;
     private final BidMapper bidMapper;
+    private final RatesService ratesService;
 
     public Page<BidReadDto> findAll(Integer page, Integer limit) {
         PageRequest req = PageRequest.of(page - 1, limit);
@@ -86,9 +87,9 @@ public class BidService extends EntityRelatedService {
 
         bidRepository.findByLotIdAndStatus(lotId, LEADING)
                 .ifPresentOrElse(prevBid -> {
-                    long bidAmount = bid.getAmount();
-                    long startPrice = lot.getStartPrice();
-                    long totalPrice = lot.getTotalPrice();
+                    double bidAmount = ratesService.convertToUSD(bid.getAmount(), bid.getCurrency());
+                    double startPrice = lot.getStartPrice();
+                    double totalPrice = lot.getTotalPrice();
 
                     if (startPrice <= bidAmount && bidAmount <= totalPrice - 1) {
                         prevBid.setStatus(OVERBID);
@@ -98,7 +99,7 @@ public class BidService extends EntityRelatedService {
                         lot.setStartPrice(bid.getAmount() + 1);
                     } else {
                         String msg = "Price %s is not less than current start price (%s)";
-                        long val = startPrice;
+                        double val = startPrice;
                         if (bidAmount > totalPrice - 1) {
                             msg = "Price %s is bigger than current max price (%s)";
                             val = totalPrice - 1;

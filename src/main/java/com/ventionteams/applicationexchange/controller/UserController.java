@@ -49,11 +49,11 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final BidService bidService;
     private final RequestService requestService;
     private final LotService lotService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<PageResponse<UserReadDto>> findAll(@RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                              @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
         return ok().body(PageResponse.of(userService.findAll(page, limit)));
@@ -130,6 +130,7 @@ public class UserController {
     }
 
     @GetMapping("/lots")
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
                                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                        @AuthenticationPrincipal UserAuthDto user,

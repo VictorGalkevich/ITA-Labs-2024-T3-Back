@@ -6,7 +6,10 @@ import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.read.BidForUserDto;
 import com.ventionteams.applicationexchange.dto.read.RequestReadDto;
 import com.ventionteams.applicationexchange.entity.Category;
+import com.ventionteams.applicationexchange.entity.Lot;
+import com.ventionteams.applicationexchange.entity.PurchaseRequest;
 import com.ventionteams.applicationexchange.entity.User;
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.exception.UserNotRegisteredException;
 import com.ventionteams.applicationexchange.mapper.RequestMapper;
@@ -28,6 +31,7 @@ public class RequestService extends UserItemService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final RequestMapper requestMapper;
+    private final RatesService ratesService;
 
     public Page<RequestReadDto> findAll(Integer page, Integer limit, String status) {
         PageRequest req = PageRequest.of(page - 1, limit);
@@ -113,5 +117,14 @@ public class RequestService extends UserItemService {
         PageRequest req = PageRequest.of(page - 1, limit);
         return requestRepository.findAllByUserId(id, req)
                 .map(requestMapper::toReadDto);
+    }
+
+    private void convertPrice(PurchaseRequest request, boolean toUsd) {
+        Currency preferred = request.getUser().getCurrency();
+        double total = toUsd
+                ? ratesService.convertToUSD(request.getDesiredPrice(), request.getCurrency())
+                : ratesService.convertFromUSD(request.getDesiredPrice(), preferred);
+        request.setDesiredPrice(total);
+        request.setCurrency(preferred);
     }
 }

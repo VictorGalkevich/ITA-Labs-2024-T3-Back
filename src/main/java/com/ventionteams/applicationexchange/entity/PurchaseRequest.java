@@ -1,8 +1,12 @@
 package com.ventionteams.applicationexchange.entity;
 
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
+import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
+import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -22,6 +27,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import static lombok.EqualsAndHashCode.*;
 
@@ -52,7 +59,7 @@ public class PurchaseRequest implements UserMappedEntity{
     private LotStatus status;
 
     @Column(name = "desired_price", nullable = false)
-    private Long desiredPrice;
+    private Double desiredPrice;
 
     @Column(name = "currency", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -69,4 +76,28 @@ public class PurchaseRequest implements UserMappedEntity{
 
     @Column(nullable = false, name = "expiration_date")
     private Instant expirationDate;
+
+    @Column(nullable = false, name = "quantity")
+    private Long quantity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "weight")
+    private Weight weight;
+
+    @Column(nullable = false, name = "price_per_unit")
+    private Double pricePerUnit;
+
+    @Embedded
+    private Location location;
+
+    @Column(nullable = false, name = "size")
+    private Integer size;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "packaging")
+    private Packaging packaging;
+
+    @Column(nullable = false, name = "length_unit")
+    @Enumerated(EnumType.STRING)
+    private LengthUnit lengthUnit;
 }

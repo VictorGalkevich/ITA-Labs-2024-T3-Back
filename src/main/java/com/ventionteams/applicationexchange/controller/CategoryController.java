@@ -66,6 +66,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}/lots")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
                                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                        @AuthenticationPrincipal UserAuthDto user,

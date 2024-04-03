@@ -3,6 +3,7 @@ package com.ventionteams.applicationexchange.controller;
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.create.RequestCreateEditDto;
 import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
+import com.ventionteams.applicationexchange.dto.read.OfferReadDto;
 import com.ventionteams.applicationexchange.dto.read.PageResponse;
 import com.ventionteams.applicationexchange.dto.read.RequestReadDto;
 import com.ventionteams.applicationexchange.service.RequestService;
@@ -47,6 +48,15 @@ public class RequestController {
         return requestService.findById(id)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
+    }
+
+    @GetMapping("/{id}/offers")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'ADMIN')")
+    public ResponseEntity<PageResponse<OfferReadDto>> findOffers(@PathVariable("id") Long id,
+                                                   @RequestParam(defaultValue = "1") Integer page,
+                                                   @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                   @RequestParam(defaultValue = "PENDING") String status) {
+        return ok(PageResponse.of(requestService.findOffers(id, page, limit, status)));
     }
 
     @ResponseStatus(HttpStatus.CREATED)

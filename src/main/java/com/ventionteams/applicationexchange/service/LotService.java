@@ -67,7 +67,10 @@ public class LotService extends UserItemService {
     public Page<LotReadDTO> findUsersLotsByStatus(Integer page, Integer limit,LotSortCriteria sort, String status, UUID userId) {
         Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
         PageRequest req = PageRequest.of(page - 1, limit, by);
-        List<LotStatus> statuses = Arrays.stream(status.split(", ")).map(LotStatus::valueOf).toList();
+        List<LotStatus> statuses = Arrays.stream(status.split(","))
+                .map(String::trim)
+                .map(LotStatus::valueOf)
+                .toList();
         return lotRepository.findByUserIdAndStatusIn(userId, statuses, req)
                 .map(lot -> map(lot, userId));
     }
@@ -228,11 +231,28 @@ public class LotService extends UserItemService {
     }
 
     @Transactional
-    public Optional<LotReadDTO> deactivate(Long id) {
+    public Optional<LotReadDTO> deactivate(Long id, UserAuthDto user) {
         return lotRepository.findById(id)
                 .map(lot -> {
                     validateLotStatus(lot, MODERATED, CANCELLED, EXPIRED);
+                    validatePermissions(lot, user);
                     lot.setStatus(LotStatus.DEACTIVATED);
+                    lot.setRejectMessage(null);
+                    return  lot;
+                })
+                .map(lotRepository::save)
+                .map(lotMapper::toLotReadDTO);
+    }
+
+    public Optional<LotReadDTO> confirm(Long id, UserAuthDto user) {
+        return lotRepository.findById(id)
+                .map(lot -> {
+                    validateLotStatus(lot, ACTIVE);
+                    validatePermissions(lot, user);
+                    Optional<Bid> bidWrapper = bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING);
+                    validateEntity(bidWrapper, Bid.class);
+                    bidWrapper.get().setStatus(BidStatus.WON);
+                    lot.setStatus(LotStatus.SOLD);
                     lot.setRejectMessage(null);
                     return  lot;
                 })

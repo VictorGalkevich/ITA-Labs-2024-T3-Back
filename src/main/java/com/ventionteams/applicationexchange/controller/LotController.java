@@ -106,8 +106,18 @@ public class LotController {
 
     @PostMapping("/{id}/deactivate")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public ResponseEntity<Void> deactivate(@PathVariable Long id) {
-        return lotService.deactivate(id).isPresent()
+    public ResponseEntity<Void> deactivate(@PathVariable Long id,
+                                           @AuthenticationPrincipal UserAuthDto user) {
+        return lotService.deactivate(id, user).isPresent()
+                ? ok().build()
+                : notFound().build();
+    }
+
+    @PostMapping("/{id}/confirm")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public ResponseEntity<Void> confirm(@PathVariable Long id,
+                                        @AuthenticationPrincipal UserAuthDto user) {
+        return lotService.confirm(id, user).isPresent()
                 ? ok().build()
                 : notFound().build();
     }

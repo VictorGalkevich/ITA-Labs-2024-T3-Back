@@ -145,7 +145,6 @@ public class UserController {
         if (user != null) {
             id = user.id();
         }
-        LotFilterDTO lotFilterDTO = LotFilterDTO.builder().lotStatus(status).build();
-        return ok(PageResponse.of(lotService.findUsersLotsByStatus(page, limit, sort, lotFilterDTO, id)));
+        return ok(PageResponse.of(lotService.findUsersLotsByStatus(page, limit, sort, status, id)));
     }
 }

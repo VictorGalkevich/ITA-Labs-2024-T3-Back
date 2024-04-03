@@ -6,7 +6,12 @@ import com.ventionteams.applicationexchange.dto.create.LotUpdateDTO;
 import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.read.BidReadDto;
 import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
-import com.ventionteams.applicationexchange.entity.*;
+import com.ventionteams.applicationexchange.entity.Bid;
+import com.ventionteams.applicationexchange.entity.Category;
+import com.ventionteams.applicationexchange.entity.Image;
+import com.ventionteams.applicationexchange.entity.Lot;
+import com.ventionteams.applicationexchange.entity.LotSortCriteria;
+import com.ventionteams.applicationexchange.entity.User;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
@@ -32,7 +37,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.*;
+import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.ACTIVE;
+import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.AUCTION_ENDED;
+import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.CANCELLED;
+import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.EXPIRED;
+import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.MODERATED;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @TransactionalService
@@ -55,11 +64,11 @@ public class LotService extends UserItemService {
                 .map(lot -> map(lot, userId));
     }
 
-    public Page<LotReadDTO> findUsersLotsByStatus(Integer page, Integer limit, LotSortCriteria sort, LotFilterDTO lotFilter, UUID userId) {
+    public Page<LotReadDTO> findUsersLotsByStatus(Integer page, Integer limit,LotSortCriteria sort, String status, UUID userId) {
         Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
         PageRequest req = PageRequest.of(page - 1, limit, by);
-        Specification<Lot> spec = LotSpecification.getFilterSpecification(lotFilter);
-        return lotRepository.findAll(spec, req)
+        List<LotStatus> statuses = Arrays.stream(status.split(", ")).map(LotStatus::valueOf).toList();
+        return lotRepository.findByUserIdAndStatusIn(userId, statuses, req)
                 .map(lot -> map(lot, userId));
     }
 

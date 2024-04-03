@@ -244,6 +244,7 @@ public class LotService extends UserItemService {
                 .map(lotMapper::toLotReadDTO);
     }
 
+    @Transactional
     public Optional<LotReadDTO> confirm(Long id, UserAuthDto user) {
         return lotRepository.findById(id)
                 .map(lot -> {

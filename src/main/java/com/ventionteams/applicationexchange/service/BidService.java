@@ -110,7 +110,7 @@ public class BidService extends EntityRelatedService {
                         );
                     }
                 }, () -> lot.setStartPrice(bid.getAmount() + 1));
-
+        lot.setBuyerId(userDto.id());
     }
 
     private void deleteOldBidFromUser(Bid bid) {

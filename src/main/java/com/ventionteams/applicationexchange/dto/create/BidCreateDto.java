@@ -17,6 +17,6 @@ public class BidCreateDto {
     private UUID userId;
     @JsonProperty("lot_id")
     private Long lotId;
-    private Long amount;
+    private Double amount;
     private Currency currency;
 }

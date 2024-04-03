@@ -147,4 +147,13 @@ public class UserController {
         }
         return ok(PageResponse.of(lotService.findUsersLotsByStatus(page, limit, sort, status, id)));
     }
+
+    @GetMapping("/lots/bought")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<PageResponse<LotReadDTO>> findBoughtByMe(@RequestParam(defaultValue = "1") Integer page,
+                                                                       @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                                       @AuthenticationPrincipal UserAuthDto user) {
+
+        return ok(PageResponse.of(lotService.findBought(page, limit, user)));
+    }
 }

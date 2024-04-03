@@ -14,7 +14,7 @@ public record BidReadDto(
         @JsonProperty("lot_id")
         Long lotId,
         BidStatus status,
-        Long amount,
+        Double amount,
         Currency currency
 ) {
 

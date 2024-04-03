@@ -15,12 +15,12 @@ public record LotUpdateDTO(
         Weight weight,
         @JsonProperty("total_price")
         @Min(0)
-        Long totalPrice,
+        Double totalPrice,
         LocationCreateDto location,
         String description,
         @JsonProperty("start_price")
         @Min(0)
-        Long startPrice,
+        Double startPrice,
         Integer fromSize,
         Integer toSize,
         @JsonProperty("expiration_days")

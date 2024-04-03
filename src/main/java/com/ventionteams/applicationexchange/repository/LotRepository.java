@@ -5,7 +5,6 @@ import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,6 +24,8 @@ public interface LotRepository extends
             UUID userId,
             Collection<LotStatus> statuses,
             Pageable pageable);
+
+    Page<Lot> findByBuyerIdAndStatus(UUID buyerId, LotStatus status, Pageable pageable);
 
     @Modifying
     @Query(

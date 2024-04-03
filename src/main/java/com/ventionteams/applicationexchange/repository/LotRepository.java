@@ -11,16 +11,21 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.UUID;
 
 public interface LotRepository extends
         JpaRepository<Lot, Long>,
         JpaSpecificationExecutor<Lot> {
-    Page<Lot> findAllByCategoryId(Integer id, Pageable pageable);
 
     Page<Lot> findByStatus(LotStatus status, Pageable pageable);
 
-    Page<Lot> findByStatusAndUserId(LotStatus lotStatus, UUID userId, Pageable pageable);
+    Page<Lot> findByUserIdAndStatusIn(
+            UUID userId,
+            Collection<LotStatus> statuses,
+            Pageable pageable);
+
+    Page<Lot> findByBuyerIdAndStatus(UUID buyerId, LotStatus status, Pageable pageable);
 
     @Modifying
     @Query(

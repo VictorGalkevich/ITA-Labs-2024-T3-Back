@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode.Include;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -89,4 +90,7 @@ public class Lot extends AuditingEntity implements UserMappedEntity{
 
     @Column(name = "reject_message")
     private String rejectMessage;
+
+    @Column(name = "buyer_id")
+    private UUID buyerId;
 }

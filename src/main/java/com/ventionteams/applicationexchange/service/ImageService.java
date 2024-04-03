@@ -61,7 +61,7 @@ public class ImageService {
         return lot;
     }
 
-    public Long saveSingleImage(MultipartFile file, String folder) {
+    public Image saveSingleImage(MultipartFile file, String folder) {
         if (file == null) return null;
         String name = String.format("%s/%s", folder, RandomStringUtils.randomAlphanumeric(12));
         Image image = Image.builder()
@@ -69,7 +69,7 @@ public class ImageService {
                 .url(storageService.upload(file, name))
                 .build();
 
-        return imageRepository.save(image).getId();
+        return imageRepository.save(image);
     }
 
     public Optional<Image> getAvatar(Long id) {
@@ -83,6 +83,17 @@ public class ImageService {
         storageService.delete(image.getName());
         imageRepository.delete(image);
         log.info("Delete image with id: {}", id);
+    }
+
+    public void deleteImage(String url) {
+        if (url == null) return;
+        Optional<Image> image = imageRepository.findByUrl(url);
+
+        if (image.isPresent()) {
+            storageService.delete(image.get().getName());
+            imageRepository.delete(image.get());
+        }
+        log.info("Delete image with url: {}", url);
     }
 
     public LotReadDTO updateListImagesForLot(List<MultipartFile> newListImages, Lot lot) {

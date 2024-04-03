@@ -95,9 +95,10 @@ public class UserController {
 
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserReadDto> update(@AuthenticationPrincipal UserAuthDto user,
-                                              @RequestPart @Validated UserData data, @RequestPart(required = false) MultipartFile newAvatar) {
+                                              @RequestPart @Validated UserData data, @RequestPart(required = false) MultipartFile newAvatar,
+                                              @RequestParam(required = false, defaultValue = "false") boolean isChange) {
         UserCreateEditDto dto = toDto(user, data);
-        return userService.update(user.id(), dto, newAvatar)
+        return userService.update(user.id(), dto, newAvatar, isChange)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);
     }

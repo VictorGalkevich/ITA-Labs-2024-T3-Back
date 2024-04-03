@@ -11,5 +11,5 @@ public record CategoryReadDto(
         @JsonProperty("parent_id")
         Integer parentId,
         List<CategoryReadDto> subcategories,
-        Long imageId) {
+        String imageUrl) {
 }

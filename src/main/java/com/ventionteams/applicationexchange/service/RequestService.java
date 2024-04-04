@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.ventionteams.applicationexchange.entity.enumeration.Currency.USD;
+
 @TransactionalService
 @RequiredArgsConstructor
 public class RequestService extends UserItemService {
@@ -39,20 +41,28 @@ public class RequestService extends UserItemService {
     private final OfferMapper offerMapper;
     private final RatesService ratesService;
 
-    public Page<RequestReadDto> findAll(Integer page, Integer limit, String status) {
+    public Page<RequestReadDto> findAll(
+            Integer page,
+            Integer limit,
+            String status,
+            UserAuthDto user,
+            Currency currency
+    ) {
         PageRequest req = PageRequest.of(page - 1, limit);
+        Currency users = userRepository.getCurrency(user.id());
         return requestRepository.findByStatus(LotStatus.valueOf(status), req)
                 .map(request -> {
-                    convertPrice(request, false);
+                    convertFromUSD(request, currency == null ? users : currency);
                     return request;
                 })
                 .map(requestMapper::toReadDto);
     }
 
-    public Optional<RequestReadDto> findById(Long id) {
+    public Optional<RequestReadDto> findById(Long id, UserAuthDto user, Currency currency) {
+        Currency users = userRepository.getCurrency(user.id());
         return requestRepository.findById(id)
                 .map(request -> {
-                    convertPrice(request, false);
+                    convertFromUSD(request, currency == null ? users : currency);
                     return request;
                 })
                 .map(requestMapper::toReadDto);
@@ -66,17 +76,13 @@ public class RequestService extends UserItemService {
         validateEntity(category, Category.class);
         return Optional.of(dto)
                 .map(requestMapper::toPurchase)
-                .map(x -> {
-                    x.setUser(user.get());
-                    x.setStatus(LotStatus.MODERATED);
-                    convertPrice(x, true);
-                    return x;
-                })
-                .map(requestRepository::save)
                 .map(request -> {
-                    convertPrice(request, false);
+                    request.setUser(user.get());
+                    request.setStatus(LotStatus.MODERATED);
+                    convertToUSD(request);
                     return request;
                 })
+                .map(requestRepository::save)
                 .map(requestMapper::toReadDto)
                 .orElseThrow();
     }
@@ -91,14 +97,10 @@ public class RequestService extends UserItemService {
                 .map(request -> {
                     validatePermissions(request, userDto);
                     requestMapper.map(request, dto);
-                    convertPrice(request, true);
+                    convertToUSD(request);
                     return request;
                 })
                 .map(requestRepository::save)
-                .map(request -> {
-                    convertPrice(request, false);
-                    return request;
-                })
                 .map(requestMapper::toReadDto);
     }
 
@@ -137,23 +139,31 @@ public class RequestService extends UserItemService {
                 .map(requestMapper::toReadDto);
     }
 
-    public Page<RequestReadDto> findAllRequests(UUID id, Integer page, Integer limit, LotStatus status) {
+    public Page<RequestReadDto> findAllRequests(UUID id, Integer page, Integer limit, LotStatus status, Currency currency) {
         PageRequest req = PageRequest.of(page - 1, limit);
-        return requestRepository.findAllByUserId(id, req)
+        Currency users = userRepository.getCurrency(id);
+        return requestRepository.findAllByUserIdAndStatus(id, status, req)
                 .map(request -> {
-                    convertPrice(request, false);
+                    convertFromUSD(request, currency == null ? users : currency);
                     return request;
                 })
                 .map(requestMapper::toReadDto);
     }
 
-    private void convertPrice(PurchaseRequest request, boolean toUsd) {
-        Currency preferred = request.getUser().getCurrency();
-        double total = toUsd
-                ? ratesService.convertToUSD(request.getDesiredPrice(), request.getCurrency())
-                : ratesService.convertFromUSD(request.getDesiredPrice(), preferred);
+    private void convertToUSD(PurchaseRequest request) {
+        double total = ratesService.convertToUSD(request.getDesiredPrice(), request.getCurrency());
+        double ppu = ratesService.convertToUSD(request.getPricePerUnit(), request.getCurrency());
         request.setDesiredPrice(total);
-        request.setCurrency(preferred);
+        request.setPricePerUnit(ppu);
+    }
+
+    private void convertFromUSD(PurchaseRequest request, Currency currency) {
+        currency = currency == null ? USD : currency;
+        double total = ratesService.convertFromUSD(request.getDesiredPrice(), currency);
+        double ppu = ratesService.convertFromUSD(request.getPricePerUnit(), currency);
+        request.setDesiredPrice(total);
+        request.setPricePerUnit(ppu);
+        request.setCurrency(currency);
     }
 
     public Page<OfferReadDto> findOffers(Long id, Integer page, Integer limit, String status) {

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import static com.ventionteams.applicationexchange.entity.enumeration.Currency.BYN;
+import static com.ventionteams.applicationexchange.entity.enumeration.Currency.USD;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class RatesService {
     }
     
     public double convertFromUSD(Double amount, Currency toConvert) {
-        if (toConvert.equals(Currency.USD)) {
+        if (toConvert.equals(USD)) {
             return amount;
         }
         ExchangeRate rates = ratesRepository.findFirstBy();
@@ -33,7 +34,7 @@ public class RatesService {
     }
 
     public double convertToUSD(Double amount, Currency toConvert) {
-        if (toConvert.equals(Currency.USD)) {
+        if (toConvert.equals(USD)) {
             return amount;
         }
         ExchangeRate rates = ratesRepository.findFirstBy();

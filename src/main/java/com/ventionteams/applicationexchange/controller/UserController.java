@@ -1,7 +1,6 @@
 package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
-import com.ventionteams.applicationexchange.dto.create.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.create.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.create.UserData;
@@ -11,6 +10,7 @@ import com.ventionteams.applicationexchange.dto.read.RequestReadDto;
 import com.ventionteams.applicationexchange.dto.read.UserReadDto;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.service.LotService;
@@ -70,19 +70,21 @@ public class UserController {
     @GetMapping("/bids")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PageResponse<LotReadDTO>> findById(@AuthenticationPrincipal UserAuthDto user,
+                                                             @RequestParam(required = false) Currency currency,
                                                              @RequestParam(defaultValue = "1") @Min(1) Integer page,
                                                              @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                              @RequestParam(defaultValue = "LEADING") BidStatus status) {
-        return ok().body(PageResponse.of(lotService.findBidsByUserId(user.id(), page, limit, status)));
+        return ok().body(PageResponse.of(lotService.findBidsByUserId(user.id(), page, limit, status, currency)));
     }
 
     @GetMapping("/requests")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PageResponse<RequestReadDto>> findRequests(@AuthenticationPrincipal UserAuthDto user,
                                                                      @RequestParam(defaultValue = "1") @Min(1) Integer page,
+                                                                     @RequestParam(required = false) Currency currency,
                                                                      @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                      @RequestParam(defaultValue = "ACTIVE") LotStatus status) {
-        return ok().body(PageResponse.of(requestService.findAllRequests(user.id(), page, limit, status)));
+        return ok().body(PageResponse.of(requestService.findAllRequests(user.id(), page, limit, status, currency)));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -133,6 +135,7 @@ public class UserController {
     @GetMapping("/lots")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
+                                                                       @RequestParam(required = false) Currency currency,
                                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                        @AuthenticationPrincipal UserAuthDto user,
                                                                        @RequestParam(required = false, defaultValue = "ACTIVE") String status,
@@ -146,15 +149,16 @@ public class UserController {
         if (user != null) {
             id = user.id();
         }
-        return ok(PageResponse.of(lotService.findUsersLotsByStatus(page, limit, sort, status, id)));
+        return ok(PageResponse.of(lotService.findUsersLotsByStatus(page, limit, sort, status, id, currency)));
     }
 
     @GetMapping("/lots/bought")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<PageResponse<LotReadDTO>> findBoughtByMe(@RequestParam(defaultValue = "1") Integer page,
-                                                                       @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
-                                                                       @AuthenticationPrincipal UserAuthDto user) {
+                                                                   @RequestParam(required = false) Currency currency,
+                                                                   @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                                   @AuthenticationPrincipal UserAuthDto user) {
 
-        return ok(PageResponse.of(lotService.findBought(page, limit, user)));
+        return ok(PageResponse.of(lotService.findBought(page, limit, user, currency)));
     }
 }

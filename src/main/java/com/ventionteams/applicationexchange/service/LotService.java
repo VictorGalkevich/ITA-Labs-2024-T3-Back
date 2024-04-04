@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.ventionteams.applicationexchange.entity.enumeration.Currency.*;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.ACTIVE;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.AUCTION_ENDED;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.CANCELLED;
@@ -59,41 +60,68 @@ public class LotService extends UserItemService {
     private final ImageService imageService;
     private final RatesService ratesService;
 
-    public Page<LotReadDTO> findAll(Integer page, Integer limit, LotFilterDTO filter, LotSortCriteria sort, UUID userId) {
+    public Page<LotReadDTO> findAll(
+            Integer page,
+            Integer limit,
+            LotFilterDTO filter,
+            LotSortCriteria sort,
+            UUID userId,
+            Currency currency
+    ) {
         Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
         PageRequest req = PageRequest.of(page - 1, limit, by);
         Specification<Lot> specification = LotSpecification.getFilterSpecification(filter);
+        Currency users = userRepository.getCurrency(userId);
         return lotRepository.findAll(specification, req)
-                .map(lot -> map(lot, userId));
+                .map(lot -> map(lot, userId, currency == null ? users : currency));
     }
 
-    public Page<LotReadDTO> findUsersLotsByStatus(Integer page, Integer limit,LotSortCriteria sort, String status, UUID userId) {
+    public Page<LotReadDTO> findUsersLotsByStatus(
+            Integer page,
+            Integer limit,
+            LotSortCriteria sort,
+            String status,
+            UUID userId,
+            Currency currency
+    ) {
         Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
         PageRequest req = PageRequest.of(page - 1, limit, by);
         List<LotStatus> statuses = Arrays.stream(status.split(","))
                 .map(String::trim)
                 .map(LotStatus::valueOf)
                 .toList();
+        Currency users = userRepository.getCurrency(userId);
         return lotRepository.findByUserIdAndStatusIn(userId, statuses, req)
-                .map(lot -> map(lot, userId));
+                .map(lot -> map(lot, userId, currency == null ? users : currency));
     }
 
-    public Page<LotReadDTO> findByStatus(Integer page, Integer limit, LotStatus status, LotSortCriteria sort, UUID userId) {
+    public Page<LotReadDTO> findByStatus(
+            Integer page,
+            Integer limit,
+            LotStatus status,
+            LotSortCriteria sort,
+            UUID userId,
+            Currency currency
+    ) {
         Sort by = Sort.by(sort.getOrder(), sort.getField().getName());
         PageRequest req = PageRequest.of(page - 1, limit, by);
+        Currency users = userRepository.getCurrency(userId);
         return lotRepository.findByStatus(status, req)
-                .map(lot -> map(lot, userId));
+                .map(lot -> map(lot, userId, currency == null ? users : currency));
     }
 
-    public Optional<LotReadDTO> findById(Long lotId, UUID userId) {
+    public Optional<LotReadDTO> findById(Long lotId, UUID userId, Currency currency) {
+        Currency users = userRepository.getCurrency(userId);
         return lotRepository.findById(lotId)
-                .map(lot -> map(lot, userId));
+                .map(lot -> map(lot, userId, currency == null ? users : currency));
     }
 
     @Transactional
     public boolean delete(Long id, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {
+            throw new UserNotRegisteredException();
+        });
         return lotRepository.findById(id)
                 .map(lot -> {
                     List<Image> images = lot.getImages();
@@ -111,7 +139,9 @@ public class LotService extends UserItemService {
     @Transactional
     public LotReadDTO create(LotUpdateDTO dto, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {
+            throw new UserNotRegisteredException();
+        });
         Optional<Category> category = categoryRepository.findById(dto.categoryId());
         validateEntity(category, Category.class);
         return Optional.of(dto)
@@ -133,9 +163,16 @@ public class LotService extends UserItemService {
     }
 
     @Transactional
-    public Optional<LotReadDTO> update(Long id, LotUpdateDTO dto, UserAuthDto userDto, List<MultipartFile> newImages) {
+    public Optional<LotReadDTO> update(
+            Long id,
+            LotUpdateDTO dto,
+            UserAuthDto userDto,
+            List<MultipartFile> newImages
+    ) {
         Optional<User> user = userRepository.findById(userDto.id());
-        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {
+            throw new UserNotRegisteredException();
+        });
         return lotRepository.findById(id)
                 .map(lot -> {
                     validatePermissions(lot, userDto);
@@ -150,13 +187,15 @@ public class LotService extends UserItemService {
                     return lot;
                 })
                 .map(lotRepository::save)
-                .map(lot -> map(lot, userDto.id()));
+                .map(lot -> map(lot, userDto.id(), lot.getCurrency()));
     }
 
     @Transactional
     public Optional<LotReadDTO> buy(Long lotId, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {
+            throw new UserNotRegisteredException();
+        });
         return lotRepository.findById(lotId)
                 .map(lot -> {
                     if (lot.getUser().getId().equals(userDto.id())) {
@@ -199,7 +238,7 @@ public class LotService extends UserItemService {
                     validateLotStatus(lot, MODERATED, CANCELLED);
                     lot.setStatus(LotStatus.ACTIVE);
                     lot.setRejectMessage(null);
-                    return  lot;
+                    return lot;
                 })
                 .map(lotRepository::save)
                 .map(lotMapper::toLotReadDTO);
@@ -213,7 +252,7 @@ public class LotService extends UserItemService {
                     validatePermissions(lot, user);
                     lot.setStatus(LotStatus.DEACTIVATED);
                     lot.setRejectMessage(null);
-                    return  lot;
+                    return lot;
                 })
                 .map(lotRepository::save)
                 .map(lotMapper::toLotReadDTO);
@@ -230,22 +269,30 @@ public class LotService extends UserItemService {
                     bidWrapper.get().setStatus(BidStatus.WON);
                     lot.setStatus(LotStatus.SOLD);
                     lot.setRejectMessage(null);
-                    return  lot;
+                    return lot;
                 })
                 .map(lotRepository::save)
                 .map(lotMapper::toLotReadDTO);
     }
 
-    public Page<LotReadDTO> findBought(Integer page, Integer limit, UserAuthDto user) {
+    public Page<LotReadDTO> findBought(Integer page, Integer limit, UserAuthDto user, Currency currency) {
         PageRequest req = PageRequest.of(page - 1, limit);
+        Currency users = userRepository.getCurrency(user.id());
         return lotRepository.findByBuyerIdAndStatus(user.id(), LotStatus.SOLD, req)
-                .map(lot -> map(lot, user.id()));
+                .map(lot -> map(lot, user.id(), currency == null ? users : currency));
     }
 
-    public Page<LotReadDTO> findBidsByUserId(UUID id, Integer page, Integer limit, BidStatus status) {
+    public Page<LotReadDTO> findBidsByUserId(
+            UUID id,
+            Integer page,
+            Integer limit,
+            BidStatus status,
+            Currency currency
+    ) {
         PageRequest req = PageRequest.of(page - 1, limit);
+        Currency users = userRepository.getCurrency(id);
         return lotRepository.findAllByBidStatus(status, id, req)
-                .map(lot -> map(lot, id));
+                .map(lot -> map(lot, id, currency == null ? users : currency));
     }
 
     private void validateLotStatus(Lot lot, LotStatus... statuses) {
@@ -261,25 +308,29 @@ public class LotService extends UserItemService {
     private void convertPriceToUSD(Lot lot) {
         double total = ratesService.convertToUSD(lot.getTotalPrice(), lot.getCurrency());
         double start = ratesService.convertToUSD(lot.getStartPrice(), lot.getCurrency());
+        double ppu = ratesService.convertToUSD(lot.getPricePerUnit(), lot.getCurrency());
         lot.setTotalPrice(total);
         lot.setStartPrice(start);
+        lot.setPricePerUnit(ppu);
     }
 
-    private void convertPriceFromUSD(LotReadDTO dto, Lot lot) {
-        Currency preferred = lot.getUser().getCurrency();
+    private void convertPriceFromUSD(LotReadDTO dto, Lot lot, Currency preferred) {
+        preferred = preferred == null ? USD : preferred;
         double total = ratesService.convertFromUSD(lot.getTotalPrice(), preferred);
         double start = ratesService.convertFromUSD(lot.getStartPrice(), preferred);
+        double ppu = ratesService.convertFromUSD(lot.getPricePerUnit(), preferred);
         dto.setTotalPrice(Math.floor(total * 100) / 100);
         dto.setStartPrice(Math.floor(start * 100) / 100);
+        dto.setPricePerUnit(Math.floor(ppu * 100) / 100);
         dto.setCurrency(preferred);
     }
 
-    private LotReadDTO map(Lot lot, UUID userId) {
+    private LotReadDTO map(Lot lot, UUID userId, Currency currency) {
         LotReadDTO lotReadDTO = lotMapper.toLotReadDTO(lot);
         Optional<Bid> leadingBid = bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING);
         leadingBid.ifPresent(bid -> {
-            bid.setAmount(ratesService.convertFromUSD(bid.getAmount(), lot.getUser().getCurrency()));
-            bid.setCurrency(lot.getUser().getCurrency());
+            bid.setAmount(ratesService.convertFromUSD(bid.getAmount(), currency));
+            bid.setCurrency(currency);
         });
         BidReadDto leading = bidMapper.toReadDto(leadingBid.orElse(null));
         Optional<Bid> usersBid = Optional.empty();
@@ -287,13 +338,13 @@ public class LotService extends UserItemService {
             usersBid = bidRepository.findByUserIdAndLotId(userId, lot.getId());
         }
         usersBid.ifPresent(bid -> {
-            bid.setAmount(ratesService.convertFromUSD(bid.getAmount(), lot.getUser().getCurrency()));
-            bid.setCurrency(lot.getUser().getCurrency());
+            bid.setAmount(ratesService.convertFromUSD(bid.getAmount(), currency));
+            bid.setCurrency(currency);
         });
         BidReadDto users = bidMapper.toReadDto(usersBid.orElse(null));
         lotReadDTO.setLeading(leading);
         lotReadDTO.setUsers(users);
-        convertPriceFromUSD(lotReadDTO, lot);
+        convertPriceFromUSD(lotReadDTO, lot, currency);
         if (lot.getLengthUnit().equals(LengthUnit.CENTIMETER)) {
             lotReadDTO.setFromSize(lot.getFromSize() / 10);
             lotReadDTO.setToSize(lot.getToSize() / 10);

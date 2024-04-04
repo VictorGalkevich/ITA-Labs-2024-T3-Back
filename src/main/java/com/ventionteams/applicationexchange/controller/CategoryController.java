@@ -9,8 +9,8 @@ import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.read.MainPageCategoryReadDto;
 import com.ventionteams.applicationexchange.dto.read.PageResponse;
 import com.ventionteams.applicationexchange.entity.LotSortCriteria;
+import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
-import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Packaging;
 import com.ventionteams.applicationexchange.entity.enumeration.Weight;
 import com.ventionteams.applicationexchange.service.CategoryService;
@@ -55,6 +55,7 @@ public class CategoryController {
 
     @GetMapping("/{id}/lots")
     public ResponseEntity<PageResponse<LotReadDTO>> findLotsWithFilter(@RequestParam(defaultValue = "1") Integer page,
+                                                                       @RequestParam(required = false) Currency currency,
                                                                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                        @AuthenticationPrincipal UserAuthDto user,
                                                                        @PathVariable("id") @Min(1) @Max(1000) Integer category,
@@ -81,7 +82,7 @@ public class CategoryController {
         if (user != null) {
             id = user.id();
         }
-        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, id)));
+        return ok(PageResponse.of(lotService.findAll(page, limit, filter, sort, id, currency)));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

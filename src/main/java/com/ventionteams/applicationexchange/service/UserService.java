@@ -3,6 +3,7 @@ package com.ventionteams.applicationexchange.service;
 import com.ventionteams.applicationexchange.annotation.TransactionalService;
 import com.ventionteams.applicationexchange.dto.create.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.read.UserReadDto;
+import com.ventionteams.applicationexchange.entity.Image;
 import com.ventionteams.applicationexchange.mapper.UserMapper;
 import com.ventionteams.applicationexchange.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class UserService {
         return Optional.of(dto)
                 .map(userMapper::toUser)
                 .map(user -> {
-                    user.setAvatarId(imageService.saveSingleImage(avatar, "avatar"));
+                    user.setAvatarId(imageService.saveSingleImage(avatar, "avatar").getId());
                     user.setCreatedAt(Instant.now());
                     return user;
                 })
@@ -48,11 +49,18 @@ public class UserService {
     }
 
     @Transactional
-    public Optional<UserReadDto> update(UUID id, UserCreateEditDto dto, MultipartFile newAvatar) {
+    public Optional<UserReadDto> update(UUID id, UserCreateEditDto dto, MultipartFile newAvatar, boolean isChange) {
         return userRepository.findById(id)
                 .map(user -> {
-                    imageService.deleteImage(user.getAvatarId());
-                    user.setAvatarId(imageService.saveSingleImage(newAvatar, "avatar"));
+                    if (isChange) {
+                        imageService.deleteImage(user.getAvatarId());
+                        Image image = imageService.saveSingleImage(newAvatar, "avatar");
+                        if (image != null) {
+                            user.setAvatarId(image.getId());
+                        } else {
+                            user.setAvatarId(null);
+                        }
+                    }
                     userMapper.map(user, dto);
                     return user;
                 })

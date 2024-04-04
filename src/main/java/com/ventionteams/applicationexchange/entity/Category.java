@@ -46,6 +46,6 @@ public class Category {
     @Builder.Default
     private List<Category> subcategories = new ArrayList<>();
 
-    @Column(name = "image_id")
-    private Long imageId;
+    @Column(name = "image_url")
+    private String imageUrl;
 }

@@ -277,13 +277,19 @@ public class LotService extends UserItemService {
     private LotReadDTO map(Lot lot, UUID userId) {
         LotReadDTO lotReadDTO = lotMapper.toLotReadDTO(lot);
         Optional<Bid> leadingBid = bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING);
-        leadingBid.ifPresent(bid -> bid.setAmount(ratesService.convertFromUSD(bid.getAmount(), lot.getUser().getCurrency())));
+        leadingBid.ifPresent(bid -> {
+            bid.setAmount(ratesService.convertFromUSD(bid.getAmount(), lot.getUser().getCurrency()));
+            bid.setCurrency(lot.getUser().getCurrency());
+        });
         BidReadDto leading = bidMapper.toReadDto(leadingBid.orElse(null));
         Optional<Bid> usersBid = Optional.empty();
         if (userId != null) {
             usersBid = bidRepository.findByUserIdAndLotId(userId, lot.getId());
         }
-        usersBid.ifPresent(bid -> bid.setAmount(ratesService.convertFromUSD(bid.getAmount(), lot.getUser().getCurrency())));
+        usersBid.ifPresent(bid -> {
+            bid.setAmount(ratesService.convertFromUSD(bid.getAmount(), lot.getUser().getCurrency()));
+            bid.setCurrency(lot.getUser().getCurrency());
+        });
         BidReadDto users = bidMapper.toReadDto(usersBid.orElse(null));
         lotReadDTO.setLeading(leading);
         lotReadDTO.setUsers(users);

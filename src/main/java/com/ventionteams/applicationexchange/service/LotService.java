@@ -263,12 +263,10 @@ public class LotService extends UserItemService {
         Currency preferred = lot.getUser().getCurrency();
         double total = ratesService.convertFromUSD(lot.getTotalPrice(), preferred);
         double start = ratesService.convertFromUSD(lot.getStartPrice(), preferred);
-        dto.setTotalPrice(total);
-        dto.setStartPrice(start);
+        dto.setTotalPrice(Math.floor(total * 100) / 100);
+        dto.setStartPrice(Math.floor(start * 100) / 100);
         dto.setCurrency(preferred);
     }
-
-
 
     private LotReadDTO map(Lot lot, UUID userId) {
         LotReadDTO lotReadDTO = lotMapper.toLotReadDTO(lot);

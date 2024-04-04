@@ -165,7 +165,13 @@ public class LotService extends UserItemService {
                     validateLotStatus(lot, ACTIVE, AUCTION_ENDED);
                     lot.setStatus(LotStatus.SOLD);
                     bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING)
-                            .ifPresent(bid -> bid.setStatus(BidStatus.OVERBID));
+                            .ifPresent(bid -> {
+                                if (bid.getUserId().equals(userDto.id())) {
+                                    bid.setStatus(BidStatus.BOUGHT);
+                                } else {
+                                    bid.setStatus(BidStatus.OVERBID);
+                                }
+                            });
                     lot.setBuyerId(userDto.id());
                     return lot;
                 })
@@ -270,12 +276,15 @@ public class LotService extends UserItemService {
 
     private LotReadDTO map(Lot lot, UUID userId) {
         LotReadDTO lotReadDTO = lotMapper.toLotReadDTO(lot);
-        BidReadDto leading = bidMapper.toReadDto(bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING).orElse(null));
-        Optional<Bid> bid = Optional.empty();
+        Optional<Bid> leadingBid = bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING);
+        leadingBid.ifPresent(bid -> bid.setAmount(ratesService.convertFromUSD(bid.getAmount(), lot.getUser().getCurrency())));
+        BidReadDto leading = bidMapper.toReadDto(leadingBid.orElse(null));
+        Optional<Bid> usersBid = Optional.empty();
         if (userId != null) {
-            bid = bidRepository.findByUserIdAndLotId(userId, lot.getId());
+            usersBid = bidRepository.findByUserIdAndLotId(userId, lot.getId());
         }
-        BidReadDto users = bidMapper.toReadDto(bid.orElse(null));
+        usersBid.ifPresent(bid -> bid.setAmount(ratesService.convertFromUSD(bid.getAmount(), lot.getUser().getCurrency())));
+        BidReadDto users = bidMapper.toReadDto(usersBid.orElse(null));
         lotReadDTO.setLeading(leading);
         lotReadDTO.setUsers(users);
         convertPriceFromUSD(lotReadDTO, lot);

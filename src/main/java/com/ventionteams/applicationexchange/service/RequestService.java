@@ -158,7 +158,6 @@ public class RequestService extends UserItemService {
     }
 
     private void convertFromUSD(PurchaseRequest request, Currency currency) {
-        currency = currency == null ? USD : currency;
         double total = ratesService.convertFromUSD(request.getDesiredPrice(), currency);
         double ppu = ratesService.convertFromUSD(request.getPricePerUnit(), currency);
         request.setDesiredPrice(total);

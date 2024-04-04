@@ -43,6 +43,9 @@ public class RequestController {
                                                                 @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                                 @RequestParam(defaultValue = "ACTIVE") String status,
                                                                 @AuthenticationPrincipal UserAuthDto user) {
+        if (user == null && currency == null) {
+            currency = Currency.USD;
+        }
         return ok(PageResponse.of(requestService.findAll(page, limit, status, user, currency)));
     }
 
@@ -50,6 +53,9 @@ public class RequestController {
     public ResponseEntity<RequestReadDto> findById(@PathVariable("id") Long id,
                                                    @RequestParam(required = false) Currency currency,
                                                    @AuthenticationPrincipal UserAuthDto user) {
+        if (user == null && currency == null) {
+            currency = Currency.USD;
+        }
         return requestService.findById(id, user, currency)
                 .map(obj -> ok().body(obj))
                 .orElseGet(notFound()::build);

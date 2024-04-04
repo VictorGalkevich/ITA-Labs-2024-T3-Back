@@ -62,6 +62,9 @@ public class LotController {
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
         UUID id = null;
+        if (user == null && currency == null) {
+            currency = Currency.USD;
+        }
         if (user != null) {
             id = user.id();
         }
@@ -73,6 +76,10 @@ public class LotController {
                                                @RequestParam(required = false) Currency currency,
                                                @AuthenticationPrincipal UserAuthDto user) {
         UUID uuid = null;
+
+        if (user == null && currency == null) {
+            currency = Currency.USD;
+        }
         if (user != null) {
             uuid = user.id();
         }

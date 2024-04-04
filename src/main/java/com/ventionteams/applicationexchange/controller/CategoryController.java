@@ -79,6 +79,9 @@ public class CategoryController {
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))
                 .build();
         UUID id = null;
+        if (user == null && currency == null) {
+            currency = Currency.USD;
+        }
         if (user != null) {
             id = user.id();
         }

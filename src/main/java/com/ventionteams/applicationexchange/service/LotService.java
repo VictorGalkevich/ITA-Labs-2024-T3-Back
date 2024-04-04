@@ -315,7 +315,6 @@ public class LotService extends UserItemService {
     }
 
     private void convertPriceFromUSD(LotReadDTO dto, Lot lot, Currency preferred) {
-        preferred = preferred == null ? USD : preferred;
         double total = ratesService.convertFromUSD(lot.getTotalPrice(), preferred);
         double start = ratesService.convertFromUSD(lot.getStartPrice(), preferred);
         double ppu = ratesService.convertFromUSD(lot.getPricePerUnit(), preferred);

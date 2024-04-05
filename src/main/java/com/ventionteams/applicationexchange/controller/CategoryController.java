@@ -70,7 +70,8 @@ public class CategoryController {
                                                                        @AuthenticationPrincipal UserAuthDto user,
                                                                        @PathVariable("id") @Min(1) @Max(1000) Integer category,
                                                                        @RequestParam(required = false) List<Packaging> packaging,
-                                                                       @RequestParam(required = false) List<Integer> locations,
+                                                                       @RequestParam(required = false) List<String> countries,
+                                                                       @RequestParam(required = false) List<String> cities,
                                                                        @RequestParam(required = false) List<Integer> varieties,
                                                                        @RequestParam(required = false) List<Weight> weights,
                                                                        @RequestParam(required = false) @Min(1) @Max(1000) Long fromQuantity,
@@ -83,7 +84,7 @@ public class CategoryController {
                                                                        @RequestParam(required = false) Sort.Direction sortOrder,
                                                                        @RequestParam(required = false, defaultValue = "ACTIVE") String status,
                                                                        @RequestParam(required = false) String keyword) {
-        final LotFilterDTO filter = new LotFilterDTO(category, packaging, locations, varieties, weights, fromQuantity, toQuantity, fromSize, toSize, fromPrice, toPrice, status, keyword);
+        final LotFilterDTO filter = new LotFilterDTO(category, packaging, countries, cities, varieties, weights, fromQuantity, toQuantity, fromSize, toSize, fromPrice, toPrice, status, keyword);
         final LotSortCriteria sort = LotSortCriteria.builder()
                 .field(Optional.ofNullable(sortField).orElse(LotSortField.CREATED_AT))
                 .order(Optional.ofNullable(sortOrder).orElse(Sort.Direction.DESC))

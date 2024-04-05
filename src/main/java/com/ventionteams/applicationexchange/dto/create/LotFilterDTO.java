@@ -10,7 +10,8 @@ import java.util.List;
 public record LotFilterDTO(
         Integer category,
         List<Packaging> packaging,
-        List<Integer> locations,
+        List<String> countries,
+        List<String> cities,
         List<Integer> varieties,
         List<Weight> weights,
         Long fromQuantity,

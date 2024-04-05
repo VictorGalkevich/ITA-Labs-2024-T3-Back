@@ -24,7 +24,8 @@ public class LotSpecification {
                 .or(filter.category() == null ? null : inParentCategories(filter.category()))
                 .and(isEmpty(filter.packaging()) ? null : inPackaging(filter.packaging()))
                 .and(isEmpty(filter.weights()) ? null : inWeight(filter.weights()))
-                .and(isEmpty(filter.locations()) ? null : inLocations(filter.locations()))
+                .and(isEmpty(filter.countries()) ? null : inCountries(filter.countries()))
+                .and(isEmpty(filter.cities()) ? null : inCities(filter.cities()))
                 .and(isEmpty(filter.varieties()) ? null : inVarieties(filter.varieties()))
                 .and(filter.fromQuantity() == null ? null : fromQuantity(filter.fromQuantity()))
                 .and(filter.toQuantity() == null ? null : toQuantity(filter.toQuantity()))
@@ -66,11 +67,21 @@ public class LotSpecification {
         };
     }
 
-    private static Specification<Lot> inLocations(List<Integer> locations) {
+    private static Specification<Lot> inCountries(List<String> countries) {
         return (root, query, criteriaBuilder) -> {
-            CriteriaBuilder.In<Integer> inClause = criteriaBuilder.in(root.get("location").get("id"));
-            for (Integer location : locations) {
-                inClause.value(location);
+            CriteriaBuilder.In<String> inClause = criteriaBuilder.in(root.get("location").get("id"));
+            for (String country : countries) {
+                inClause.value(country);
+            }
+            return inClause;
+        };
+    }
+
+    private static Specification<Lot> inCities(List<String> cities) {
+        return (root, query, criteriaBuilder) -> {
+            CriteriaBuilder.In<String> inClause = criteriaBuilder.in(root.get("location").get("id"));
+            for (String city : cities) {
+                inClause.value(city);
             }
             return inClause;
         };

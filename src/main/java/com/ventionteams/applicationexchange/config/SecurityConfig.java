@@ -35,6 +35,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET,
+                                "/actuator/**",
                                 "/bids/**",
                                 "/categories/**",
                                 "/data-selection/**",
@@ -42,7 +43,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/**"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))

@@ -9,10 +9,12 @@ import jakarta.validation.constraints.NotNull;
 public record RequestCreateEditDto(
         @JsonProperty("category_id")
         @Min(1)
+        @NotNull
         Integer categoryId,
 
         @JsonProperty("desired_price")
         @Min(0)
+        @NotNull
         Long desiredPrice,
 
         @NotBlank
@@ -22,6 +24,8 @@ public record RequestCreateEditDto(
         Currency currency,
 
         @JsonProperty("expiration_days")
+        @NotNull
+        @Min(1)
         Integer days
 ) {
 }

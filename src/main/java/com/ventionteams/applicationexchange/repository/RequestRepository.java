@@ -1,9 +1,6 @@
 package com.ventionteams.applicationexchange.repository;
 
-import com.ventionteams.applicationexchange.dto.read.BidForUserDto;
-import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.PurchaseRequest;
-import com.ventionteams.applicationexchange.entity.User;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +13,7 @@ import java.util.UUID;
 
 public interface RequestRepository extends JpaRepository<PurchaseRequest, Long> {
     Page<PurchaseRequest> findByStatus(LotStatus status, Pageable pageable);
-    Page<PurchaseRequest> findAllByUserId(UUID uuid, Pageable pageable);
+    Page<PurchaseRequest> findAllByUserIdAndStatus(UUID uuid, LotStatus status, Pageable pageable);
 
     @Modifying
     @Query(

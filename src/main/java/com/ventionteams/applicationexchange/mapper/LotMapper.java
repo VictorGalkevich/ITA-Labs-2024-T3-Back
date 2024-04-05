@@ -1,8 +1,8 @@
 package com.ventionteams.applicationexchange.mapper;
 
 import com.ventionteams.applicationexchange.config.MapperConfiguration;
-import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
 import com.ventionteams.applicationexchange.dto.create.LotUpdateDTO;
+import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
 import com.ventionteams.applicationexchange.entity.Lot;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,6 +21,7 @@ public interface LotMapper {
     Lot toLot(LotUpdateDTO dto);
 
     void map(@MappingTarget Lot to, LotUpdateDTO from);
+
     @Mapping(target = "category", expression = "java(Category.builder().id(from.getCategoryId()).build())")
     void map(@MappingTarget Lot to, LotReadDTO from);
 

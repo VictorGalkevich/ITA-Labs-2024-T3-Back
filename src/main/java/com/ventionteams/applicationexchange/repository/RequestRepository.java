@@ -13,6 +13,7 @@ import java.util.UUID;
 
 public interface RequestRepository extends JpaRepository<PurchaseRequest, Long> {
     Page<PurchaseRequest> findByStatus(LotStatus status, Pageable pageable);
+
     Page<PurchaseRequest> findAllByUserIdAndStatus(UUID uuid, LotStatus status, Pageable pageable);
 
     @Modifying

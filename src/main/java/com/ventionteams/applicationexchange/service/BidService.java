@@ -53,7 +53,9 @@ public class BidService extends EntityRelatedService {
     @Transactional
     public BidReadDto create(BidCreateDto dto, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {
+            throw new UserNotRegisteredException();
+        });
         return Optional.of(dto)
                 .map(bidMapper::toBid)
                 .map(bid -> {

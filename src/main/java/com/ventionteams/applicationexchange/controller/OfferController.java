@@ -6,7 +6,6 @@ import com.ventionteams.applicationexchange.dto.create.OfferCreateEditDto;
 import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.read.OfferReadDto;
 import com.ventionteams.applicationexchange.dto.read.PageResponse;
-import com.ventionteams.applicationexchange.entity.enumeration.OfferStatus;
 import com.ventionteams.applicationexchange.service.OfferService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

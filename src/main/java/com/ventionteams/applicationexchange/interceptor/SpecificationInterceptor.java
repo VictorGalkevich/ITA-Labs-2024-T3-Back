@@ -19,10 +19,9 @@ public class SpecificationInterceptor implements StatementInspector {
                 keyword = matcher.group(1);
                 if (keyword != null && !keyword.isBlank()) {
                     var searchInsert = "to_tsvector(c1_0.name || ' ' || l1_0.title || ' ' ||" +
-                            " l1_0.description) @@ to_tsquery('" + keyword + ":*')";
+                                       " l1_0.description) @@ to_tsquery('" + keyword + ":*')";
                     sql = sql.replaceFirst("'KEYWORD'='(.*?)'", searchInsert);
-                }
-                else {
+                } else {
                     sql = sql.replaceFirst("and 'KEYWORD'='(.*?)'", "");
                 }
             } else {

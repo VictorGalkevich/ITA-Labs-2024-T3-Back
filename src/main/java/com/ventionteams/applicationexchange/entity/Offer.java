@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import static lombok.EqualsAndHashCode.*;
+import static lombok.EqualsAndHashCode.Include;
 
 @Data
 @Builder

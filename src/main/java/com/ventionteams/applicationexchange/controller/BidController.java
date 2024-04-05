@@ -2,9 +2,9 @@ package com.ventionteams.applicationexchange.controller;
 
 import com.ventionteams.applicationexchange.annotation.ValidatedController;
 import com.ventionteams.applicationexchange.dto.create.BidCreateDto;
+import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.read.BidReadDto;
 import com.ventionteams.applicationexchange.dto.read.PageResponse;
-import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.service.BidService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

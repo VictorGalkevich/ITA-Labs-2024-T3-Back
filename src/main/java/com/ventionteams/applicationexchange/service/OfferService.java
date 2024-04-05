@@ -95,7 +95,9 @@ public class OfferService extends UserItemService {
     @Transactional
     public Optional<OfferReadDto> decide(Long id, UserAuthDto userDto, OfferStatus status) {
         Optional<User> user = userRepository.findById(userDto.id());
-        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {
+            throw new UserNotRegisteredException();
+        });
 
         return offerRepository.findById(id)
                 .map(offer -> {
@@ -112,7 +114,9 @@ public class OfferService extends UserItemService {
     @Transactional
     public Optional<OfferReadDto> sell(Long id, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {
+            throw new UserNotRegisteredException();
+        });
 
         return offerRepository.findById(id)
                 .map(offer -> {
@@ -129,7 +133,9 @@ public class OfferService extends UserItemService {
     @Transactional
     public boolean delete(Long id, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {
+            throw new UserNotRegisteredException();
+        });
         return offerRepository.findById(id)
                 .map(offer -> {
                     validatePermissions(offer.getLot(), userDto);

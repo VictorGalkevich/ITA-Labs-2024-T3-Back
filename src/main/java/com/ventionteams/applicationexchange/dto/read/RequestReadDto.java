@@ -25,7 +25,7 @@ public record RequestReadDto(
         Long quantity,
         Weight weight,
         @JsonProperty("price_per_unit")
-        Double pricePerUnit,Location location,
+        Double pricePerUnit, Location location,
         Integer size,
         Packaging packaging,
         @JsonProperty("length_unit")

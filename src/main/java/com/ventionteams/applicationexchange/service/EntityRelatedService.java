@@ -15,7 +15,7 @@ public class EntityRelatedService {
         }
     }
 
-    public static  <T> void validateEntity(Optional<T> entity, Runnable onEmptyAction) {
+    public static <T> void validateEntity(Optional<T> entity, Runnable onEmptyAction) {
         if (entity.isEmpty()) {
             onEmptyAction.run();
         }

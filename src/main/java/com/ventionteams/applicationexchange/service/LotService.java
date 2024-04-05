@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.ventionteams.applicationexchange.entity.enumeration.Currency.*;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.ACTIVE;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.AUCTION_ENDED;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.CANCELLED;

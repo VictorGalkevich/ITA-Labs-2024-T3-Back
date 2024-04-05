@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @FeignClient(name = "ratesClient", url = "#{@linkConfig.getRatesApi()}")
-public interface RatesClient{
+public interface RatesClient {
 
     @GetMapping("/latest/USD")
     ExchangeRatesReadDto retrieveExchangeRates();

@@ -23,7 +23,7 @@ public class RatesService {
         rate.setSellEur(1 / rates.buyEur());
         ratesRepository.saveAndFlush(rate);
     }
-    
+
     public double convertFromUSD(Double amount, Currency toConvert) {
         if (toConvert.equals(USD)) {
             return amount;

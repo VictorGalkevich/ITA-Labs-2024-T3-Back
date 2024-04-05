@@ -10,10 +10,11 @@ public record ExchangeRatesReadDto(
 
 ) {
 
-        public record ConversionRates(
-                @JsonProperty("BYN")
-                Double buyByn,
-                @JsonProperty("EUR")
-                Double buyEur
-        ){}
+    public record ConversionRates(
+            @JsonProperty("BYN")
+            Double buyByn,
+            @JsonProperty("EUR")
+            Double buyEur
+    ) {
+    }
 }

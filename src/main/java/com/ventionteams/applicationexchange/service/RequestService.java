@@ -70,7 +70,9 @@ public class RequestService extends UserItemService {
     @Transactional
     public RequestReadDto create(RequestCreateEditDto dto, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {
+            throw new UserNotRegisteredException();
+        });
         Optional<Category> category = categoryRepository.findById(dto.categoryId());
         validateEntity(category, Category.class);
         return Optional.of(dto)
@@ -89,7 +91,9 @@ public class RequestService extends UserItemService {
     @Transactional
     public Optional<RequestReadDto> update(Long id, RequestCreateEditDto dto, UserAuthDto userDto) {
         Optional<User> user = userRepository.findById(userDto.id());
-        validateEntity(user, () -> {throw new UserNotRegisteredException();});
+        validateEntity(user, () -> {
+            throw new UserNotRegisteredException();
+        });
         Optional<Category> category = categoryRepository.findById(dto.categoryId());
         validateEntity(category, Category.class);
         return requestRepository.findById(id)
@@ -170,7 +174,7 @@ public class RequestService extends UserItemService {
                 .map(String::trim)
                 .map(OfferStatus::valueOf)
                 .toList();
-        return offerRepository.findAllByPurchaseRequestIdAndStatusIn(id, statuses,req)
+        return offerRepository.findAllByPurchaseRequestIdAndStatusIn(id, statuses, req)
                 .map(offerMapper::toReadDto);
     }
 }

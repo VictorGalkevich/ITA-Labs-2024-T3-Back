@@ -124,12 +124,12 @@ public class LotSpecification {
                 criteriaBuilder.lessThanOrEqualTo(root.get("totalPrice"), toPrice);
     }
 
-    private static Specification<Lot> byKeyword(String keyword){
+    private static Specification<Lot> byKeyword(String keyword) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(criteriaBuilder.literal("KEYWORD"), criteriaBuilder.literal(keyword));
     }
 
-    private static List<LotStatus> getStatusList(String statuses){
+    private static List<LotStatus> getStatusList(String statuses) {
         return Arrays.stream(statuses.split(","))
                 .map(String::trim)
                 .map(LotStatus::valueOf)

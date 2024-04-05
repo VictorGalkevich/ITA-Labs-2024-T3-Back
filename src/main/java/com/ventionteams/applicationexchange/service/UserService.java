@@ -39,7 +39,8 @@ public class UserService {
         return Optional.of(dto)
                 .map(userMapper::toUser)
                 .map(user -> {
-                    user.setAvatarId(imageService.saveSingleImage(avatar, "avatar").getId());
+                    if (avatar != null)
+                        user.setAvatarId(imageService.saveSingleImage(avatar, "avatar").getId());
                     user.setCreatedAt(Instant.now());
                     return user;
                 })

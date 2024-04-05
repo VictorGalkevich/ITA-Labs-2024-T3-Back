@@ -69,7 +69,7 @@ public class LotSpecification {
 
     private static Specification<Lot> inCountries(List<String> countries) {
         return (root, query, criteriaBuilder) -> {
-            CriteriaBuilder.In<String> inClause = criteriaBuilder.in(root.get("location").get("id"));
+            CriteriaBuilder.In<String> inClause = criteriaBuilder.in(root.get("country"));
             for (String country : countries) {
                 inClause.value(country);
             }
@@ -79,7 +79,7 @@ public class LotSpecification {
 
     private static Specification<Lot> inCities(List<String> cities) {
         return (root, query, criteriaBuilder) -> {
-            CriteriaBuilder.In<String> inClause = criteriaBuilder.in(root.get("location").get("id"));
+            CriteriaBuilder.In<String> inClause = criteriaBuilder.in(root.get("region"));
             for (String city : cities) {
                 inClause.value(city);
             }

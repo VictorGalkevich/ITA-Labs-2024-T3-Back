@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.AUCTION_ENDED;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.SOLD;
@@ -138,5 +139,11 @@ public class OfferService extends UserItemService {
                     return true;
                 })
                 .orElse(false);
+    }
+
+    public Page<OfferReadDto> findOffersByUserId(UUID id, Integer page, Integer limit, OfferStatus status) {
+        PageRequest req = PageRequest.of(page - 1, limit);
+        return offerRepository.findByUserId(id, req)
+                .map(offerMapper::toReadDto);
     }
 }

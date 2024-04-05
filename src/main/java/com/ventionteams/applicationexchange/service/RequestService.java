@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.ventionteams.applicationexchange.entity.enumeration.Currency.USD;
 
 @TransactionalService
 @RequiredArgsConstructor

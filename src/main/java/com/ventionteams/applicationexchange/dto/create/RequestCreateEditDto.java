@@ -16,8 +16,6 @@ public record RequestCreateEditDto(
         @Min(0)
         @NotNull
         Long desiredPrice,
-
-        @NotBlank
         String description,
 
         @NotNull

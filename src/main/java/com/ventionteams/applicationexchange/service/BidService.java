@@ -96,7 +96,7 @@ public class BidService extends EntityRelatedService {
                         }
                         lot.setStartPrice(bid.getAmount() + 1);
                     } else {
-                        String msg = "Price %s is not less than current start price (%s)";
+                        String msg = "Price %s is less than current start price (%s)";
                         double val = startPrice;
                         if (bidAmount > totalPrice - 1) {
                             msg = "Price %s is bigger than current max price (%s)";

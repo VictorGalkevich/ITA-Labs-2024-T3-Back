@@ -5,6 +5,7 @@ import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.create.UserCreateEditDto;
 import com.ventionteams.applicationexchange.dto.create.UserData;
 import com.ventionteams.applicationexchange.dto.read.LotReadDTO;
+import com.ventionteams.applicationexchange.dto.read.OfferReadDto;
 import com.ventionteams.applicationexchange.dto.read.PageResponse;
 import com.ventionteams.applicationexchange.dto.read.RequestReadDto;
 import com.ventionteams.applicationexchange.dto.read.UserReadDto;
@@ -13,7 +14,9 @@ import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LotSortField;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
+import com.ventionteams.applicationexchange.entity.enumeration.OfferStatus;
 import com.ventionteams.applicationexchange.service.LotService;
+import com.ventionteams.applicationexchange.service.OfferService;
 import com.ventionteams.applicationexchange.service.RequestService;
 import com.ventionteams.applicationexchange.service.UserService;
 import jakarta.validation.constraints.Max;
@@ -51,6 +54,7 @@ public class UserController {
     private final UserService userService;
     private final RequestService requestService;
     private final LotService lotService;
+    private final OfferService offerService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -75,6 +79,15 @@ public class UserController {
                                                              @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
                                                              @RequestParam(defaultValue = "LEADING") BidStatus status) {
         return ok().body(PageResponse.of(lotService.findBidsByUserId(user.id(), page, limit, status, currency)));
+    }
+
+    @GetMapping("/offers")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<PageResponse<OfferReadDto>> findOffers(@AuthenticationPrincipal UserAuthDto user,
+                                                                 @RequestParam(defaultValue = "1") @Min(1) Integer page,
+                                                                 @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit,
+                                                                 @RequestParam(defaultValue = "PENDING") OfferStatus status) {
+        return ok().body(PageResponse.of(offerService.findOffersByUserId(user.id(), page, limit, status)));
     }
 
     @GetMapping("/requests")

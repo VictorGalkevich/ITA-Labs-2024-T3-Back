@@ -17,6 +17,7 @@ import com.ventionteams.applicationexchange.entity.enumeration.Currency;
 import com.ventionteams.applicationexchange.entity.enumeration.LengthUnit;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.exception.EntityStatusViolationException;
+import com.ventionteams.applicationexchange.exception.InvalidPriceException;
 import com.ventionteams.applicationexchange.exception.PermissionsDeniedException;
 import com.ventionteams.applicationexchange.exception.UserNotRegisteredException;
 import com.ventionteams.applicationexchange.mapper.BidMapper;
@@ -144,6 +145,12 @@ public class LotService extends UserItemService {
         });
         Optional<Category> category = categoryRepository.findById(dto.categoryId());
         validateEntity(category, Category.class);
+        if (dto.startPrice() >= dto.totalPrice()) {
+            throw new InvalidPriceException(
+                    "Start price must be less than total price",
+                    BAD_REQUEST
+            );
+        }
         return Optional.of(dto)
                 .map(lotMapper::toLot)
                 .map(lot -> {
@@ -173,6 +180,12 @@ public class LotService extends UserItemService {
         validateEntity(user, () -> {
             throw new UserNotRegisteredException();
         });
+        if (dto.startPrice() >= dto.totalPrice()) {
+            throw new InvalidPriceException(
+                    "Start price must be less than total price",
+                    BAD_REQUEST
+            );
+        }
         return lotRepository.findById(id)
                 .map(lot -> {
                     validatePermissions(lot, userDto);

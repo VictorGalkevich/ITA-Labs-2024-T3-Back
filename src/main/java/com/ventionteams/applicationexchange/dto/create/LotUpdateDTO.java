@@ -24,7 +24,6 @@ public record LotUpdateDTO(
         Double totalPrice,
         @NotNull
         LocationCreateDto location,
-        @NotBlank
         String description,
         @JsonProperty("start_price")
         @Min(0)

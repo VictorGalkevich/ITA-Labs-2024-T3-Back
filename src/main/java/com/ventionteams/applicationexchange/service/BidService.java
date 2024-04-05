@@ -84,19 +84,19 @@ public class BidService extends EntityRelatedService {
         }
 
         lot.setBidQuantity(lot.getBidQuantity() + 1);
-
+        double bidAmount = ratesService.convertToUSD(bid.getAmount(), bid.getCurrency());
+        bid.setAmount(bidAmount);
         bidRepository.findByLotIdAndStatus(lotId, LEADING)
                 .ifPresentOrElse(prevBid -> {
-                    double bidAmount = ratesService.convertToUSD(bid.getAmount(), bid.getCurrency());
                     double startPrice = lot.getStartPrice();
                     double totalPrice = lot.getTotalPrice();
 
                     if (startPrice <= bidAmount && bidAmount <= totalPrice - 1) {
                         prevBid.setStatus(OVERBID);
-                        if (bidAmount == totalPrice - 1) {
+                        if (bidAmount >= totalPrice - 1) {
                             lot.setStatus(LotStatus.AUCTION_ENDED);
                         }
-                        lot.setStartPrice(bid.getAmount() + 1);
+                        lot.setStartPrice(bidAmount + 1);
                     } else {
                         String msg = "Price %s is less than current start price (%s)";
                         double val = startPrice;
@@ -109,7 +109,7 @@ public class BidService extends EntityRelatedService {
                                 BAD_REQUEST
                         );
                     }
-                }, () -> lot.setStartPrice(bid.getAmount() + 1));
+                }, () -> lot.setStartPrice(bidAmount + 1));
         lot.setBuyerId(userDto.id());
     }
 

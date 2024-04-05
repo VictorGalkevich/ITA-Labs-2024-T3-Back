@@ -12,6 +12,9 @@ public interface BidMapper {
 
     BidReadDto toReadDto(Bid bid);
 
-    @Mapping(target = "status", expression = "java(BidStatus.LEADING)")
+    @Mapping(
+            target = "status",
+            expression = "java(com.ventionteams.applicationexchange.entity.enumeration.BidStatus.LEADING)"
+    )
     Bid toBid(BidCreateDto dto);
 }

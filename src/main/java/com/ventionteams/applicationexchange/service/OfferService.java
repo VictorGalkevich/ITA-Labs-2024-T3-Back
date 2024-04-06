@@ -4,14 +4,18 @@ import com.ventionteams.applicationexchange.annotation.TransactionalService;
 import com.ventionteams.applicationexchange.dto.create.OfferCreateEditDto;
 import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.read.OfferReadDto;
+import com.ventionteams.applicationexchange.entity.Bid;
 import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.PurchaseRequest;
 import com.ventionteams.applicationexchange.entity.User;
+import com.ventionteams.applicationexchange.entity.enumeration.BidStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import com.ventionteams.applicationexchange.entity.enumeration.OfferStatus;
 import com.ventionteams.applicationexchange.exception.AuctionEndedException;
+import com.ventionteams.applicationexchange.exception.PermissionsDeniedException;
 import com.ventionteams.applicationexchange.exception.UserNotRegisteredException;
 import com.ventionteams.applicationexchange.mapper.OfferMapper;
+import com.ventionteams.applicationexchange.repository.BidRepository;
 import com.ventionteams.applicationexchange.repository.LotRepository;
 import com.ventionteams.applicationexchange.repository.OfferRepository;
 import com.ventionteams.applicationexchange.repository.RequestRepository;
@@ -19,6 +23,7 @@ import com.ventionteams.applicationexchange.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -36,6 +41,7 @@ public class OfferService extends UserItemService {
     private final LotRepository lotRepository;
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
+    private final BidRepository bidRepository;
     private final OfferMapper offerMapper;
 
     public Page<OfferReadDto> findAll(Integer page, Integer limit) {
@@ -60,10 +66,15 @@ public class OfferService extends UserItemService {
         validateLot(lot);
         validateRequest(req);
         validatePermissions(lot.get(), userDto);
+        if (lot.get().getUser().getId().equals(req.get().getUser().getId())) {
+            throw new PermissionsDeniedException(
+                    "U cant create offers at your lots",
+                    BAD_REQUEST
+            );
+        }
         return Optional.of(dto)
                 .map(offerMapper::toOffer)
                 .map(offer -> {
-                    validateLot(lot);
                     PurchaseRequest purchaseRequest = req.get();
                     purchaseRequest.setOfferQuantity(purchaseRequest.getOfferQuantity() + 1);
                     offer.setStatus(OfferStatus.PENDING);
@@ -117,11 +128,18 @@ public class OfferService extends UserItemService {
         validateEntity(user, () -> {
             throw new UserNotRegisteredException();
         });
-
         return offerRepository.findById(id)
                 .map(offer -> {
+                    if (!offer.getStatus().equals(OfferStatus.READY_TO_BUY)) {
+                        throw new PermissionsDeniedException(
+                                "You cant sell this lot",
+                                BAD_REQUEST
+                        );
+                    }
                     Lot lot = offer.getLot();
                     validatePermissions(lot, userDto);
+                    Optional<Bid> leadingBid = bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING);
+                    leadingBid.ifPresent(it -> it.setStatus(BidStatus.OVERBID));
                     lot.setStatus(SOLD);
                     offer.setStatus(WON);
                     return offer;

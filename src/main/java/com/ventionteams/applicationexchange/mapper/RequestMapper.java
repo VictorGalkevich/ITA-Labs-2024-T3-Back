@@ -11,6 +11,8 @@ import org.mapstruct.MappingTarget;
 @Mapper(config = MapperConfiguration.class)
 public interface RequestMapper {
 
+    @Mapping(target = "categoryId", source = "request.category.id")
+    @Mapping(target = "userId", source = "request.user.id")
     RequestReadDto toReadDto(PurchaseRequest request);
 
     @Mapping(target = "category", expression = "java(com.ventionteams.applicationexchange.entity.Category.builder().id(dto.categoryId()).build())")

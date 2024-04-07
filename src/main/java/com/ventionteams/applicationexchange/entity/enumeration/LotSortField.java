@@ -9,7 +9,8 @@ public enum LotSortField {
     QUANTITY("quantity"),
     CREATED_AT("createdAt"),
     EXPIRATION_DATE("expirationDate"),
-    SIZE("size");
+    SIZE("size"),
+    BID_QUANTITY("bidQuantity");
 
     private String name;
 }

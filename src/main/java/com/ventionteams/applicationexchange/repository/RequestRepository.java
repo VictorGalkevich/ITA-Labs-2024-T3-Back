@@ -1,17 +1,19 @@
 package com.ventionteams.applicationexchange.repository;
 
+import com.ventionteams.applicationexchange.entity.Lot;
 import com.ventionteams.applicationexchange.entity.PurchaseRequest;
 import com.ventionteams.applicationexchange.entity.enumeration.LotStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
 import java.util.UUID;
 
-public interface RequestRepository extends JpaRepository<PurchaseRequest, Long> {
+public interface RequestRepository extends JpaRepository<PurchaseRequest, Long>, JpaSpecificationExecutor<PurchaseRequest> {
     Page<PurchaseRequest> findByStatus(LotStatus status, Pageable pageable);
 
     Page<PurchaseRequest> findAllByUserIdAndStatus(UUID uuid, LotStatus status, Pageable pageable);

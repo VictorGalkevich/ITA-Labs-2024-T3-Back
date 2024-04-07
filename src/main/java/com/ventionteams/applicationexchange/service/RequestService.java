@@ -1,11 +1,14 @@
 package com.ventionteams.applicationexchange.service;
 
 import com.ventionteams.applicationexchange.annotation.TransactionalService;
+import com.ventionteams.applicationexchange.dto.create.LotFilterDTO;
 import com.ventionteams.applicationexchange.dto.create.RequestCreateEditDto;
 import com.ventionteams.applicationexchange.dto.create.UserAuthDto;
 import com.ventionteams.applicationexchange.dto.read.OfferReadDto;
 import com.ventionteams.applicationexchange.dto.read.RequestReadDto;
 import com.ventionteams.applicationexchange.entity.Category;
+import com.ventionteams.applicationexchange.entity.Lot;
+import com.ventionteams.applicationexchange.entity.LotSortCriteria;
 import com.ventionteams.applicationexchange.entity.PurchaseRequest;
 import com.ventionteams.applicationexchange.entity.User;
 import com.ventionteams.applicationexchange.entity.enumeration.Currency;
@@ -18,9 +21,13 @@ import com.ventionteams.applicationexchange.repository.CategoryRepository;
 import com.ventionteams.applicationexchange.repository.OfferRepository;
 import com.ventionteams.applicationexchange.repository.RequestRepository;
 import com.ventionteams.applicationexchange.repository.UserRepository;
+import com.ventionteams.applicationexchange.specification.LotSpecification;
+import com.ventionteams.applicationexchange.specification.PurchaseRequestSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -43,13 +50,14 @@ public class RequestService extends UserItemService {
     public Page<RequestReadDto> findAll(
             Integer page,
             Integer limit,
-            String status,
+            LotFilterDTO filter,
             UserAuthDto user,
             Currency currency
     ) {
         PageRequest req = PageRequest.of(page - 1, limit);
+        Specification<PurchaseRequest> specification = PurchaseRequestSpecification.getFilterSpecification(filter);
         Currency users = userRepository.getCurrency(user.id());
-        return requestRepository.findByStatus(LotStatus.valueOf(status), req)
+        return requestRepository.findAll(specification, req)
                 .map(request -> {
                     convertFromUSD(request, currency == null ? users : currency);
                     return request;

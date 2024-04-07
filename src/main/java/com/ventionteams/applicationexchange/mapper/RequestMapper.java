@@ -13,6 +13,7 @@ public interface RequestMapper {
 
     @Mapping(target = "categoryId", source = "request.category.id")
     @Mapping(target = "userId", source = "request.user.id")
+    @Mapping(target = "categoryName", source = "request.category.name")
     RequestReadDto toReadDto(PurchaseRequest request);
 
     @Mapping(target = "category", expression = "java(com.ventionteams.applicationexchange.entity.Category.builder().id(dto.categoryId()).build())")

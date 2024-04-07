@@ -27,6 +27,9 @@ public record RequestReadDto(
         @JsonProperty("price_per_unit")
         Double pricePerUnit, Location location,
         Integer size,
+        String title,
+        @JsonProperty("category_name")
+        String categoryName,
         Packaging packaging,
         @JsonProperty("length_unit")
         LengthUnit lengthUnit,

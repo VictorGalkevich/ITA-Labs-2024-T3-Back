@@ -63,6 +63,9 @@ public class PurchaseRequest implements UserMappedEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "reject_message")
     private String rejectMessage;
 

@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.ventionteams.applicationexchange.entity.enumeration.BidStatus.*;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.ACTIVE;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.AUCTION_ENDED;
 import static com.ventionteams.applicationexchange.entity.enumeration.LotStatus.CANCELLED;
@@ -215,12 +216,12 @@ public class LotService extends UserItemService {
                     }
                     validateLotStatus(lot, ACTIVE, AUCTION_ENDED);
                     lot.setStatus(LotStatus.SOLD);
-                    bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING)
+                    bidRepository.findByLotIdAndStatus(lot.getId(), LEADING)
                             .ifPresent(bid -> {
                                 if (bid.getUserId().equals(userDto.id())) {
-                                    bid.setStatus(BidStatus.BOUGHT);
+                                    bid.setStatus(BOUGHT);
                                 } else {
-                                    bid.setStatus(BidStatus.OVERBID);
+                                    bid.setStatus(OVERBID);
                                 }
                             });
                     lot.setBuyerId(userDto.id());
@@ -276,9 +277,9 @@ public class LotService extends UserItemService {
                 .map(lot -> {
                     validateLotStatus(lot, ACTIVE);
                     validatePermissions(lot, user);
-                    Optional<Bid> bidWrapper = bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING);
+                    Optional<Bid> bidWrapper = bidRepository.findByLotIdAndStatus(lot.getId(), LEADING);
                     validateEntity(bidWrapper, Bid.class);
-                    bidWrapper.get().setStatus(BidStatus.WON);
+                    bidWrapper.get().setStatus(WON);
                     lot.setStatus(LotStatus.SOLD);
                     lot.setRejectMessage(null);
                     return lot;
@@ -338,7 +339,7 @@ public class LotService extends UserItemService {
 
     private LotReadDTO map(Lot lot, UUID userId, Currency currency) {
         LotReadDTO lotReadDTO = lotMapper.toLotReadDTO(lot);
-        Optional<Bid> leadingBid = bidRepository.findByLotIdAndStatus(lot.getId(), BidStatus.LEADING);
+        Optional<Bid> leadingBid = bidRepository.findByLotIdAndStatusIn(lot.getId(), List.of(LEADING, WON));
         BidReadDto leading = bidMapper.toReadDto(leadingBid.orElse(null));
         leadingBid.ifPresent(bid -> {
             double converted = ratesService.convertFromUSD(bid.getAmount(), currency);
